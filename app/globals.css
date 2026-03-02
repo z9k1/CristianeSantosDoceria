@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  @apply bg-rose-50/30 font-sansBrand text-cocoa-800 antialiased;
+}
+
+a {
+  @apply transition;
+}
+
+.container-pad {
+  @apply mx-auto max-w-6xl px-4 sm:px-6 lg:px-8;
+}

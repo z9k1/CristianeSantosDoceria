@@ -1,0 +1,191 @@
+import {
+  BrandSettings,
+  CtaConfig,
+  EventPackage,
+  FaqItem,
+  Product,
+  ProductCategory,
+  Testimonial
+} from "@/types/cms";
+
+export const brandSettings: BrandSettings = {
+  businessName: "Cristiane Santos Gastronomia",
+  tagline: "Macarons artesanais para momentos marcantes",
+  summary:
+    "Confeitaria premium artesanal em Londrina-PR, especializada em macarons personalizados para casamentos, eventos corporativos e datas especiais.",
+  whatsappNumber: "5543988428410",
+  instagramUrl: "https://www.instagram.com/cristianesantos_gastronomia/",
+  ifoodUrl: "https://cristiane-santos-gastronomia.ola.click/products",
+  menuPdfUrl: "https://drive.google.com/file/d/1aVLK57rtlIeFI3y0gFWv5ve00zaVzWs_/view",
+  coverage: "Londrina e regiao",
+  address: "R. Monaco, 178 - Jardim Adriana II, Londrina - PR",
+  phoneDisplay: "(43) 98842-8410",
+  minOrderNoticeDays: 5
+};
+
+export const productCategories: ProductCategory[] = [
+  {
+    id: "eventos-casamentos",
+    name: "Eventos & Casamentos",
+    description: "Macarons premium sob encomenda com personalizacao para eventos."
+  },
+  {
+    id: "kits-caixas",
+    name: "Kits e Caixas Especiais",
+    description: "Combinacoes prontas para presentear e celebrar com praticidade."
+  },
+  {
+    id: "pedido-rapido",
+    name: "Pedido Rapido",
+    description: "Linha para encomendas recorrentes e datas comemorativas."
+  }
+];
+
+export const products: Product[] = [
+  {
+    id: "macaron-medio",
+    categoryId: "eventos-casamentos",
+    name: "Macaron medio (4,5 cm)",
+    description: "Sabores premium como pistache, champanhe, frutas vermelhas e lotus biscoff.",
+    priceRange: "A partir de R$7,00 por unidade",
+    minOrder: "Pedido minimo varia por quantidade/cor/sabor",
+    imageHint: "macarons coloridos em mesa de casamento"
+  },
+  {
+    id: "macaron-mini",
+    categoryId: "eventos-casamentos",
+    name: "Mini macaron",
+    description: "Formato delicado para lembrancas e composicao de caixas especiais.",
+    priceRange: "10 unidades por R$40,00",
+    minOrder: "Minimo de 10 unidades",
+    imageHint: "mini macarons em caixa transparente"
+  },
+  {
+    id: "kit-festa",
+    categoryId: "kits-caixas",
+    name: "Kits para festa",
+    description: "Combos de bolo e docinhos para 10 a 50 pessoas.",
+    priceRange: "A partir de R$160,00",
+    minOrder: "Conforme disponibilidade",
+    imageHint: "kit festa com bolo e doces"
+  },
+  {
+    id: "caixas-presente",
+    categoryId: "kits-caixas",
+    name: "Caixas presente",
+    description: "Caixas com visor ou acrilicas para padrinhos, empresas e brindes.",
+    priceRange: "A partir de R$10,00",
+    minOrder: "Minimo de 10 caixas pequenas",
+    imageHint: "caixa de macarons para presente"
+  },
+  {
+    id: "docinhos-gourmet",
+    categoryId: "pedido-rapido",
+    name: "Docinhos gourmet",
+    description: "Selecao para aniversarios, reunioes e comemoracoes em casa.",
+    priceRange: "Preco sob consulta",
+    imageHint: "docinhos gourmet coloridos"
+  },
+  {
+    id: "bolos-sob-encomenda",
+    categoryId: "pedido-rapido",
+    name: "Bolos sob encomenda",
+    description: "Bolos artesanais personalizados para celebrar com estilo.",
+    priceRange: "Preco sob consulta",
+    imageHint: "bolo decorado artesanal"
+  }
+];
+
+export const eventPackages: EventPackage[] = [
+  {
+    id: "torre-04",
+    title: "Torre de macarons - 4 andares",
+    details: "47 macarons, 15 cm de altura e base de 18 cm.",
+    price: "R$395,00"
+  },
+  {
+    id: "torre-06",
+    title: "Torre de macarons - 6 andares",
+    details: "95 macarons, 25 cm de altura e base de 23 cm.",
+    price: "R$745,00"
+  },
+  {
+    id: "torre-10",
+    title: "Torre de macarons - 10 andares",
+    details: "237 macarons, 55 cm de altura e base de 33 cm.",
+    price: "R$1.750,00"
+  }
+];
+
+export const testimonials: Testimonial[] = [
+  {
+    id: "t1",
+    author: "Amanda S.",
+    role: "Noiva em Londrina",
+    text: "Os macarons ficaram perfeitos na paleta do casamento e foram muito elogiados."
+  },
+  {
+    id: "t2",
+    author: "Equipe RH",
+    role: "Empresa local",
+    text: "Atendimento impecavel e embalagens personalizadas que valorizaram nosso evento."
+  },
+  {
+    id: "t3",
+    author: "Patricia M.",
+    role: "Cliente recorrente",
+    text: "Qualidade constante, sabor marcante e uma apresentacao sempre elegante."
+  }
+];
+
+export const faqItems: FaqItem[] = [
+  {
+    id: "f1",
+    question: "Qual o prazo minimo para encomendas?",
+    answer:
+      "Trabalhamos com antecedencia minima de 5 dias para pedidos sob encomenda, sujeito a disponibilidade."
+  },
+  {
+    id: "f2",
+    question: "Voces atendem apenas Londrina?",
+    answer: "Atendemos Londrina e regiao. A taxa/viabilidade depende do local do evento."
+  },
+  {
+    id: "f3",
+    question: "E possivel personalizar com logo ou iniciais?",
+    answer: "Sim. Personalizamos cores, iniciais e logos curtos conforme viabilidade tecnica."
+  },
+  {
+    id: "f4",
+    question: "Existe pedido minimo?",
+    answer:
+      "Sim. Alguns itens possuem minimos por quantidade, sabor e formato. Isso e detalhado no orcamento."
+  }
+];
+
+export const ctaConfigs: CtaConfig[] = [
+  {
+    id: "whatsapp-principal",
+    label: "Pedir orcamento no WhatsApp",
+    type: "whatsapp_primary",
+    message: "Ola! Quero um orcamento para meu evento."
+  },
+  {
+    id: "whatsapp-casamento",
+    label: "Quero orcamento para casamento",
+    type: "whatsapp_quote",
+    message: "Ola! Quero um orcamento para casamento."
+  },
+  {
+    id: "external-ifood",
+    label: "Pedido rapido no cardapio online",
+    type: "external_ifood",
+    href: brandSettings.ifoodUrl
+  },
+  {
+    id: "external-instagram",
+    label: "Ver Instagram",
+    type: "external_instagram",
+    href: brandSettings.instagramUrl
+  }
+];
