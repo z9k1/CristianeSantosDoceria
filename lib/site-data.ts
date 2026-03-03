@@ -166,19 +166,19 @@ export const faqItems: FaqItem[] = [
 export const ctaConfigs: CtaConfig[] = [
   {
     id: "whatsapp-principal",
-    label: "Pedir orcamento no WhatsApp",
+    label: "Pedir orçamento no WhatsApp",
     type: "whatsapp_primary",
-    message: "Ola! Quero um orcamento para meu evento."
+    message: "Olá! Quero um orçamento para meu evento."
   },
   {
     id: "whatsapp-casamento",
-    label: "Quero orcamento para casamento",
+    label: "Quero orçamento para casamento",
     type: "whatsapp_quote",
-    message: "Ola! Quero um orcamento para casamento."
+    message: "Olá! Quero um orçamento para casamento."
   },
   {
     id: "external-ifood",
-    label: "Pedido rapido no cardapio online",
+    label: "Pedido rápido no cardápio online",
     type: "external_ifood",
     href: brandSettings.ifoodUrl
   },

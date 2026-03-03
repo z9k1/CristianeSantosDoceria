@@ -56,7 +56,11 @@ export function Footer() {
             <IconLink href={brandSettings.menuPdfUrl} label="Catálogo PDF">
               <Icon path="M14 2H6a2 2 0 0 0-2 2v16c0 1.1.9 2 2 2h12a2 2 0 0 0 2-2V8zM13 3.5 17.5 8H13zM6 20V4h6v5h5v11z" />
             </IconLink>
-            <Link href="/politica-de-privacidade" className="flex h-10 w-10 items-center justify-center rounded-full border border-transparent bg-white/80 text-cocoa-700 transition hover:border-cocoa-700 hover:text-cocoa-900" aria-label="Política de privacidade">
+            <Link
+              href="/politica-de-privacidade"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-transparent bg-white/80 text-cocoa-700 transition hover:border-cocoa-700 hover:text-cocoa-900"
+              aria-label="Política de privacidade"
+            >
               <Icon path="M12 2a9 9 0 1 0 9 9 9 9 0 0 0-9-9zm.5 13.3h-1V11h1zm0-5.9h-1V7h1z" />
             </Link>
           </div>

@@ -54,10 +54,10 @@ export function LeadForm({ sourcePage }: LeadFormProps) {
 
   return (
     <form onSubmit={onSubmit} className="space-y-4 rounded-brand border border-rose-100 bg-white p-6 shadow-soft">
-      <h3 className="font-serifBrand text-2xl text-cocoa-800">Briefing rapido do evento</h3>
-      <p className="text-sm text-cocoa-700">
-        Preencha os campos principais para receber seu orcamento personalizado.
-      </p>
+      <h3 className="font-serifBrand text-2xl text-cocoa-800">Briefing rápido do evento</h3>
+        <p className="text-sm text-cocoa-700">
+          Preencha os campos principais para receber seu orçamento personalizado.
+        </p>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <input

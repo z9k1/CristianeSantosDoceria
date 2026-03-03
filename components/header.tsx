@@ -25,7 +25,7 @@ export function Header() {
         </nav>
 
         <a
-          href={buildWhatsAppUrl("Ola! Quero fazer um pedido.")}
+          href={buildWhatsAppUrl("Olá! Quero fazer um pedido.")}
           target="_blank"
           rel="noreferrer"
           className="rounded-full bg-cocoa-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-cocoa-800"
