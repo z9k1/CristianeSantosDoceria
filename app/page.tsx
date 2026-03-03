@@ -5,11 +5,8 @@ import { CtaLink } from "@/components/cta-link";
 import { BackToTop } from "@/components/back-to-top";
 import { Gallery } from "@/components/gallery";
 import { Reveal } from "@/components/reveal";
-import { ctaConfigs } from "@/lib/site-data";
 
 export default function HomePage() {
-  const ifoodCta = ctaConfigs.find((item) => item.id === "external-ifood");
-
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
   }, []);
@@ -33,12 +30,7 @@ export default function HomePage() {
         </Reveal>
         <Reveal delay={160}>
           <div className="flex justify-center">
-            <CtaLink
-              label="Ver cardápio"
-              href={ifoodCta?.href ?? "/cardapio"}
-              eventName="click_ifood"
-              className="px-8 py-3"
-            />
+            <CtaLink label="Ver cardápio" href="/cardapio" eventName="click_ifood" className="px-8 py-3" external={false} />
           </div>
         </Reveal>
       </section>
@@ -67,12 +59,7 @@ export default function HomePage() {
           <p className="mt-3 text-sm text-cocoa-700">Ação única para conferir opções e sabores disponíveis.</p>
         </Reveal>
         <div className="mt-6 flex justify-center">
-          <CtaLink
-            label="Ver cardápio"
-            href={ifoodCta?.href ?? "/cardapio"}
-            eventName="click_ifood"
-            className="px-8 py-3"
-          />
+          <CtaLink label="Ver cardápio" href="/cardapio" eventName="click_ifood" className="px-8 py-3" external={false} />
         </div>
       </section>
     </div>
