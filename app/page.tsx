@@ -1,4 +1,8 @@
+"use client";
+
+import { useEffect } from "react";
 import { CtaLink } from "@/components/cta-link";
+import { BackToTop } from "@/components/back-to-top";
 import { Gallery } from "@/components/gallery";
 import { Reveal } from "@/components/reveal";
 import { SectionHeading } from "@/components/section-heading";
@@ -8,8 +12,14 @@ export default function HomePage() {
   const whatsappWedding = ctaConfigs.find((item) => item.id === "whatsapp-casamento");
   const ifoodCta = ctaConfigs.find((item) => item.id === "external-ifood");
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, []);
+
   return (
     <div>
+      <BackToTop />
+
       {/* Hero com âncoras principais */}
       <section className="mx-auto flex max-w-6xl flex-col gap-10 px-4 py-14 lg:px-6">
         <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
