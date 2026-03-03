@@ -1,18 +1,368 @@
-import type { Metadata } from "next";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Cardápio",
-  description: "Página em construção."
+import { useEffect, useMemo, useState } from "react";
+import { brandSettings } from "@/lib/site-data";
+
+type Bolo = {
+  id: string;
+  name: string;
+  basePrice: number;
+  description: string;
 };
 
+type Decoration = {
+  id: string;
+  label: string;
+  extraPrice: number;
+};
+
+type CartItem = {
+  productId: string;
+  productName: string;
+  basePrice: number;
+  quantity: number;
+  decorationId: string;
+  decorationLabel: string;
+  decorationPrice: number;
+  lineTotal: number;
+};
+
+const CART_STORAGE_KEY = "csg_cardapio_bolos_cart_v1";
+
+const BOLOS: Bolo[] = [
+  { id: "ninho-abacaxi", name: "Ninho com abacaxi", basePrice: 79.9, description: "Bolo cremoso com ninho e pedaços de abacaxi." },
+  { id: "ninho-morangos", name: "Ninho com morangos", basePrice: 89.9, description: "Combinação clássica de creme de ninho com morangos frescos." },
+  { id: "abacaxi-coco", name: "Abacaxi com coco", basePrice: 79.9, description: "Massa leve com recheio tropical de abacaxi e coco." },
+  { id: "limao-frutas-vermelhas", name: "Limão siciliano e frutas vermelhas", basePrice: 89.9, description: "Toque cítrico equilibrado com frutas vermelhas." },
+  { id: "morango-choc-branco", name: "Morango com chocolate branco", basePrice: 99.9, description: "Recheio intenso de chocolate branco com morango." },
+  { id: "brigadeiro", name: "Brigadeiro", basePrice: 84.9, description: "Bolo tradicional com recheio de brigadeiro cremoso." },
+  { id: "maracuja-chocolate", name: "Maracujá com chocolate", basePrice: 87.9, description: "Contraste perfeito entre maracujá e chocolate." },
+  { id: "prestigio", name: "Prestígio", basePrice: 83.9, description: "Chocolate com coco em versão premium artesanal." },
+  { id: "ninho-nutella", name: "Ninho com Nutella", basePrice: 89.9, description: "Camadas cremosas de ninho com Nutella." },
+  { id: "kinder-bueno", name: "Kinder Bueno", basePrice: 95.9, description: "Recheio inspirado no sabor do Kinder Bueno." },
+  { id: "chocolate-caramelo", name: "Chocolate com Caramelo", basePrice: 99.9, description: "Chocolate intenso com toque de caramelo." },
+  { id: "red-velvet", name: "Red Velvet", basePrice: 99.9, description: "Red velvet clássico com acabamento sofisticado." },
+  { id: "nozes-caramelizadas", name: "Nozes caramelizadas", basePrice: 97.9, description: "Nozes selecionadas com caramelo artesanal." },
+  { id: "surpresa-uva", name: "Surpresa de uva", basePrice: 86.9, description: "Creme suave com uvas inteiras para efeito surpresa." },
+  { id: "morango-chocolate", name: "Morango com Chocolate", basePrice: 92.9, description: "Morangos e chocolate em camadas equilibradas." },
+  { id: "brigadeiro-morangos", name: "Brigadeiro com morangos", basePrice: 87.9, description: "Brigadeiro com toque fresco de morangos." }
+];
+
+const DECORATIONS: Decoration[] = [
+  { id: "none", label: "Nenhuma", extraPrice: 0 },
+  { id: "flores", label: "Flores comestíveis", extraPrice: 25 },
+  { id: "macarons", label: "6 macarons minis ou 4 médios", extraPrice: 25 },
+  { id: "macarons-flores", label: "6 macarons + Flores", extraPrice: 40 },
+  { id: "topo-chocolate", label: "Topo de chocolate personalizado", extraPrice: 30 }
+];
+
+function formatCurrency(value: number): string {
+  return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
+}
+
+function todayISODate(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = `${now.getMonth() + 1}`.padStart(2, "0");
+  const day = `${now.getDate()}`.padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function parseISODate(value: string): Date {
+  const [year, month, day] = value.split("-").map((part) => Number(part));
+  return new Date(year, (month || 1) - 1, day || 1, 12, 0, 0, 0);
+}
+
 export default function CardapioPage() {
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [selectedBolo, setSelectedBolo] = useState<Bolo | null>(null);
+  const [quantity, setQuantity] = useState(1);
+  const [decorationId, setDecorationId] = useState(DECORATIONS[0].id);
+  const [customerName, setCustomerName] = useState("");
+  const [eventDate, setEventDate] = useState("");
+  const [submitError, setSubmitError] = useState("");
+
+  useEffect(() => {
+    const raw = localStorage.getItem(CART_STORAGE_KEY);
+    if (!raw) return;
+    try {
+      const parsed = JSON.parse(raw) as CartItem[];
+      if (Array.isArray(parsed)) {
+        setCart(parsed);
+      }
+    } catch {
+      localStorage.removeItem(CART_STORAGE_KEY);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+  }, [cart]);
+
+  useEffect(() => {
+    document.body.style.overflow = selectedBolo ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [selectedBolo]);
+
+  const selectedDecoration = useMemo(
+    () => DECORATIONS.find((option) => option.id === decorationId) ?? DECORATIONS[0],
+    [decorationId]
+  );
+
+  const modalTotal = useMemo(() => {
+    if (!selectedBolo) return 0;
+    return selectedBolo.basePrice * quantity + selectedDecoration.extraPrice;
+  }, [selectedBolo, quantity, selectedDecoration.extraPrice]);
+
+  const cartTotal = useMemo(
+    () => cart.reduce((acc, item) => acc + item.lineTotal, 0),
+    [cart]
+  );
+
+  const badgeCount = useMemo(
+    () => cart.reduce((acc, item) => acc + item.quantity, 0),
+    [cart]
+  );
+
+  const openModal = (bolo: Bolo) => {
+    setSelectedBolo(bolo);
+    setQuantity(1);
+    setDecorationId(DECORATIONS[0].id);
+  };
+
+  const closeModal = () => {
+    setSelectedBolo(null);
+  };
+
+  const addToCart = () => {
+    if (!selectedBolo) return;
+
+    const lineTotal = selectedBolo.basePrice * quantity + selectedDecoration.extraPrice;
+    const newItem: CartItem = {
+      productId: selectedBolo.id,
+      productName: selectedBolo.name,
+      basePrice: selectedBolo.basePrice,
+      quantity,
+      decorationId: selectedDecoration.id,
+      decorationLabel: selectedDecoration.label,
+      decorationPrice: selectedDecoration.extraPrice,
+      lineTotal
+    };
+
+    setCart((prev) => {
+      const existingIndex = prev.findIndex(
+        (item) =>
+          item.productId === newItem.productId &&
+          item.decorationId === newItem.decorationId
+      );
+      if (existingIndex === -1) {
+        return [...prev, newItem];
+      }
+      const updated = [...prev];
+      const existing = updated[existingIndex];
+      const mergedQuantity = existing.quantity + newItem.quantity;
+      updated[existingIndex] = {
+        ...existing,
+        quantity: mergedQuantity,
+        lineTotal: existing.basePrice * mergedQuantity + existing.decorationPrice
+      };
+      return updated;
+    });
+
+    closeModal();
+    setIsCartOpen(true);
+  };
+
+  const removeItem = (index: number) => {
+    setCart((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const validateDate = (): boolean => {
+    if (!eventDate) return false;
+    const inputDate = parseISODate(eventDate);
+    const minDate = parseISODate(todayISODate());
+    return inputDate.getTime() >= minDate.getTime();
+  };
+
+  const finalizeOrder = () => {
+    if (cart.length === 0) return;
+    if (!customerName.trim()) {
+      setSubmitError("Informe seu nome para continuar.");
+      return;
+    }
+    if (!validateDate()) {
+      setSubmitError("A data do evento não pode ser anterior à data atual.");
+      return;
+    }
+
+    setSubmitError("");
+
+    const lines = cart
+      .map((item) => `- ${item.quantity}x Bolo ${item.productName}\n  Decoração: ${item.decorationLabel}`)
+      .join("\n\n");
+
+    const message = `Olá! Gostaria de fazer o seguinte pedido:\n\n${lines}\n\nTotal estimado: ${formatCurrency(
+      cartTotal
+    )}\n(Aguardando confirmação de disponibilidade e valor final)\n\nNome: ${customerName.trim()}\nData do evento: ${eventDate}`;
+
+    const encoded = encodeURIComponent(message);
+    window.open(`https://wa.me/${brandSettings.whatsappNumber}?text=${encoded}`, "_blank", "noopener,noreferrer");
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-rose-50 px-4 text-center">
-      <div>
-        <p className="text-sm uppercase tracking-[0.4em] text-rose-400">Cardápio</p>
-        <h1 className="mt-4 font-serifDisplay text-3xl text-cocoa-900">Em construção</h1>
-        <p className="mt-3 text-sm text-cocoa-700">Aguarde próximas instruções.</p>
-      </div>
+    <div className="container-pad py-12">
+      <header className="mb-8 text-center">
+        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-rose-500">Cardápio Inteligente</p>
+        <h1 className="mt-3 font-serifDisplay text-4xl text-cocoa-900">Bolos artesanais</h1>
+        <p className="mx-auto mt-3 max-w-2xl text-sm text-cocoa-700">
+          Cada item corresponde a 1kg. Para bolos maiores, aumente a quantidade no modal.
+        </p>
+      </header>
+
+      <section className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {BOLOS.map((bolo) => (
+          <article key={bolo.id} className="rounded-[1.25rem] bg-white/85 p-5 shadow-panel">
+            <h2 className="font-serifDisplay text-2xl text-cocoa-900">{bolo.name}</h2>
+            <p className="mt-2 text-sm text-cocoa-700">{bolo.description}</p>
+            <p className="mt-4 text-sm font-semibold text-cocoa-900">{formatCurrency(bolo.basePrice)} / 1kg</p>
+            <button
+              type="button"
+              onClick={() => openModal(bolo)}
+              className="mt-4 inline-flex w-full items-center justify-center rounded-full bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-5 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:from-cocoa-800 hover:to-cocoa-950"
+            >
+              Selecionar
+            </button>
+          </article>
+        ))}
+      </section>
+
+      <button
+        type="button"
+        onClick={() => setIsCartOpen((prev) => !prev)}
+        className="fixed bottom-6 right-6 z-30 inline-flex items-center gap-3 rounded-full bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-5 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-white shadow-lg transition hover:from-cocoa-800 hover:to-cocoa-950"
+      >
+        Carrinho
+        <span className="inline-flex h-6 min-w-[1.5rem] items-center justify-center rounded-full bg-white px-2 text-xs font-bold text-cocoa-900">
+          {badgeCount}
+        </span>
+      </button>
+
+      {isCartOpen ? (
+        <aside className="fixed right-4 top-24 z-30 w-[min(92vw,380px)] rounded-[1.25rem] bg-white/95 p-5 shadow-soft backdrop-blur">
+          <h3 className="font-serifDisplay text-2xl text-cocoa-900">Resumo do pedido</h3>
+          {cart.length === 0 ? (
+            <p className="mt-4 text-sm text-cocoa-700">Seu carrinho está vazio.</p>
+          ) : (
+            <ul className="mt-4 space-y-3">
+              {cart.map((item, index) => (
+                <li key={`${item.productId}-${item.decorationId}-${index}`} className="rounded-xl bg-rose-50/80 p-3">
+                  <p className="text-sm font-semibold text-cocoa-900">
+                    {item.quantity}x {item.productName}
+                  </p>
+                  <p className="mt-1 text-xs text-cocoa-700">Decoração: {item.decorationLabel}</p>
+                  <p className="mt-1 text-xs text-cocoa-700">Subtotal: {formatCurrency(item.lineTotal)}</p>
+                  <button
+                    type="button"
+                    onClick={() => removeItem(index)}
+                    className="mt-2 text-xs font-semibold uppercase tracking-[0.15em] text-rose-600 hover:text-rose-700"
+                  >
+                    Remover
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <p className="mt-4 text-sm font-semibold text-cocoa-900">Total geral: {formatCurrency(cartTotal)}</p>
+
+          <div className="mt-4 space-y-3">
+            <input
+              type="text"
+              value={customerName}
+              onChange={(event) => setCustomerName(event.target.value)}
+              placeholder="Nome"
+              className="w-full rounded-xl border border-rose-200 px-3 py-2 text-sm outline-none ring-cocoa-700/30 focus:ring"
+            />
+            <input
+              type="date"
+              value={eventDate}
+              min={todayISODate()}
+              onChange={(event) => setEventDate(event.target.value)}
+              className="w-full rounded-xl border border-rose-200 px-3 py-2 text-sm outline-none ring-cocoa-700/30 focus:ring"
+            />
+            {submitError ? <p className="text-xs text-rose-700">{submitError}</p> : null}
+            <button
+              type="button"
+              onClick={finalizeOrder}
+              disabled={cart.length === 0}
+              className="inline-flex w-full items-center justify-center rounded-full bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-5 py-3 text-xs font-semibold uppercase tracking-[0.2em] text-white transition enabled:hover:from-cocoa-800 enabled:hover:to-cocoa-950 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Finalizar pedido
+            </button>
+          </div>
+        </aside>
+      ) : null}
+
+      {selectedBolo ? (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-cocoa-900/50 p-4">
+          <div className="w-full max-w-lg rounded-[1.5rem] bg-white p-6 shadow-soft">
+            <h2 className="font-serifDisplay text-3xl text-cocoa-900">{selectedBolo.name}</h2>
+            <p className="mt-2 text-sm text-cocoa-700">{selectedBolo.description}</p>
+            <p className="mt-3 text-sm font-semibold text-cocoa-900">
+              Preço base: {formatCurrency(selectedBolo.basePrice)} / 1kg
+            </p>
+
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <label className="text-sm text-cocoa-700">
+                Quantidade (kg)
+                <input
+                  type="number"
+                  min={1}
+                  value={quantity}
+                  onChange={(event) => setQuantity(Math.max(1, Number(event.target.value) || 1))}
+                  className="mt-1 w-full rounded-xl border border-rose-200 px-3 py-2 text-sm outline-none ring-cocoa-700/30 focus:ring"
+                />
+              </label>
+              <label className="text-sm text-cocoa-700">
+                Decoração personalizada
+                <select
+                  value={decorationId}
+                  onChange={(event) => setDecorationId(event.target.value)}
+                  className="mt-1 w-full rounded-xl border border-rose-200 px-3 py-2 text-sm outline-none ring-cocoa-700/30 focus:ring"
+                >
+                  {DECORATIONS.map((option) => (
+                    <option key={option.id} value={option.id}>
+                      {option.label} ({formatCurrency(option.extraPrice)})
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <p className="mt-4 text-sm font-semibold text-cocoa-900">Total: {formatCurrency(modalTotal)}</p>
+
+            <div className="mt-6 flex gap-3">
+              <button
+                type="button"
+                onClick={closeModal}
+                className="inline-flex flex-1 items-center justify-center rounded-full border border-rose-200 px-4 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-cocoa-800 hover:bg-rose-50"
+              >
+                Fechar
+              </button>
+              <button
+                type="button"
+                onClick={addToCart}
+                className="inline-flex flex-1 items-center justify-center rounded-full bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white hover:from-cocoa-800 hover:to-cocoa-950"
+              >
+                Adicionar ao carrinho
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
