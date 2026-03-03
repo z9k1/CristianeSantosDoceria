@@ -53,7 +53,10 @@ export function MenuCatalog({ categories, products }: MenuCatalogProps) {
 
       <div className="mt-8 grid gap-4 md:grid-cols-2">
         {filteredProducts.map((product) => (
-          <article key={product.id} className="rounded-brand border border-rose-100 bg-white p-5 shadow-soft">
+          <article
+            key={product.id}
+            className="rounded-[1.25rem] bg-white/80 p-6 shadow-panel transition duration-500 hover:-translate-y-1 hover:shadow-soft"
+          >
             <p className="text-xs uppercase tracking-[0.12em] text-rose-500">{product.imageHint}</p>
             <h3 className="mt-2 font-serifBrand text-2xl text-cocoa-800">{product.name}</h3>
             <p className="mt-2 text-sm text-cocoa-700">{product.description}</p>

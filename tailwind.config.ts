@@ -18,20 +18,31 @@ const config: Config = {
           500: "#e47a6d"
         },
         cocoa: {
+          600: "#7b493f",
           700: "#6e3f3b",
           800: "#5a342f",
           900: "#3b221f"
+        },
+        sand: {
+          100: "#fdfbf9",
+          200: "#f7f1eb",
+          300: "#f1e7df",
+          400: "#e9dccf",
+          500: "#e0d1c0"
         }
       },
       boxShadow: {
-        soft: "0 10px 30px -12px rgba(110, 63, 59, 0.35)"
+        soft: "0 25px 45px -25px rgba(33, 21, 16, 0.4)",
+        panel: "0 20px 40px -30px rgba(33, 21, 16, 0.35)"
       },
       borderRadius: {
-        brand: "1.25rem"
+        brand: "1.25rem",
+        soft: "1rem"
       },
       fontFamily: {
-        serifBrand: ["Georgia", "Times New Roman", "serif"],
-        sansBrand: ["Inter", "Segoe UI", "Roboto", "Helvetica", "Arial", "sans-serif"]
+        serifBrand: ["Playfair Display", "Georgia", "Times New Roman", "serif"],
+        serifDisplay: ["Cormorant Garamond", "Georgia", "serif"],
+        sansBrand: ["Inter", "Segoe UI", "Helvetica", "Arial", "sans-serif"]
       }
     }
   },

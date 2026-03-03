@@ -1,19 +1,43 @@
+.application-bg {
+  background: radial-gradient(circle at top, rgba(255, 230, 225, 0.9), rgba(233, 221, 210, 0.95), rgba(250, 247, 239, 0.8));
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
   color-scheme: light;
+  --section-bg: rgba(255, 255, 255, 0.88);
 }
 
 body {
-  @apply bg-rose-50/30 font-sansBrand text-cocoa-800 antialiased;
+  @apply application-bg font-sansBrand text-cocoa-800 antialiased;
+  min-height: 100vh;
 }
 
 a {
-  @apply transition;
+  @apply transition duration-300 ease-in-out;
 }
 
 .container-pad {
   @apply mx-auto max-w-6xl px-4 sm:px-6 lg:px-8;
+}
+
+.section-surface {
+  background: var(--section-bg);
+  border-radius: 1.5rem;
+  border: 1px solid rgba(97, 61, 56, 0.08);
+  box-shadow: 0 25px 45px -25px rgba(33, 21, 16, 0.45);
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  will-change: opacity, transform;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
