@@ -11,13 +11,13 @@ export default function HomePage() {
 
   return (
     <div>
-      <section className="container-pad relative overflow-hidden rounded-[1.75rem] bg-gradient-to-br from-rose-50 via-sand-100 to-white px-6 py-14 shadow-panel lg:px-10">
+      <section className="mx-auto flex max-w-6xl flex-col gap-10 px-4 py-14 lg:px-6">
         <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
           <div className="space-y-6">
             <Reveal>
-              <p className="text-xs font-semibold uppercase tracking-[0.4em] text-rose-500">
-                Premium artesanal em Londrina-PR
-              </p>
+                <p className="text-xs font-semibold uppercase tracking-[0.4em] text-rose-500">
+                  Premium artesanal em Londrina-PR
+                </p>
             </Reveal>
             <Reveal delay={80}>
               <h1 className="font-serifDisplay text-4xl text-cocoa-900 leading-tight sm:text-5xl">
