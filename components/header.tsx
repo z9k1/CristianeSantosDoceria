@@ -4,7 +4,7 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 const navItems = [
   { href: "/", label: "Home" },
-  { href: "/cardapio", label: "Cardapio" },
+  { href: "/cardapio", label: "Cardápio" },
   { href: "/eventos", label: "Eventos & Casamentos" }
 ] as const;
 
