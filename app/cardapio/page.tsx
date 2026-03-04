@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { brandSettings } from "@/lib/site-data";
-import { Reveal } from "@/components/reveal";
 import { CustomSelect } from "@/components/custom-select";
 import { assetPath } from "@/lib/asset-path";
 
@@ -394,29 +393,28 @@ export default function CardapioPage() {
 
     {activeTabInfo.isReady ? (
       <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {BOLOS.map((bolo, idx) => (
-          <Reveal key={bolo.id} delay={idx * 40}>
-            <button
-              type="button"
-              onClick={() => openModal(bolo)}
-              className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 md:hover:-translate-y-1 md:hover:shadow-2xl"
-            >
-              <div className="relative h-60 w-full overflow-hidden rounded-t-lg">
-                <Image
-                  src={bolo.imageUrl}
-                  alt={`Imagem do bolo ${bolo.name}`}
-                  fill
-                  className="object-cover transition duration-500 group-hover:scale-105"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-                />
-              </div>
-              <div className="flex flex-1 flex-col p-5">
-                <h2 className="font-serifDisplay text-2xl text-cocoa-900">{bolo.name}</h2>
-                <p className="mt-2 text-lg text-cocoa-700">{bolo.description}</p>
-                <p className="mt-4 text-lg font-semibold text-cocoa-900">{formatCurrency(bolo.basePrice)} / 1kg</p>
-              </div>
-            </button>
-          </Reveal>
+        {BOLOS.map((bolo) => (
+          <button
+            key={bolo.id}
+            type="button"
+            onClick={() => openModal(bolo)}
+            className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 md:hover:-translate-y-1 md:hover:shadow-2xl"
+          >
+            <div className="relative h-60 w-full overflow-hidden rounded-t-lg">
+              <Image
+                src={bolo.imageUrl}
+                alt={`Imagem do bolo ${bolo.name}`}
+                fill
+                className="object-cover transition duration-500 group-hover:scale-105"
+                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+              />
+            </div>
+            <div className="flex flex-1 flex-col p-5">
+              <h2 className="font-serifDisplay text-2xl text-cocoa-900">{bolo.name}</h2>
+              <p className="mt-2 text-lg text-cocoa-700">{bolo.description}</p>
+              <p className="mt-4 text-lg font-semibold text-cocoa-900">{formatCurrency(bolo.basePrice)} / 1kg</p>
+            </div>
+          </button>
         ))}
       </section>
     ) : (
