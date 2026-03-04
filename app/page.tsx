@@ -6,6 +6,7 @@ import { CtaLink } from "@/components/cta-link";
 import { BackToTop } from "@/components/back-to-top";
 import { Gallery } from "@/components/gallery";
 import { Reveal } from "@/components/reveal";
+import { assetPath } from "@/lib/asset-path";
 
 export default function HomePage() {
   useEffect(() => {
@@ -26,7 +27,7 @@ export default function HomePage() {
         </Reveal>
         <Reveal delay={80}>
           <div className="mx-auto flex max-w-xs flex-col items-center justify-center gap-4">
-            <Image src="/gallery/logo.jpg" alt="Logo Cristiane Santos Gastronomia" width={180} height={180} className="rounded-lg object-cover" />
+            <Image src={assetPath("/gallery/logo.jpg")} alt="Logo Cristiane Santos Gastronomia" width={180} height={180} className="rounded-lg object-cover" />
             <h1 className="font-serifDisplay text-4xl text-cocoa-900 leading-tight sm:text-5xl">
               Confeitaria artesanal que constrói sonhos em forma de doces
             </h1>
