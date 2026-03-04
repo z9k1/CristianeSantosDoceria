@@ -72,112 +72,112 @@ const BOLOS: Bolo[] = [
     name: "Ninho com abacaxi",
     basePrice: 79.9,
     description: "Massa branca e recheio cremoso de leite ninho com compota de abacaxi artesanal",
-    imageUrl: "/images/bolos/bolo-placeholder.jpg"
+    imageUrl: "/images/bolos/ninho-abacaxi.jpeg"
   },
   {
     id: "ninho-morangos",
     name: "Ninho com morangos",
     basePrice: 89.9,
     description: "Massa branca e recheio cremoso de leite ninho com morangos frescos ou geleia de morango artesanal",
-    imageUrl: "/images/bolos/ninho-com-morangos.jpeg"
+    imageUrl: "/images/bolos/ninho-morangos.jpeg"
   },
   {
     id: "abacaxi-coco",
     name: "Abacaxi com coco",
     basePrice: 79.9,
     description: "Massa branca e recheio de creme 4 leites (leite condensado, creme de leite, leite de coco e leite Ninho) com compota artesanal de abacaxi e beijinho cremoso",
-    imageUrl: "/images/bolos/bolo-placeholder.jpg"
+    imageUrl: "/images/bolos/abacaxi-coco.jpeg"
   },
   {
     id: "limao-frutas-vermelhas",
     name: "Limão siciliano e frutas vermelhas",
     basePrice: 89.9,
     description: "Massa branca com recheio cremoso de brigadeiro de limão siciliano e geleia artesanal de frutas vermelhas",
-    imageUrl: "/images/bolos/bolo-placeholder.jpg"
+    imageUrl: "/images/bolos/limao-frutas-vermelhas.jpeg"
   },
   {
     id: "morango-choc-branco",
     name: "Morango com chocolate branco",
     basePrice: 99.9,
     description: "Massa branca com recheio de trufa de chocolate branco e morangos frescos ou geleia de morango artesanal",
-    imageUrl: "/images/bolos/bolo-placeholder.jpg"
+    imageUrl: "/images/bolos/morango-choc-branco.jpeg"
   },
   {
     id: "brigadeiro",
     name: "Brigadeiro",
     basePrice: 84.9,
     description: "Massa de chocolate e duas camadas de brigadeiro cremoso",
-    imageUrl: "/images/bolos/bolo-placeholder.jpg"
+    imageUrl: "/images/bolos/brigadeiro.jpeg"
   },
   {
     id: "maracuja-chocolate",
     name: "Maracujá com chocolate",
     basePrice: 87.9,
     description: "Massa de chocolate com recheio de brigadeiro de maracujá e trufado de chocolate",
-    imageUrl: "/images/bolos/bolo-placeholder.jpg"
+    imageUrl: "/images/bolos/maracuja-chocolate.jpeg"
   },
   {
     id: "prestigio",
     name: "Prestígio",
     basePrice: 83.9,
     description: "Massa de chocolate com recheio trufado de chocolate e beijinho cremoso",
-    imageUrl: "/images/bolos/bolo-placeholder.jpg"
+    imageUrl: "/images/bolos/prestigio.jpeg"
   },
   {
     id: "ninho-nutella",
     name: "Ninho com Nutella",
     basePrice: 89.9,
     description: "Massa branca com recheio de creme de leite Ninho e creme de Nutella",
-    imageUrl: "/images/bolos/bolo-placeholder.jpg"
+    imageUrl: "/images/bolos/ninho-nutella.jpeg"
   },
   {
     id: "kinder-bueno",
     name: "Kinder Bueno",
     basePrice: 95.9,
     description: "Massa branca com recheio de creme Kinder Bueno e creme de Nutella",
-    imageUrl: "/images/bolos/bolo-placeholder.jpg"
+    imageUrl: "/images/bolos/kinder-bueno.jpeg"
   },
   {
     id: "chocolate-caramelo",
     name: "Chocolate com Caramelo",
     basePrice: 99.9,
     description: "Massa dark com recheio de trufa de chocolate e caramelo com flor de sal",
-    imageUrl: "/images/bolos/bolo-placeholder.jpg"
+    imageUrl: "/images/bolos/chocolate-caramelo.jpeg"
   },
   {
     id: "red-velvet",
     name: "Red Velvet",
     basePrice: 99.9,
     description: "Massa amanteigada de iogurte com recheio de mousse de cream cheese e geleia de frutas vermelhas",
-    imageUrl: "/images/bolos/bolo-placeholder.jpg"
+    imageUrl: "/images/bolos/red-velvet.jpeg"
   },
   {
     id: "nozes-caramelizadas",
     name: "Nozes caramelizadas",
     basePrice: 97.9,
     description: "Massa branca com recheio  trufado de chocolate branco com praliné de nozes caramelizadas",
-    imageUrl: "/images/bolos/bolo-placeholder.jpg"
+    imageUrl: "/images/bolos/nozes-caramelizadas.jpeg"
   },
   {
     id: "surpresa-uva",
     name: "Surpresa de uva",
     basePrice: 86.9,
     description: "Massa branca com recheio de leite Ninho e uvas verdes sem sementes",
-    imageUrl: "/images/bolos/bolo-placeholder.jpg"
+    imageUrl: "/images/bolos/surpresa-uva.jpeg"
   },
   {
     id: "morango-chocolate",
     name: "Morango com Chocolate",
     basePrice: 92.9,
     description: "Massa de chocolate com recheio de trufa de chocolate e morangos frescos ou geleia de morango artesanal",
-    imageUrl: "/images/bolos/bolo-placeholder.jpg"
+    imageUrl: "/images/bolos/morango-chocolate.jpeg"
   },
   {
     id: "brigadeiro-morangos",
     name: "Brigadeiro com morangos",
     basePrice: 87.9,
     description: "Massa de chocolate com recheio de brigadeiro e brigadeiro branco com morangos frescos",
-    imageUrl: "/images/bolos/bolo-placeholder.jpg"
+    imageUrl: "/images/bolos/brigadeiro-morangos.jpeg"
   }
 ];
 
