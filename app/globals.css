@@ -14,7 +14,21 @@
 html {
   scroll-behavior: smooth;
 }
+.decoracao-checkbox {
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  min-height: 18px;
+  margin-top: 0;
+  transform: none;
+}
 
+.decoracao-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 38px;
+}
 body {
   @apply application-bg font-sansBrand text-cocoa-800 antialiased;
   min-height: 100vh;

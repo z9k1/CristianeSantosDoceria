@@ -57,11 +57,11 @@ export function Header() {
             type="button"
             aria-label={isCartOpen ? "Fechar carrinho" : "Abrir carrinho"}
             onClick={toggleCart}
-            className="relative inline-flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-800 to-cocoa-900 text-white shadow-lg transition md:hover:from-cocoa-900 md:hover:to-cocoa-950"
+            className="relative inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-800 to-cocoa-900 text-white shadow-lg transition md:hover:from-cocoa-900 md:hover:to-cocoa-950"
           >
-            {isCartOpen ? <X size={16} strokeWidth={2.25} /> : <ShoppingCart size={16} strokeWidth={2.25} />}
+            {isCartOpen ? <X size={14} strokeWidth={2.25} /> : <ShoppingCart size={14} strokeWidth={2.25} />}
             {badgeCount > 0 ? (
-              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[9px] font-bold leading-none text-white">
+              <span className="absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center rounded-full bg-rose-500 text-[7px] font-bold leading-none text-white">
                 {badgeCount}
               </span>
             ) : null}
