@@ -157,112 +157,112 @@ const BOLOS: Bolo[] = [
   {
     id: "ninho-abacaxi",
     name: "Ninho com abacaxi",
-    basePrice: 79.9,
+    basePrice: 84.9,
     description: "Massa branca e recheio cremoso de leite ninho com compota de abacaxi artesanal",
     imageUrl: assetPath("/images/bolos/nb.jpeg")
   },
   {
     id: "ninho-morangos",
     name: "Ninho com morangos",
-    basePrice: 89.9,
+    basePrice: 94.9,
     description: "Massa branca e recheio cremoso de leite ninho com morangos frescos ou geleia de morango artesanal",
     imageUrl: assetPath("/images/bolos/nm.jpeg")
   },
   {
     id: "abacaxi-coco",
     name: "Abacaxi com coco",
-    basePrice: 79.9,
+    basePrice: 84.9,
     description: "Massa branca e recheio de creme 4 leites (leite condensado, creme de leite, leite de coco e leite Ninho) com compota artesanal de abacaxi e beijinho cremoso",
     imageUrl: assetPath("/images/bolos/ac.jpeg")
   },
   {
     id: "limao-frutas-vermelhas",
     name: "Limão siciliano e frutas vermelhas",
-    basePrice: 89.9,
+    basePrice: 94.9,
     description: "Massa branca com recheio cremoso de brigadeiro de limão siciliano e geleia artesanal de frutas vermelhas",
     imageUrl: assetPath("/images/bolos/lv.jpeg")
   },
   {
     id: "morango-choc-branco",
     name: "Morango com chocolate branco",
-    basePrice: 99.9,
+    basePrice: 104.9,
     description: "Massa branca com recheio de trufa de chocolate branco e morangos frescos ou geleia de morango artesanal",
     imageUrl: assetPath("/images/bolos/mcb.jpeg")
   },
   {
     id: "brigadeiro",
     name: "Brigadeiro",
-    basePrice: 84.9,
+    basePrice: 89.9,
     description: "Massa de chocolate e duas camadas de brigadeiro cremoso",
     imageUrl: assetPath("/images/bolos/bb.jpeg")
   },
   {
     id: "maracuja-chocolate",
     name: "Maracujá com chocolate",
-    basePrice: 87.9,
+    basePrice: 92.9,
     description: "Massa de chocolate com recheio de brigadeiro de maracujá e trufado de chocolate",
     imageUrl: assetPath("/images/bolos/mcc.jpeg")
   },
   {
     id: "prestigio",
     name: "Prestígio",
-    basePrice: 83.9,
+    basePrice: 88.9,
     description: "Massa de chocolate com recheio trufado de chocolate e beijinho cremoso",
     imageUrl: assetPath("/images/bolos/pp.jpeg")
   },
   {
     id: "ninho-nutella",
     name: "Ninho com Nutella",
-    basePrice: 89.9,
+    basePrice: 94.9,
     description: "Massa branca com recheio de creme de leite Ninho e creme de Nutella",
     imageUrl: assetPath("/images/bolos/nnn.jpeg")
   },
   {
     id: "kinder-bueno",
     name: "Kinder Bueno",
-    basePrice: 95.9,
+    basePrice: 100.9,
     description: "Massa branca com recheio de creme Kinder Bueno e creme de Nutella",
     imageUrl: assetPath("/images/bolos/kbz.jpeg")
   },
   {
     id: "chocolate-caramelo",
     name: "Chocolate com Caramelo",
-    basePrice: 99.9,
+    basePrice: 104.9,
     description: "Massa dark com recheio de trufa de chocolate e caramelo com flor de sal",
     imageUrl: assetPath("/images/bolos/cc.jpeg")
   },
   {
     id: "red-velvet",
     name: "Red Velvet",
-    basePrice: 99.9,
+    basePrice: 104.9,
     description: "Massa amanteigada de iogurte com recheio de mousse de cream cheese e geleia de frutas vermelhas",
     imageUrl: assetPath("/images/bolos/rv.jpeg")
   },
   {
     id: "nozes-caramelizadas",
     name: "Nozes caramelizadas",
-    basePrice: 97.9,
+    basePrice: 102.9,
     description: "Massa branca com recheio  trufado de chocolate branco com praliné de nozes caramelizadas",
     imageUrl: assetPath("/images/bolos/nz.jpeg")
   },
   {
     id: "surpresa-uva",
     name: "Surpresa de uva",
-    basePrice: 86.9,
+    basePrice: 91.9,
     description: "Massa branca com recheio de leite Ninho e uvas verdes sem sementes",
     imageUrl: assetPath("/images/bolos/suv.jpeg")
   },
   {
     id: "morango-chocolate",
     name: "Morango com Chocolate",
-    basePrice: 92.9,
+    basePrice: 97.9,
     description: "Massa de chocolate com recheio de trufa de chocolate e morangos frescos ou geleia de morango artesanal",
     imageUrl: assetPath("/images/bolos/mmc.jpeg")
   },
   {
     id: "brigadeiro-morangos",
     name: "Brigadeiro com morangos",
-    basePrice: 87.9,
+    basePrice: 92.9,
     description: "Massa de chocolate com recheio de brigadeiro e brigadeiro branco com morangos frescos",
     imageUrl: assetPath("/images/bolos/bv.jpeg")
   }
@@ -439,6 +439,7 @@ export default function CardapioPage() {
   const [selectedBarra, setSelectedBarra] = useState<BarraProduct | null>(null);
   const [selectedMacaron, setSelectedMacaron] = useState<MacaronProduct | null>(null);
   const [quantity, setQuantity] = useState(1);
+  const [quantityInput, setQuantityInput] = useState("1");
   const [selectedDecorationIds, setSelectedDecorationIds] = useState<string[]>([]);
   const [docinhoQuantity, setDocinhoQuantity] = useState(DOCINHO_MIN_QTY);
   const [selectedFlavorId, setSelectedFlavorId] = useState("");
@@ -543,6 +544,17 @@ export default function CardapioPage() {
     [selectedDecorations]
   );
 
+  const validateBoloQuantity = useCallback(() => {
+    const parsed = Number.parseInt(quantityInput, 10);
+    if (Number.isNaN(parsed) || parsed < 1) {
+      setQuantity(1);
+      setQuantityInput("1");
+      return 1;
+    }
+    setQuantity(parsed);
+    return parsed;
+  }, [quantityInput]);
+
   const modalTotal = useMemo(() => {
     if (!selectedBolo) return 0;
     return selectedBolo.basePrice * quantity + selectedDecorationTotal;
@@ -643,6 +655,7 @@ export default function CardapioPage() {
     setSelectedBarra(null);
     setSelectedBolo(bolo);
     setQuantity(1);
+    setQuantityInput("1");
     setSelectedDecorationIds([]);
   };
 
@@ -794,12 +807,15 @@ export default function CardapioPage() {
     setSelectedCento(null);
     setSelectedBarra(null);
     setSelectedMacaron(null);
+    setQuantity(1);
+    setQuantityInput("1");
   };
 
   const addToCart = () => {
     if (!selectedBolo) return;
+    const safeQuantity = validateBoloQuantity();
 
-    const lineTotal = selectedBolo.basePrice * quantity + selectedDecorationTotal;
+    const lineTotal = selectedBolo.basePrice * safeQuantity + selectedDecorationTotal;
     const decorationIds = selectedDecorations.map((item) => item.id).sort();
     const decorationLabels = selectedDecorations.map((item) => item.label);
     const newItem: CartItem = {
@@ -807,7 +823,7 @@ export default function CardapioPage() {
       productId: selectedBolo.id,
       productName: selectedBolo.name,
       basePrice: selectedBolo.basePrice,
-      quantity,
+      quantity: safeQuantity,
       decorationIds,
       decorationLabels,
       decorationTotal: selectedDecorationTotal,
@@ -1430,8 +1446,9 @@ export default function CardapioPage() {
                   <input
                     type="number"
                     min={1}
-                    value={quantity}
-                    onChange={(event) => setQuantity(Math.max(1, Number(event.target.value) || 1))}
+                    value={quantityInput}
+                    onChange={(event) => setQuantityInput(event.target.value)}
+                    onBlur={validateBoloQuantity}
                     className="mt-1 h-14 w-full box-border rounded-lg border border-rose-200 px-6 py-2 text-lg leading-none outline-none ring-cocoa-700/20 focus:ring-1"
                   />
                 </label>
@@ -1514,7 +1531,7 @@ export default function CardapioPage() {
                       setDocinhoQuantityError("");
                     }}
                     onBlur={validateDocinhoQuantity}
-                    className="mt-1 h-14 w-[calc(100%-0.5rem)] ml-2 rounded-lg border border-rose-200 px-6 py-2 text-lg leading-none outline-none ring-cocoa-700/30 focus:ring"
+                    className="mt-1 h-14 w-full box-border rounded-lg border border-rose-200 px-6 py-2 text-lg leading-none outline-none ring-cocoa-700/20 focus:ring-1"
                   />
                   {docinhoQuantityError ? (
                     <p className="mt-1 text-xs font-semibold text-rose-700">{docinhoQuantityError}</p>
@@ -1625,7 +1642,7 @@ export default function CardapioPage() {
                       setBombomQuantityError("");
                     }}
                     onBlur={() => validateBombomQuantity(selectedBombomMode)}
-                    className="mt-1 h-14 w-[calc(100%-0.5rem)] ml-2 rounded-lg border border-rose-200 px-6 py-2 text-lg leading-none outline-none ring-cocoa-700/30 focus:ring"
+                    className="mt-1 h-14 w-full box-border rounded-lg border border-rose-200 px-6 py-2 text-lg leading-none outline-none ring-cocoa-700/20 focus:ring-1"
                   />
                   {bombomQuantityError ? (
                     <p className="mt-1 text-xs font-semibold text-rose-700">{bombomQuantityError}</p>
@@ -1720,7 +1737,7 @@ export default function CardapioPage() {
                       setCentoError("");
                     }}
                     onBlur={validateCentoQuantity}
-                    className="mt-1 h-14 w-[calc(100%-0.5rem)] ml-2 rounded-lg border border-rose-200 px-6 py-2 text-lg leading-none outline-none ring-cocoa-700/30 focus:ring"
+                    className="mt-1 h-14 w-full box-border rounded-lg border border-rose-200 px-6 py-2 text-lg leading-none outline-none ring-cocoa-700/20 focus:ring-1"
                   />
                   <p className="mt-1 text-xs font-normal text-cocoa-600">Cada sabor selecionado corresponde a 100 unidades.</p>
                 </label>
@@ -1815,7 +1832,7 @@ export default function CardapioPage() {
                       setMacaronQuantityError("");
                     }}
                     onBlur={validateMacaronQuantity}
-                    className="mt-1 h-12 w-full rounded-lg border border-rose-200 px-5 py-2 text-base leading-none outline-none ring-cocoa-700/30 focus:ring-1"
+                    className="mt-1 h-14 w-full box-border rounded-lg border border-rose-200 px-6 py-2 text-lg leading-none outline-none ring-cocoa-700/20 focus:ring-1"
                   />
                   {macaronQuantityError ? (
                     <p className="mt-1 text-xs font-semibold text-rose-700">{macaronQuantityError}</p>
@@ -1939,7 +1956,7 @@ export default function CardapioPage() {
                       setBarraQuantityError("");
                     }}
                     onBlur={validateBarraQuantity}
-                    className="mt-1 h-14 w-[calc(100%-0.5rem)] ml-2 rounded-lg border border-rose-200 px-6 py-2 text-lg leading-none outline-none ring-cocoa-700/30 focus:ring"
+                    className="mt-1 h-14 w-full box-border rounded-lg border border-rose-200 px-6 py-2 text-lg leading-none outline-none ring-cocoa-700/20 focus:ring-1"
                   />
                   {barraQuantityError ? (
                     <p className="mt-1 text-xs font-semibold text-rose-700">{barraQuantityError}</p>
