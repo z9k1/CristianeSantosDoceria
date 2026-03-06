@@ -395,7 +395,7 @@ const MACARON_PRODUCT: MacaronProduct = {
   id: "macarons",
   name: "Macarons",
   description:
-    "Macarons artesanais por unidade. Pedido mínimo: 10 a 19 unidades: até 2 sabores e 1 cor. Acima de 20 unidades: até 4 sabores e 2 cores.",
+    "Macarons artesanais por unidade.\nPedido mínimo: 10 unidades\n10 a 19 unidades: até 2 sabores e 1 cor\nAcima de 20 unidades: até 4 sabores e 2 cores.",
   imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
 };
 
@@ -1270,10 +1270,9 @@ export default function CardapioPage() {
           </div>
           <div className="flex flex-1 flex-col p-5">
             <h2 className="font-serifDisplay text-2xl text-cocoa-900">{MACARON_PRODUCT.name}</h2>
-            <p className="mt-2 text-lg text-cocoa-700">Macarons artesanais por unidade.</p>
-            <p className="mt-2 text-lg text-cocoa-700">Pedido mínimo</p>
-            <p className="text-lg text-cocoa-700">10 a 19 unidades: até 2 sabores e 1 cor.</p>
-            <p className="text-lg text-cocoa-700">Acima de 20 unidades: até 4 sabores e 2 cores.</p>
+            <p className="mt-2 whitespace-pre-line text-lg text-cocoa-700">
+              {MACARON_PRODUCT.description}
+            </p>
             <p className="mt-4 text-lg font-semibold text-cocoa-900">
               A partir de {formatCurrency(minMacaronPrice)} / unidade
             </p>
@@ -1774,6 +1773,93 @@ export default function CardapioPage() {
                   type="button"
                   onClick={addCentoToCart}
                   className="inline-flex h-12 flex-[2] items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 text-base font-semibold uppercase tracking-[0.12em] text-white md:hover:from-cocoa-800 md:hover:to-cocoa-950"
+                >
+                  Adicionar ao carrinho
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {selectedMacaron ? (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-cocoa-900/50 p-4">
+          <div className="w-full max-w-lg max-h-[95vh] rounded-lg bg-white p-6 sm:p-8 shadow-soft flex flex-col">
+            <div className="flex-1 overflow-y-auto pr-1">
+              <div className="relative mb-4 h-56 w-full overflow-hidden rounded-lg">
+                <Image
+                  src={selectedMacaron.imageUrl}
+                  alt={`Imagem do ${selectedMacaron.name}`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 540px"
+                />
+              </div>
+              <h2 className="font-serifDisplay text-3xl text-cocoa-900">{selectedMacaron.name}</h2>
+              <div className="mt-3 rounded-lg bg-rose-50/70 px-4 py-3 text-sm text-cocoa-700 space-y-1">
+                <p className="font-semibold text-cocoa-900">Macarons artesanais por unidade.</p>
+                <p>Pedido mínimo: 10 unidades</p>
+                <p>10 a 19 unidades: até 2 sabores e 1 cor</p>
+                <p>Acima de 20 unidades: até 4 sabores e 2 cores.</p>
+              </div>
+
+              <div className="mt-4 space-y-3">
+                <label className="block text-base font-bold text-cocoa-700">
+                  Quantidade (unidades)
+                  <input
+                    type="number"
+                    min={10}
+                    value={macaronQuantityInput}
+                    onChange={(event) => {
+                      setMacaronQuantityInput(event.target.value);
+                      setMacaronQuantityError("");
+                    }}
+                    onBlur={validateMacaronQuantity}
+                    className="mt-1 h-12 w-full rounded-lg border border-rose-200 px-5 py-2 text-base leading-none outline-none ring-cocoa-700/30 focus:ring-1"
+                  />
+                  {macaronQuantityError ? (
+                    <p className="mt-1 text-xs font-semibold text-rose-700">{macaronQuantityError}</p>
+                  ) : null}
+                </label>
+
+                <div className="text-base font-bold text-cocoa-700">
+                  Sabores disponíveis
+                  <div className="mt-3 space-y-2 pb-2">
+                    {MACARON_FLAVORS.map((flavor) => (
+                      <label key={flavor.id} className="flex items-start gap-3 text-sm font-normal text-cocoa-700">
+                        <input
+                          type="radio"
+                          name="macaron-flavor"
+                          checked={selectedMacaronFlavorId === flavor.id}
+                          onChange={() => setSelectedMacaronFlavorId(flavor.id)}
+                          className="mt-0.5 h-4 w-4 rounded-full border-rose-200 text-cocoa-800 focus:ring-cocoa-700/30"
+                        />
+                        <span className="flex flex-col">
+                          <span className="text-sm font-semibold text-cocoa-800">{flavor.label}</span>
+                          <span className="text-xs text-cocoa-600">{formatCurrency(flavor.price)} / unidade</span>
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-4">
+              <p className="text-lg font-semibold text-cocoa-900">Total: {formatCurrency(macaronTotal)}</p>
+              <div className="mt-4 flex flex-row gap-3">
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="inline-flex h-12 flex-1 items-center justify-center rounded-lg border border-rose-200 px-4 text-base font-semibold uppercase tracking-[0.12em] text-cocoa-800 md:hover:bg-rose-50"
+                >
+                  Fechar
+                </button>
+                <button
+                  type="button"
+                  onClick={addMacaronToCart}
+                  disabled={Boolean(macaronQuantityError) || !selectedMacaronFlavor}
+                  className="inline-flex min-h-fit flex-1 flex-col items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-white text-center whitespace-normal transition sm:text-sm md:hover:from-cocoa-800 md:hover:to-cocoa-950 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Adicionar ao carrinho
                 </button>
