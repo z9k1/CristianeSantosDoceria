@@ -349,9 +349,9 @@ const CENTO_18G_PRODUCT: CentoProduct = {
   id: "cento-docinhos-18g",
   name: "Cento de Docinhos 18g",
   description:
-    "Docinhos em tamanho tradicional (18g). O valor de R$ 200,00 é por sabor (cada sabor selecionado corresponde a 100 unidades).",
+    "Docinhos em tamanho tradicional (18g). O valor de R$ 220,00 é por sabor (cada sabor selecionado corresponde a 100 unidades).",
   imageUrl: assetPath("/images/bolos/doces-finos2.jpeg"),
-  unitPrice: 200
+  unitPrice: 220
 };
 
 const CENTO_18G_FLAVORS: CentoFlavor[] = [
