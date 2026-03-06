@@ -370,7 +370,7 @@ const CENTO_MACARONS_MINI_PRODUCT: CentoProduct = {
   id: "cento-macarons-mini",
   name: "Cento de Macarons Mini",
   description:
-    "Cento de Macarons em tamanho mini. Escolha até 5 cores e 5 sabores do nosso cardápio artesanal.",
+    "Cento de Macarons em tamanho mini (aprox. 3cm cada). Escolha até 5 cores e 5 sabores do nosso cardápio artesanal.",
   imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg"),
   unitPrice: 400,
   priceLabel: "R$ 400,00 / cento"
