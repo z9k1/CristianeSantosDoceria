@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import type { Route } from "next";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ShoppingCart, X } from "lucide-react";
@@ -35,16 +36,17 @@ export function Header() {
   const pathname = usePathname();
   const router = useRouter();
   const basePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "");
-  const cardapioPath = basePath ? `${basePath}/cardapio` : "/cardapio";
+  const cardapioPath = "/cardapio";
   const normalizedPath = pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
+  const isCardapioPath = normalizedPath === cardapioPath || normalizedPath === `${basePath}/cardapio`;
 
   const toggleCart = () => {
     if (typeof window === "undefined") return;
-    if (normalizedPath === cardapioPath) {
+    if (isCardapioPath) {
       window.dispatchEvent(new Event(CART_TOGGLE_EVENT));
       return;
     }
-    router.push(`${cardapioPath}?openCart=1`);
+    router.push("/cardapio?openCart=1" as Route);
   };
 
   return (

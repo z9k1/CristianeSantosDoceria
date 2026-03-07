@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { brandSettings } from "@/lib/site-data";
 import { assetPath } from "@/lib/asset-path";
 import { generateOrderId } from "@/lib/order-id";
@@ -827,7 +826,6 @@ export default function CardapioPage() {
   const [eventDate, setEventDate] = useState("");
   const [submitError, setSubmitError] = useState("");
   const [hasHydratedCart, setHasHydratedCart] = useState(false);
-  const searchParams = useSearchParams();
   const cartToastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const minOrderDate = useMemo(() => minimumOrderDateISO(5), []);
   const activeTabInfo = categoryConfigs.find((tab) => tab.id === activeTab) ?? categoryConfigs[0];
@@ -891,10 +889,12 @@ export default function CardapioPage() {
   }, [cart, hasHydratedCart]);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    const searchParams = new URLSearchParams(window.location.search);
     if (searchParams.get("openCart") === "1") {
       setIsCartOpen(true);
     }
-  }, [searchParams]);
+  }, []);
 
   useEffect(() => {
     return () => {
