@@ -29,7 +29,7 @@ export default function HomePage() {
           <div className="mx-auto flex max-w-xs flex-col items-center justify-center gap-4">
             <Image src={assetPath("/gallery/logo.jpg")} alt="Logo Cristiane Santos Gastronomia" width={180} height={180} className="rounded-lg object-cover" />
             <h1 className="font-serifDisplay text-4xl text-cocoa-900 leading-tight sm:text-5xl">
-              Confeitaria artesanal que constrói sonhos em forma de doces
+              Confeitaria que constrói sonhos em forma de doces...
             </h1>
           </div>
           <p className="mt-4 text-lg text-cocoa-700">

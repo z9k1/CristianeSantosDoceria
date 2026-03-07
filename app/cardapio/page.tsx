@@ -84,6 +84,16 @@ type MacaronProduct = {
   imageUrl: string;
 };
 
+type BiscoitoFloridoProduct = {
+  id: string;
+  name: string;
+  description: string;
+  imageUrl: string;
+  unitPrice: number;
+  unitsPerPack: number;
+  priceLabel: string;
+};
+
 type MacaronFlavor = {
   id: string;
   label: string;
@@ -96,8 +106,24 @@ type Decoration = {
   extraPrice: number | null;
 };
 
+type KitProduct = {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  imageUrl: string;
+};
+
+type SimpleProduct = {
+  id: string;
+  name: string;
+  description: string;
+  priceLabel: string;
+  imageUrl: string;
+};
+
 type CartItem = {
-  category: "bolo" | "docinho" | "bombom" | "cento" | "barra" | "macaron";
+  category: "bolo" | "docinho" | "bombom" | "cento" | "barra" | "macaron" | "biscoito-florido" | "kit";
   productId: string;
   productName: string;
   basePrice: number;
@@ -144,11 +170,32 @@ const categoryConfigs = [
     isReady: true
   },
   {
+    id: "biscoitos-floridos",
+    label: "Biscoitos floridos",
+    title: "Biscoitos floridos",
+    description: "Biscoitos de amêndoas com chocolate branco e flores comestíveis.",
+    isReady: true
+  },
+  {
+    id: "embalagens-macarons",
+    label: "Embalagens para macarons",
+    title: "Embalagens para macarons",
+    description: "Caixas e embalagens para presentear macarons.",
+    isReady: true
+  },
+  {
+    id: "torres-macarons",
+    label: "Torres de macarons",
+    title: "Torres de macarons",
+    description: "Torres que elevam a mesa de doces.",
+    isReady: true
+  },
+  {
     id: "kits",
     label: "Kits para festa",
     title: "Kits para festa",
-    description: "Em breve.",
-    isReady: false
+    description: "Combinações pensadas para celebrações pequenas e práticas.",
+    isReady: true
   }
 ] as const;
 
@@ -331,7 +378,7 @@ const CENTO_13G_PRODUCT: CentoProduct = {
   id: "cento-docinhos-13g",
   name: "Cento de Docinhos 13g",
   description:
-    "Tamanho ideal para festas. O valor de R$ 150,00 é por sabor (cada sabor selecionado corresponde a 100 unidades).",
+    "Tamanho ideal para festas. R$ 150,00 / cento, com escolha de até 4 sabores para 100 unidades no total.",
   imageUrl: assetPath("/images/bolos/brigadeiro.jpeg"),
   unitPrice: 150
 };
@@ -350,7 +397,7 @@ const CENTO_18G_PRODUCT: CentoProduct = {
   id: "cento-docinhos-18g",
   name: "Cento de Docinhos 18g",
   description:
-    "Docinhos em tamanho tradicional (18g). O valor de R$ 220,00 é por sabor (cada sabor selecionado corresponde a 100 unidades).",
+    "Docinhos em tamanho tradicional (18g). R$ 220,00 / cento, com escolha de até 4 sabores para 100 unidades no total.",
   imageUrl: assetPath("/images/bolos/doces-finos2.jpeg"),
   unitPrice: 220
 };
@@ -371,7 +418,7 @@ const CENTO_MACARONS_MINI_PRODUCT: CentoProduct = {
   name: "Cento de Macarons Mini",
   description:
     "Cento de Macarons em tamanho mini (aprox. 3cm cada). Escolha até 5 cores e 5 sabores do nosso cardápio artesanal.",
-  imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg"),
+  imageUrl: assetPath("/images/bolos/macaronscento.jpeg"),
   unitPrice: 400,
   priceLabel: "R$ 400,00 / cento"
 };
@@ -404,8 +451,19 @@ const BARRAS_FLORIDAS_PRODUCT: BarraProduct = {
   name: "Barras Floridas",
   description:
     "Barras de chocolate decoradas com flores comestíveis e pedacinhos de macaron. (Observação: a decoração florida não se aplica à barra de limão siciliano com lavanda, que possui receita própria.)",
-  imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+  imageUrl: assetPath("/images/bolos/barra.jpeg")
 };
+
+const BISCOITOS_FLORIDOS_PRODUCT = {
+  id: "biscoitos-artesanalmente-floridos",
+  name: "Biscoitos artesanalmente floridos",
+  description:
+    "Biscoitos de amêndoas cobertos com chocolate branco nobre e decorados com flores comestíveis sazonais. Embalados em saquinho. Para outras opções de embalagem, consulte valores.",
+  imageUrl: assetPath("/images/bolos/biscoitos.jpeg"),
+  unitPrice: 75,
+  unitsPerPack: 10,
+  priceLabel: "R$ 75,00 / 10 unidades"
+} satisfies BiscoitoFloridoProduct;
 
 const BARRAS_FLORIDAS_SIZES: BarraSizeOption[] = [
   { id: "mini-30g", label: "Mini barra (30 gramas)", price: 8 },
@@ -420,12 +478,240 @@ const BARRAS_FLORIDAS_CHOCOLATES: BarraChocolateOption[] = [
   { id: "branco-limao-lavanda", label: "Branco com limao siciliano e lavanda" }
 ];
 
+const KIT_FESTA_10_PRODUCT: KitProduct = {
+  id: "kit-festa-10-pessoas",
+  name: "Kit festa 10 pessoas",
+  description:
+    "Kit festa para 10 pessoas. Bolo de 1 kg a 1,2 kg + 30 docinhos de 25g. Escolha o sabor do bolo, cobertura, sabores de docinhos e personalize a decoração.",
+  price: 160,
+  imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+};
+
+const KIT_FESTA_20_PRODUCT: KitProduct = {
+  id: "kit-festa-20-pessoas",
+  name: "Kit festa 20 pessoas",
+  description:
+    "Kit festa para 20 pessoas. Bolo de 2 kg a 2,2 kg + 60 docinhos de 25 gramas. Escolha o sabor do bolo, cobertura, sabores de docinhos e personalize a decoração.",
+  price: 310,
+  imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+};
+
+const KIT_FESTA_30_PRODUCT: KitProduct = {
+  id: "kit-festa-30-pessoas",
+  name: "Kit festa",
+  description:
+    "Bolo de 3 kg a 3,2 kg + 90 docinhos de 25 gramas. Escolha o sabor do bolo, cobertura, sabores de docinhos e personalize a decoração.",
+  price: 460,
+  imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+};
+
+const KIT_FESTA_40_PRODUCT: KitProduct = {
+  id: "kit-festa-40-pessoas",
+  name: "Kit festa 40 pessoas",
+  description:
+    "Bolo de 4 kg a 4,2 kg + 120 docinhos de 25 gramas. Escolha o sabor do bolo, cobertura, sabores de docinhos e personalize a decoração.",
+  price: 600,
+  imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+};
+
+const KIT_FESTA_50_PRODUCT: KitProduct = {
+  id: "kit-festa-50-pessoas",
+  name: "Kit festa 50 pessoas",
+  description:
+    "Bolo de 5 kg a 5,2 kg + 150 docinhos de 25 gramas. Escolha o sabor do bolo, cobertura, sabores de docinhos e personalize a decoração.",
+  price: 780,
+  imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+};
+
+const EMBALAGENS_MACARONS_PRODUCTS: SimpleProduct[] = [
+  {
+    id: "caixa-acrilica-7x4",
+    name: "Caixa acrílica (7cm x 4cm)",
+    description: "Acomoda 4 mini macarons*",
+    priceLabel: "R$ 18,00",
+    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+  },
+  {
+    id: "caixa-acrilica-6x6",
+    name: "Caixa acrílica (6cm x 6cm)",
+    description: "Acomoda 2 macarons médios",
+    priceLabel: "R$ 18,00",
+    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+  },
+  {
+    id: "caixa-visor-1",
+    name: "Caixa com visor",
+    description: "Acomoda 1 macaron médio",
+    priceLabel: "R$ 10,00",
+    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+  },
+  {
+    id: "caixa-visor-2",
+    name: "Caixa com visor",
+    description: "Acomoda 2 macarons médios",
+    priceLabel: "R$ 18,00",
+    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+  },
+  {
+    id: "caixa-visor-3",
+    name: "Caixa com visor",
+    description: "Acomoda 3 macarons médios",
+    priceLabel: "R$ 25,00",
+    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+  },
+  {
+    id: "caixa-visor-4",
+    name: "Caixa com visor",
+    description: "Acomoda 4 macarons médios",
+    priceLabel: "R$ 30,00",
+    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+  },
+  {
+    id: "caixa-visor-6",
+    name: "Caixa com visor",
+    description: "Acomoda 6 macarons médios",
+    priceLabel: "R$ 50,00",
+    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+  },
+  {
+    id: "caixa-visor-7-champanhe",
+    name: "Caixa com visor",
+    description: "Acomoda 7 macarons médios + champanhe à escolha",
+    priceLabel: "A partir de R$ 110,00",
+    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+  }
+];
+
+const TORRES_MACARONS_PRODUCTS: SimpleProduct[] = [
+  {
+    id: "torre-4-andares",
+    name: "Torre de macarons — 4 andares",
+    description: "47 macarons | Altura: 15cm | Base: 18cm",
+    priceLabel: "R$ 395,00",
+    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+  },
+  {
+    id: "torre-5-andares",
+    name: "Torre de macarons — 5 andares",
+    description: "69 macarons | Altura: 21cm | Base: 20cm",
+    priceLabel: "R$ 575,00",
+    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+  },
+  {
+    id: "torre-6-andares",
+    name: "Torre de macarons — 6 andares",
+    description: "95 macarons | Altura: 25cm | Base: 23cm",
+    priceLabel: "R$ 745,00",
+    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+  },
+  {
+    id: "torre-8-andares",
+    name: "Torre de macarons — 8 andares",
+    description: "159 macarons | Altura: 35cm | Base: 28cm",
+    priceLabel: "R$ 1.195,00",
+    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+  },
+  {
+    id: "torre-10-andares",
+    name: "Torre de macarons — 10 andares",
+    description: "237 macarons | Altura: 55cm | Base: 33cm",
+    priceLabel: "R$ 1.750,00",
+    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+  }
+];
+
+const KIT_CAKE_FLAVORS = [
+  {
+    id: "abacaxi-coco",
+    label: "Abacaxi com coco",
+    description:
+      "Massa branca e recheio de creme 4 leites (leite condensado, creme de leite, leite de coco e leite Ninho) com compota artesanal de abacaxi e beijinho cremoso"
+  },
+  {
+    id: "brigadeiro",
+    label: "Brigadeiro",
+    description: "Massa de chocolate e duas camadas de brigadeiro cremoso ao leite ou meio amargo"
+  },
+  {
+    id: "brigadeiro-morangos",
+    label: "Brigadeiro com morangos",
+    description: "Massa de chocolate com recheio de brigadeiro e brigadeiro branco com morangos frescos"
+  },
+  {
+    id: "limao-siciliano-frutas-vermelhas",
+    label: "Limão siciliano com frutas vermelhas",
+    description: "Massa branca com recheio cremoso de brigadeiro de limão siciliano e geleia artesanal de frutas vermelhas"
+  },
+  {
+    id: "maracuja-chocolate",
+    label: "Maracujá com chocolate",
+    description: "Massa de chocolate com recheio de brigadeiro de maracujá e trufado de chocolate"
+  },
+  {
+    id: "morango-chocolate",
+    label: "Morango com Chocolate",
+    description: "Massa de chocolate com recheio de trufa de chocolate e morangos frescos ou geleia de morango artesanal"
+  },
+  {
+    id: "morango-chocolate-branco",
+    label: "Morango com chocolate branco",
+    description: "Massa branca com recheio de trufa de chocolate branco e morangos frescos ou geleia de morango artesanal"
+  },
+  {
+    id: "ninho-abacaxi",
+    label: "Ninho com abacaxi",
+    description: "Massa branca e recheio cremoso de leite ninho com compota de abacaxi artesanal"
+  },
+  {
+    id: "ninho-morangos",
+    label: "Ninho com morangos",
+    description: "Massa branca e recheio cremoso de leite ninho com morangos frescos ou geleia de morango artesanal"
+  },
+  {
+    id: "ninho-nutella",
+    label: "Ninho com Nutella",
+    description: "Massa branca com recheio de creme de leite Ninho e creme de Nutella"
+  },
+  {
+    id: "prestigio",
+    label: "Prestígio",
+    description: "Massa de chocolate com recheio trufado de chocolate e beijinho cremoso"
+  },
+  {
+    id: "surpresa-uva",
+    label: "Surpresa de uva",
+    description: "Massa branca com recheio de leite Ninho e uvas verdes sem sementes"
+  }
+] as const;
+
+const KIT_COVERINGS = [
+  { id: "chantilly", label: "Chantilly" },
+  { id: "chantininho", label: "Chantininho" }
+] as const;
+
+const KIT_DECORATIONS = [
+  { id: "flores-comestiveis", label: "Flores comestíveis", price: 25 },
+  { id: "macarons-minis", label: "6 macarons minis", price: 25 },
+  { id: "macarons-medios", label: "4 macarons médios", price: 25 },
+  { id: "topo-chocolate", label: "Topo de chocolate personalizado", price: 30 }
+] as const;
+
+const KIT_DOCINHO_OPTIONS = [
+  { id: "brigadeiro", label: "Brigadeiro" },
+  { id: "beijinho", label: "Beijinho" },
+  { id: "casadinho", label: "Casadinho" },
+  { id: "churros", label: "Churros" },
+  { id: "ninho-nutella", label: "Ninho com Nutella" },
+  { id: "pacoca", label: "Paçoca" },
+  { id: "surpresa-uva", label: "Surpresa de uva" }
+] as const;
+
 const MACARON_PRODUCT: MacaronProduct = {
   id: "macarons",
   name: "Macarons",
   description:
     "Macarons artesanais por unidade.\nPedido mínimo: 10 unidades\n10 a 19 unidades: até 2 sabores e 1 cor\nAcima de 20 unidades: até 4 sabores e 2 cores.",
-  imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+  imageUrl: assetPath("/images/bolos/macarons.jpeg")
 };
 
 const MACARON_FLAVORS: MacaronFlavor[] = [
@@ -467,6 +753,8 @@ export default function CardapioPage() {
   const [selectedCento, setSelectedCento] = useState<CentoProduct | null>(null);
   const [selectedBarra, setSelectedBarra] = useState<BarraProduct | null>(null);
   const [selectedMacaron, setSelectedMacaron] = useState<MacaronProduct | null>(null);
+  const [selectedBiscoitoFlorido, setSelectedBiscoitoFlorido] = useState<BiscoitoFloridoProduct | null>(null);
+  const [selectedKitProduct, setSelectedKitProduct] = useState<KitProduct | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [quantityInput, setQuantityInput] = useState("1");
   const [selectedDecorationIds, setSelectedDecorationIds] = useState<string[]>([]);
@@ -497,10 +785,20 @@ export default function CardapioPage() {
   const [macaronQuantity, setMacaronQuantity] = useState(10);
   const [macaronQuantityInput, setMacaronQuantityInput] = useState("10");
   const [macaronQuantityError, setMacaronQuantityError] = useState("");
+
+  const [biscoitoFloridoQuantity, setBiscoitoFloridoQuantity] = useState(1);
+  const [biscoitoFloridoQuantityInput, setBiscoitoFloridoQuantityInput] = useState("1");
+  const [biscoitoFloridoQuantityError, setBiscoitoFloridoQuantityError] = useState("");
+  const [kitCakeFlavorId, setKitCakeFlavorId] = useState(KIT_CAKE_FLAVORS[0].id);
+  const [kitCoveringId, setKitCoveringId] = useState(KIT_COVERINGS[0].id);
+  const [kitDecorationIds, setKitDecorationIds] = useState<string[]>([]);
+  const [kitDocinhoIds, setKitDocinhoIds] = useState<string[]>([]);
+  const [kitDocinhoError, setKitDocinhoError] = useState("");
   const [selectedMacaronFlavorId, setSelectedMacaronFlavorId] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [eventDate, setEventDate] = useState("");
   const [submitError, setSubmitError] = useState("");
+  const [hasHydratedCart, setHasHydratedCart] = useState(false);
   const activeTabInfo = categoryConfigs.find((tab) => tab.id === activeTab) ?? categoryConfigs[0];
   const minDocinhoPrice = useMemo(
     () => Math.min(...DOCINHO_FLAVORS.map((flavor) => flavor.price)),
@@ -521,7 +819,10 @@ export default function CardapioPage() {
 
   useEffect(() => {
     const raw = localStorage.getItem(CART_STORAGE_KEY);
-    if (!raw) return;
+    if (!raw) {
+      setHasHydratedCart(true);
+      return;
+    }
     try {
       const parsed = JSON.parse(raw) as CartItem[];
       const isValid =
@@ -533,7 +834,9 @@ export default function CardapioPage() {
               item.category === "bombom" ||
               item.category === "cento" ||
               item.category === "barra" ||
-              item.category === "macaron") &&
+              item.category === "macaron" ||
+              item.category === "biscoito-florido" ||
+              item.category === "kit") &&
             Array.isArray(item.decorationIds) &&
             Array.isArray(item.decorationLabels) &&
             Array.isArray(item.detailLines)
@@ -545,15 +848,25 @@ export default function CardapioPage() {
       }
     } catch {
       localStorage.removeItem(CART_STORAGE_KEY);
+    } finally {
+      setHasHydratedCart(true);
     }
   }, []);
 
   useEffect(() => {
+    if (!hasHydratedCart) return;
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
-  }, [cart]);
+  }, [cart, hasHydratedCart]);
 
   const isModalOpen = Boolean(
-    selectedBolo || selectedDocinho || selectedBombom || selectedCento || selectedBarra || selectedMacaron
+    selectedBolo ||
+      selectedDocinho ||
+      selectedBombom ||
+      selectedCento ||
+      selectedBarra ||
+      selectedMacaron ||
+      selectedBiscoitoFlorido ||
+      selectedKitProduct
   );
 
   useEffect(() => {
@@ -624,7 +937,9 @@ export default function CardapioPage() {
     const flavorsCount = selectedCentoFlavorIds.length;
     if (flavorsCount === 0) return 0;
     const isFixedPriceCento =
-      selectedCento.id === CENTO_MACARONS_MINI_PRODUCT.id || selectedCento.id === CENTO_18G_PRODUCT.id;
+      selectedCento.id === CENTO_MACARONS_MINI_PRODUCT.id ||
+      selectedCento.id === CENTO_18G_PRODUCT.id ||
+      selectedCento.id === CENTO_13G_PRODUCT.id;
     return selectedCento.unitPrice * centoQuantity * (isFixedPriceCento ? 1 : flavorsCount);
   }, [selectedCento, centoQuantity, selectedCentoFlavorIds.length]);
 
@@ -651,6 +966,36 @@ export default function CardapioPage() {
     if (!selectedMacaronFlavor) return 0;
     return selectedMacaronFlavor.price * macaronQuantity;
   }, [selectedMacaronFlavor, macaronQuantity]);
+
+  const biscoitoFloridoTotal = useMemo(() => {
+    if (!selectedBiscoitoFlorido) return 0;
+    return selectedBiscoitoFlorido.unitPrice * biscoitoFloridoQuantity;
+  }, [selectedBiscoitoFlorido, biscoitoFloridoQuantity]);
+
+  const selectedKitDecorations = useMemo(
+    () => KIT_DECORATIONS.filter((item) => kitDecorationIds.includes(item.id)),
+    [kitDecorationIds]
+  );
+  const selectedKitCakeFlavor = useMemo(
+    () => KIT_CAKE_FLAVORS.find((item) => item.id === kitCakeFlavorId) ?? KIT_CAKE_FLAVORS[0],
+    [kitCakeFlavorId]
+  );
+  const selectedKitCovering = useMemo(
+    () => KIT_COVERINGS.find((item) => item.id === kitCoveringId) ?? KIT_COVERINGS[0],
+    [kitCoveringId]
+  );
+  const selectedKitDocinhos = useMemo(
+    () => KIT_DOCINHO_OPTIONS.filter((item) => kitDocinhoIds.includes(item.id)),
+    [kitDocinhoIds]
+  );
+  const kitDecorationTotal = useMemo(
+    () => selectedKitDecorations.reduce((sum, item) => sum + item.price, 0),
+    [selectedKitDecorations]
+  );
+  const kitTotal = useMemo(
+    () => (selectedKitProduct?.price ?? 0) + kitDecorationTotal,
+    [kitDecorationTotal, selectedKitProduct]
+  );
 
   const cartTotal = useMemo(
     () => cart.reduce((acc, item) => acc + item.lineTotal, 0),
@@ -687,6 +1032,8 @@ export default function CardapioPage() {
     setSelectedBombom(null);
     setSelectedCento(null);
     setSelectedBarra(null);
+    setSelectedMacaron(null);
+    setSelectedBiscoitoFlorido(null);
     setSelectedBolo(bolo);
     setQuantity(1);
     setQuantityInput("1");
@@ -698,6 +1045,8 @@ export default function CardapioPage() {
     setSelectedBombom(null);
     setSelectedCento(null);
     setSelectedBarra(null);
+    setSelectedMacaron(null);
+    setSelectedBiscoitoFlorido(null);
     setSelectedDocinho(docinho);
     setDocinhoQuantity(DOCINHO_MIN_QTY);
     setDocinhoQuantityInput(DOCINHO_MIN_QTY.toString());
@@ -710,6 +1059,8 @@ export default function CardapioPage() {
     setSelectedDocinho(null);
     setSelectedCento(null);
     setSelectedBarra(null);
+    setSelectedMacaron(null);
+    setSelectedBiscoitoFlorido(null);
     setSelectedBombom(bombom);
     setSelectedBombomModeId("unidades");
     setSelectedBombomFlavorId(BOMBOM_FLAVORS[0]?.id ?? "");
@@ -724,6 +1075,8 @@ export default function CardapioPage() {
     setSelectedDocinho(null);
     setSelectedBombom(null);
     setSelectedBarra(null);
+    setSelectedMacaron(null);
+    setSelectedBiscoitoFlorido(null);
     setSelectedCento(cento);
     setCentoQuantity(1);
     setCentoQuantityInput("1");
@@ -739,6 +1092,7 @@ export default function CardapioPage() {
     setSelectedCento(null);
     setSelectedBarra(barra);
     setSelectedMacaron(null);
+    setSelectedBiscoitoFlorido(null);
     setSelectedBarraSizeId(BARRAS_FLORIDAS_SIZES[0]?.id ?? "mini-30g");
     setSelectedBarraChocolateId(BARRAS_FLORIDAS_CHOCOLATES[0]?.id ?? "ao-leite");
     setBarraQuantity(1);
@@ -752,11 +1106,41 @@ export default function CardapioPage() {
     setSelectedBombom(null);
     setSelectedCento(null);
     setSelectedBarra(null);
+    setSelectedBiscoitoFlorido(null);
     setSelectedMacaron(macaron);
     setSelectedMacaronFlavorId(MACARON_FLAVORS[0]?.id ?? "");
     setMacaronQuantity(10);
     setMacaronQuantityInput("10");
     setMacaronQuantityError("");
+  };
+
+  const openBiscoitoFloridoModal = (biscoito: BiscoitoFloridoProduct) => {
+    setSelectedBolo(null);
+    setSelectedDocinho(null);
+    setSelectedBombom(null);
+    setSelectedCento(null);
+    setSelectedBarra(null);
+    setSelectedMacaron(null);
+    setSelectedBiscoitoFlorido(biscoito);
+    setBiscoitoFloridoQuantity(1);
+    setBiscoitoFloridoQuantityInput("1");
+    setBiscoitoFloridoQuantityError("");
+  };
+
+  const openKitModal = (kit: KitProduct) => {
+    setSelectedBolo(null);
+    setSelectedDocinho(null);
+    setSelectedBombom(null);
+    setSelectedCento(null);
+    setSelectedBarra(null);
+    setSelectedMacaron(null);
+    setSelectedBiscoitoFlorido(null);
+    setSelectedKitProduct(kit);
+    setKitCakeFlavorId(KIT_CAKE_FLAVORS[0].id);
+    setKitCoveringId(KIT_COVERINGS[0].id);
+    setKitDecorationIds([]);
+    setKitDocinhoIds([]);
+    setKitDocinhoError("");
   };
 
   const toggleDecoration = (id: string) => {
@@ -822,6 +1206,19 @@ export default function CardapioPage() {
     return parsed;
   }, [barraQuantityInput]);
 
+  const validateBiscoitoFloridoQuantity = useCallback(() => {
+    const parsed = Number.parseInt(biscoitoFloridoQuantityInput, 10);
+    if (Number.isNaN(parsed) || parsed < 1) {
+      setBiscoitoFloridoQuantity(1);
+      setBiscoitoFloridoQuantityInput("1");
+      setBiscoitoFloridoQuantityError("Quantidade mínima de 1 pacote.");
+      return 1;
+    }
+    setBiscoitoFloridoQuantity(parsed);
+    setBiscoitoFloridoQuantityError("");
+    return parsed;
+  }, [biscoitoFloridoQuantityInput]);
+
   const validateMacaronQuantity = useCallback(() => {
     const parsed = Number.parseInt(macaronQuantityInput, 10);
     if (Number.isNaN(parsed) || parsed < 10) {
@@ -842,6 +1239,8 @@ export default function CardapioPage() {
     setSelectedCento(null);
     setSelectedBarra(null);
     setSelectedMacaron(null);
+    setSelectedBiscoitoFlorido(null);
+    setSelectedKitProduct(null);
     setQuantity(1);
     setQuantityInput("1");
   };
@@ -995,11 +1394,13 @@ export default function CardapioPage() {
     const flavorIds = selectedFlavors.map((flavor) => flavor.id).sort();
     const flavorLabels = selectedFlavors.map((flavor) => flavor.label);
     const isFixedPriceCento =
-      selectedCento.id === CENTO_MACARONS_MINI_PRODUCT.id || selectedCento.id === CENTO_18G_PRODUCT.id;
+      selectedCento.id === CENTO_MACARONS_MINI_PRODUCT.id ||
+      selectedCento.id === CENTO_18G_PRODUCT.id ||
+      selectedCento.id === CENTO_13G_PRODUCT.id;
     const lineTotal = selectedCento.unitPrice * safeQuantity * (isFixedPriceCento ? 1 : selectedFlavors.length);
     const detailLines = [
       `Sabores: ${flavorLabels.join(", ")}`,
-      `Quantidade por sabor: ${safeQuantity} cento(s)`
+      `Quantidade: ${safeQuantity} cento(s)`
     ];
     if (selectedCento.id === CENTO_MACARONS_MINI_PRODUCT.id && centoColors.trim()) {
       detailLines.push(`Cores: ${centoColors.trim()}`);
@@ -1031,7 +1432,9 @@ export default function CardapioPage() {
       const mergedQuantity = existing.quantity + newItem.quantity;
       const flavorsCount = existing.decorationIds.length || 1;
       const isFixedPriceCento =
-        existing.productId === CENTO_MACARONS_MINI_PRODUCT.id || existing.productId === CENTO_18G_PRODUCT.id;
+        existing.productId === CENTO_MACARONS_MINI_PRODUCT.id ||
+        existing.productId === CENTO_18G_PRODUCT.id ||
+        existing.productId === CENTO_13G_PRODUCT.id;
       updated[existingIndex] = {
         ...existing,
         quantity: mergedQuantity,
@@ -1103,6 +1506,104 @@ export default function CardapioPage() {
       const decorationKey = newItem.decorationIds.join("|");
       const existingIndex = prev.findIndex(
         (item) => item.productId === newItem.productId && item.decorationIds.join("|") === decorationKey
+      );
+      if (existingIndex === -1) {
+        return [...prev, newItem];
+      }
+      const updated = [...prev];
+      const existing = updated[existingIndex];
+      const mergedQuantity = existing.quantity + newItem.quantity;
+      updated[existingIndex] = {
+        ...existing,
+        quantity: mergedQuantity,
+        lineTotal: existing.basePrice * mergedQuantity
+      };
+      return updated;
+    });
+
+    closeModal();
+  };
+
+  const addBiscoitoFloridoToCart = () => {
+    if (!selectedBiscoitoFlorido) return;
+    const safeQuantity = validateBiscoitoFloridoQuantity();
+    const lineTotal = selectedBiscoitoFlorido.unitPrice * safeQuantity;
+
+    const newItem: CartItem = {
+      category: "biscoito-florido",
+      productId: selectedBiscoitoFlorido.id,
+      productName: selectedBiscoitoFlorido.name,
+      basePrice: selectedBiscoitoFlorido.unitPrice,
+      quantity: safeQuantity,
+      decorationIds: [],
+      decorationLabels: [],
+      decorationTotal: 0,
+      lineTotal,
+      detailLines: [`Quantidade: ${safeQuantity} pacote(s) de ${selectedBiscoitoFlorido.unitsPerPack} unidades`]
+    };
+
+    setCart((prev) => {
+      const existingIndex = prev.findIndex((item) => item.productId === newItem.productId);
+      if (existingIndex === -1) {
+        return [...prev, newItem];
+      }
+      const updated = [...prev];
+      const existing = updated[existingIndex];
+      const mergedQuantity = existing.quantity + newItem.quantity;
+      updated[existingIndex] = {
+        ...existing,
+        quantity: mergedQuantity,
+        lineTotal: existing.basePrice * mergedQuantity,
+        detailLines: [`Quantidade: ${mergedQuantity} pacote(s) de ${selectedBiscoitoFlorido.unitsPerPack} unidades`]
+      };
+      return updated;
+    });
+
+    closeModal();
+  };
+
+  const addKitToCart = () => {
+    if (!selectedKitProduct) return;
+    if (kitDocinhoIds.length !== 3) {
+      setKitDocinhoError("Selecione exatamente 3 sabores de docinhos.");
+      return;
+    }
+
+    setKitDocinhoError("");
+    const decorationLabels = selectedKitDecorations.map((item) => item.label);
+    const docinhoLabels = selectedKitDocinhos.map((item) => item.label);
+    const lineBase = selectedKitProduct.price + kitDecorationTotal;
+    const lineTotal = lineBase;
+    const detailLines = [
+      `Sabor do bolo: ${selectedKitCakeFlavor.label}`,
+      `Cobertura: ${selectedKitCovering.label}`,
+      `Decoração: ${decorationLabels.length ? decorationLabels.join(", ") : "Nenhuma"}`,
+      `Docinhos: ${docinhoLabels.join(", ")}`
+    ];
+
+    const configKey = [
+      kitCakeFlavorId,
+      kitCoveringId,
+      [...kitDecorationIds].sort().join("|"),
+      [...kitDocinhoIds].sort().join("|")
+    ].join("::");
+
+    const newItem: CartItem = {
+      category: "kit",
+      productId: selectedKitProduct.id,
+      productName: selectedKitProduct.name,
+      basePrice: lineBase,
+      quantity: 1,
+      decorationIds: [configKey],
+      decorationLabels,
+      decorationTotal: kitDecorationTotal,
+      lineTotal,
+      detailLines
+    };
+
+    setCart((prev) => {
+      const existingIndex = prev.findIndex(
+        (item) => item.productId === newItem.productId && item.decorationIds.join("|") === newItem.decorationIds.join("|")
       );
       if (existingIndex === -1) {
         return [...prev, newItem];
@@ -1219,7 +1720,7 @@ export default function CardapioPage() {
             <div className="flex flex-1 flex-col p-5">
               <h2 className="font-serifDisplay text-2xl text-cocoa-900">{bolo.name}</h2>
               <p className="mt-2 text-lg text-cocoa-700">{bolo.description}</p>
-              <p className="mt-4 text-lg font-semibold text-cocoa-900">{formatCurrency(bolo.basePrice)} / 1kg</p>
+              <p className="mt-auto pt-4 text-lg font-semibold text-cocoa-900">{formatCurrency(bolo.basePrice)} / 1kg</p>
             </div>
           </button>
         ))}
@@ -1245,7 +1746,7 @@ export default function CardapioPage() {
           <div className="flex flex-1 flex-col p-5">
             <h2 className="font-serifDisplay text-2xl text-cocoa-900">{DOCINHO_PRODUCT.name}</h2>
             <p className="mt-2 text-lg text-cocoa-700">{DOCINHO_PRODUCT.description}</p>
-            <p className="mt-4 text-lg font-semibold text-cocoa-900">
+            <p className="mt-auto pt-4 text-lg font-semibold text-cocoa-900">
               A partir de {formatCurrency(minDocinhoPrice)} / unidade
             </p>
           </div>
@@ -1267,7 +1768,7 @@ export default function CardapioPage() {
           <div className="flex flex-1 flex-col p-5">
             <h2 className="font-serifDisplay text-2xl text-cocoa-900">{CENTO_18G_PRODUCT.name}</h2>
             <p className="mt-2 text-lg text-cocoa-700">{CENTO_18G_PRODUCT.description}</p>
-            <p className="mt-4 text-lg font-semibold text-cocoa-900">{formatCurrency(CENTO_18G_PRODUCT.unitPrice)} / cento (por sabor)</p>
+            <p className="mt-auto pt-4 text-lg font-semibold text-cocoa-900">{formatCurrency(CENTO_18G_PRODUCT.unitPrice)} / cento</p>
           </div>
         </button>
         <button
@@ -1287,8 +1788,8 @@ export default function CardapioPage() {
           <div className="flex flex-1 flex-col p-5">
             <h2 className="font-serifDisplay text-2xl text-cocoa-900">{CENTO_13G_PRODUCT.name}</h2>
             <p className="mt-2 text-lg text-cocoa-700">{CENTO_13G_PRODUCT.description}</p>
-            <p className="mt-4 text-lg font-semibold text-cocoa-900">
-              {formatCurrency(CENTO_13G_PRODUCT.unitPrice)} / cento (por sabor)
+            <p className="mt-auto pt-4 text-lg font-semibold text-cocoa-900">
+              {formatCurrency(CENTO_13G_PRODUCT.unitPrice)} / cento
             </p>
           </div>
         </button>
@@ -1309,7 +1810,7 @@ export default function CardapioPage() {
           <div className="flex flex-1 flex-col p-5">
             <h2 className="font-serifDisplay text-2xl text-cocoa-900">{BOMBOM_PRODUCT.name}</h2>
             <p className="mt-2 text-lg text-cocoa-700">{BOMBOM_PRODUCT.description}</p>
-            <p className="mt-4 text-lg font-semibold text-cocoa-900">A partir de {formatCurrency(minBombomPrice)} / unidade</p>
+            <p className="mt-auto pt-4 text-lg font-semibold text-cocoa-900">A partir de {formatCurrency(minBombomPrice)} / unidade</p>
           </div>
         </button>
       </section>
@@ -1336,7 +1837,7 @@ export default function CardapioPage() {
             <p className="mt-2 whitespace-pre-line text-lg text-cocoa-700">
               {MACARON_PRODUCT.description}
             </p>
-            <p className="mt-4 text-lg font-semibold text-cocoa-900">
+            <p className="mt-auto pt-4 text-lg font-semibold text-cocoa-900">
               A partir de {formatCurrency(minMacaronPrice)} / unidade
             </p>
           </div>
@@ -1358,7 +1859,7 @@ export default function CardapioPage() {
           <div className="flex flex-1 flex-col p-5">
             <h2 className="font-serifDisplay text-2xl text-cocoa-900">{CENTO_MACARONS_MINI_PRODUCT.name}</h2>
             <p className="mt-2 text-lg text-cocoa-700">{CENTO_MACARONS_MINI_PRODUCT.description}</p>
-            <p className="mt-4 text-lg font-semibold text-cocoa-900">
+            <p className="mt-auto pt-4 text-lg font-semibold text-cocoa-900">
               {CENTO_MACARONS_MINI_PRODUCT.priceLabel ?? `${formatCurrency(CENTO_MACARONS_MINI_PRODUCT.unitPrice)} / cento (por sabor)`}
             </p>
           </div>
@@ -1385,7 +1886,7 @@ export default function CardapioPage() {
           <div className="flex flex-1 flex-col p-5">
             <h2 className="font-serifDisplay text-2xl text-cocoa-900">{BARRAS_FLORIDAS_PRODUCT.name}</h2>
             <p className="mt-2 text-lg text-cocoa-700">{BARRAS_FLORIDAS_PRODUCT.description}</p>
-            <p className="mt-4 text-lg font-semibold text-cocoa-900">
+            <p className="mt-auto pt-4 text-lg font-semibold text-cocoa-900">
               A partir de {formatCurrency(minBarraPrice)} / unidade
             </p>
           </div>
@@ -1393,10 +1894,145 @@ export default function CardapioPage() {
       </section>
     ) : null}
 
+    {activeTab === "biscoitos-floridos" ? (
+      <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <button
+          type="button"
+          onClick={() => openBiscoitoFloridoModal(BISCOITOS_FLORIDOS_PRODUCT)}
+          className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 md:hover:-translate-y-1 md:hover:shadow-2xl"
+        >
+          <div className="relative h-60 w-full overflow-hidden rounded-t-lg">
+            <Image
+              src={BISCOITOS_FLORIDOS_PRODUCT.imageUrl}
+              alt={`Imagem do ${BISCOITOS_FLORIDOS_PRODUCT.name}`}
+              fill
+              className="object-cover transition duration-500 group-hover:scale-105"
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+            />
+          </div>
+          <div className="flex flex-1 flex-col p-5">
+            <h2 className="font-serifDisplay text-2xl text-cocoa-900">{BISCOITOS_FLORIDOS_PRODUCT.name}</h2>
+            <p className="mt-2 text-lg text-cocoa-700">{BISCOITOS_FLORIDOS_PRODUCT.description}</p>
+            <p className="mt-auto pt-4 text-lg font-semibold text-cocoa-900">{BISCOITOS_FLORIDOS_PRODUCT.priceLabel}</p>
+          </div>
+        </button>
+      </section>
+    ) : null}
+
+    {activeTab === "embalagens-macarons" ? (
+      <section className="space-y-6">
+        <div className="rounded-lg border-l-4 border-rose-200/80 bg-rose-50/40 p-4 text-sm text-cocoa-700">
+          <p className="font-semibold text-cocoa-900">Informações importantes</p>
+          <p className="mt-2 text-sm">
+            Presenteie seus funcionários ou componha a caixa de convite de padrinhos.
+          </p>
+          <p className="mt-1 text-sm text-cocoa-700">
+            Para caixas de até 4 macarons, o pedido mínimo é de 10 caixinhas.
+          </p>
+          <p className="mt-1 text-sm text-cocoa-700">
+            Valores com TAG e fita inclusos.
+          </p>
+        </div>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {EMBALAGENS_MACARONS_PRODUCTS.map((item) => (
+            <div key={item.id} className="flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel">
+              <div className="relative h-56 w-full overflow-hidden rounded-t-lg">
+                <Image
+                  src={item.imageUrl}
+                  alt={`Imagem da ${item.name}`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                />
+              </div>
+              <div className="flex flex-1 flex-col p-5">
+                <h2 className="font-serifDisplay text-2xl text-cocoa-900">{item.name}</h2>
+                <p className="mt-2 text-lg text-cocoa-700">{item.description}</p>
+                <p className="mt-1 text-xs text-cocoa-500">*consultar valor do mini macaron</p>
+                <p className="mt-auto pt-4 text-lg font-semibold text-cocoa-900">{item.priceLabel}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    ) : null}
+
+    {activeTab === "torres-macarons" ? (
+      <section className="space-y-6">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {TORRES_MACARONS_PRODUCTS.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => {
+                const message = `Olá! Tenho interesse em ${item.name}.`;
+                window.open(
+                  `https://wa.me/${brandSettings.whatsappNumber}?text=${encodeURIComponent(message)}`,
+                  "_blank",
+                  "noopener,noreferrer"
+                );
+              }}
+              className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 md:hover:-translate-y-1 md:hover:shadow-2xl"
+            >
+              <div className="relative h-56 w-full overflow-hidden rounded-t-lg">
+                <Image
+                  src={item.imageUrl}
+                  alt={`Imagem da ${item.name}`}
+                  fill
+                  className="object-cover transition duration-500 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                />
+              </div>
+              <div className="flex flex-1 flex-col p-5">
+                <h2 className="font-serifDisplay text-2xl text-cocoa-900">{item.name}</h2>
+                <p className="mt-2 text-lg text-cocoa-700">{item.description}</p>
+                <p className="mt-auto pt-4 text-lg font-semibold text-cocoa-900">{item.priceLabel}</p>
+              </div>
+            </button>
+          ))}
+        </div>
+        <div className="rounded-lg bg-white/70 p-5 text-sm text-cocoa-700 shadow-panel">
+          <p>Caso haja devolução do suporte em perfeito estado, haverá estorno de R$90,00.</p>
+        </div>
+      </section>
+    ) : null}
+
+    {activeTab === "kits" ? (
+      <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {[KIT_FESTA_10_PRODUCT, KIT_FESTA_20_PRODUCT, KIT_FESTA_30_PRODUCT, KIT_FESTA_40_PRODUCT, KIT_FESTA_50_PRODUCT].map((kit) => (
+          <button
+            key={kit.id}
+            type="button"
+            onClick={() => openKitModal(kit)}
+            className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 md:hover:-translate-y-1 md:hover:shadow-2xl"
+          >
+            <div className="relative h-60 w-full overflow-hidden rounded-t-lg">
+              <Image
+                src={kit.imageUrl}
+                alt={`Imagem do ${kit.name}`}
+                fill
+                className="object-cover transition duration-500 group-hover:scale-105"
+                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+              />
+            </div>
+            <div className="flex flex-1 flex-col p-5">
+              <h2 className="font-serifDisplay text-2xl text-cocoa-900">{kit.name}</h2>
+              <p className="mt-2 text-lg text-cocoa-700">{kit.description}</p>
+              <p className="mt-auto pt-4 text-lg font-semibold text-cocoa-900">{formatCurrency(kit.price)}</p>
+            </div>
+          </button>
+        ))}
+      </section>
+    ) : null}
+
     {activeTab !== "bolos" &&
     activeTab !== "docinhos" &&
     activeTab !== "barras" &&
-    activeTab !== "macarons" ? (
+    activeTab !== "macarons" &&
+    activeTab !== "biscoitos-floridos" &&
+    activeTab !== "embalagens-macarons" &&
+    activeTab !== "torres-macarons" &&
+    activeTab !== "kits" ? (
       <section className="rounded-lg bg-white/70 p-12 text-center text-sm text-cocoa-700 shadow-panel">
         <p className="font-serifBrand text-2xl text-cocoa-900">{activeTabInfo.title}</p>
         <p className="mt-3 text-lg">Estamos preparando novidades exclusivas. Em breve!</p>
@@ -1796,7 +2432,7 @@ export default function CardapioPage() {
 
               <div className="mt-4 space-y-3">
                 <label className="block text-base font-bold text-cocoa-700">
-                  Quantidade (centos por sabor)
+                  Quantidade (centos)
                   <input
                     type="number"
                     min={1}
@@ -1808,7 +2444,7 @@ export default function CardapioPage() {
                     onBlur={validateCentoQuantity}
                     className="mt-1 h-14 w-full box-border rounded-lg border border-rose-200 px-6 py-2 text-lg leading-none outline-none ring-cocoa-700/20 focus:ring-1"
                   />
-                  <p className="mt-1 text-xs font-normal text-cocoa-600">Cada sabor selecionado corresponde a 100 unidades.</p>
+                  <p className="mt-1 text-xs font-normal text-cocoa-600">Cada pedido corresponde a 100 unidades no total.</p>
                 </label>
 
                 <div className="text-base font-bold text-cocoa-700">
@@ -2059,6 +2695,224 @@ export default function CardapioPage() {
                 <button
                   type="button"
                   onClick={addBarraToCart}
+                  className="inline-flex h-12 flex-[2] items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 text-base font-semibold uppercase tracking-[0.12em] text-white md:hover:from-cocoa-800 md:hover:to-cocoa-950"
+                >
+                  Adicionar ao carrinho
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {selectedBiscoitoFlorido ? (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-cocoa-900/50 p-4">
+          <div className="w-full max-w-lg max-h-[95vh] rounded-lg bg-white p-6 sm:p-8 shadow-soft flex flex-col">
+            <div className="flex-1 overflow-y-auto pr-1">
+              <div className="relative mb-4 h-56 w-full overflow-hidden rounded-lg">
+                <Image
+                  src={selectedBiscoitoFlorido.imageUrl}
+                  alt={`Imagem do ${selectedBiscoitoFlorido.name}`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 540px"
+                />
+              </div>
+              <h2 className="font-serifDisplay text-3xl text-cocoa-900">{selectedBiscoitoFlorido.name}</h2>
+              <p className="mt-2 text-lg text-cocoa-700">{selectedBiscoitoFlorido.description}</p>
+
+              <div className="mt-4 space-y-3 pb-4">
+                <label className="block text-base font-bold text-cocoa-700">
+                  Quantidade (pacotes)
+                  <input
+                    type="number"
+                    min={1}
+                    value={biscoitoFloridoQuantityInput}
+                    onChange={(event) => {
+                      setBiscoitoFloridoQuantityInput(event.target.value);
+                      setBiscoitoFloridoQuantityError("");
+                    }}
+                    onBlur={validateBiscoitoFloridoQuantity}
+                    className="mt-1 h-14 w-full box-border rounded-lg border border-rose-200 px-6 py-2 text-lg leading-none outline-none ring-cocoa-700/20 focus:ring-1"
+                  />
+                  {biscoitoFloridoQuantityError ? (
+                    <p className="mt-1 text-xs font-semibold text-rose-700">{biscoitoFloridoQuantityError}</p>
+                  ) : (
+                    <p className="mt-1 text-xs font-normal text-cocoa-600">Cada pacote corresponde a 10 unidades.</p>
+                  )}
+                </label>
+              </div>
+            </div>
+
+            <div className="pt-4">
+              <p className="text-lg font-semibold text-cocoa-900">Total: {formatCurrency(biscoitoFloridoTotal)}</p>
+              <div className="mt-4 flex flex-row gap-3">
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="inline-flex h-12 flex-1 items-center justify-center rounded-lg border border-rose-200 px-4 text-base font-semibold uppercase tracking-[0.12em] text-cocoa-800 md:hover:bg-rose-50"
+                >
+                  Fechar
+                </button>
+                <button
+                  type="button"
+                  onClick={addBiscoitoFloridoToCart}
+                  className="inline-flex h-12 flex-[2] items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 text-base font-semibold uppercase tracking-[0.12em] text-white md:hover:from-cocoa-800 md:hover:to-cocoa-950"
+                >
+                  Adicionar ao carrinho
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {selectedKitProduct ? (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-cocoa-900/50 p-4">
+          <div className="w-full max-w-lg max-h-[95vh] rounded-lg bg-white p-6 sm:p-8 shadow-soft flex flex-col">
+            <div className="flex-1 overflow-y-auto pr-1">
+              <div className="relative mb-4 h-56 w-full overflow-hidden rounded-lg">
+                <Image
+                  src={selectedKitProduct.imageUrl}
+                  alt={`Imagem do ${selectedKitProduct.name}`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 540px"
+                />
+              </div>
+              <h2 className="font-serifDisplay text-3xl text-cocoa-900">{selectedKitProduct.name}</h2>
+              <p className="mt-2 text-lg text-cocoa-700">{selectedKitProduct.description}</p>
+
+              <div className="mt-4 space-y-4 pb-4">
+                <div className="text-base font-bold text-cocoa-700">
+                  Sabor do bolo
+                  <div className="mt-3 space-y-2">
+                    {KIT_CAKE_FLAVORS.map((flavor) => (
+                      <label key={flavor.id} className="flex items-start gap-3 text-sm font-normal text-cocoa-700">
+                        <input
+                          type="radio"
+                          name="kit-cake-flavor"
+                          checked={kitCakeFlavorId === flavor.id}
+                          onChange={() => setKitCakeFlavorId(flavor.id)}
+                          className="mt-0.5 h-4 w-4 border-rose-200 text-cocoa-800 focus:ring-cocoa-700/30"
+                        />
+                        <span className="flex flex-col">
+                          <span className="text-sm font-semibold text-cocoa-800">{flavor.label}</span>
+                          <span className="text-xs text-cocoa-600">{flavor.description}</span>
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="text-base font-bold text-cocoa-700">
+                  Cobertura do bolo
+                  <div className="mt-3 space-y-2">
+                    {KIT_COVERINGS.map((covering) => (
+                      <label key={covering.id} className="flex items-start gap-3 text-sm font-normal text-cocoa-700">
+                        <input
+                          type="radio"
+                          name="kit-covering"
+                          checked={kitCoveringId === covering.id}
+                          onChange={() => setKitCoveringId(covering.id)}
+                          className="mt-0.5 h-4 w-4 border-rose-200 text-cocoa-800 focus:ring-cocoa-700/30"
+                        />
+                        <span className="text-sm font-semibold text-cocoa-800">{covering.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="text-base font-bold text-cocoa-700">
+                  Decoração personalizada
+                  <div className="mt-3 space-y-2">
+                    {KIT_DECORATIONS.map((decoration) => {
+                      const checked = kitDecorationIds.includes(decoration.id);
+                      const atLimit = kitDecorationIds.length >= 3;
+                      const hasMini = kitDecorationIds.includes("macarons-minis");
+                      const hasMedio = kitDecorationIds.includes("macarons-medios");
+                      const macaronsBlocked =
+                        (decoration.id === "macarons-minis" && hasMedio && !checked) ||
+                        (decoration.id === "macarons-medios" && hasMini && !checked);
+                      const disabled = (!checked && atLimit) || macaronsBlocked;
+
+                      return (
+                        <label key={decoration.id} className="flex items-start gap-3 text-sm font-normal text-cocoa-700">
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            disabled={disabled}
+                            onChange={() => {
+                              setKitDecorationIds((prev) => {
+                                if (prev.includes(decoration.id)) {
+                                  return prev.filter((item) => item !== decoration.id);
+                                }
+                                if (prev.length >= 3) return prev;
+                                if (decoration.id === "macarons-minis" && prev.includes("macarons-medios")) return prev;
+                                if (decoration.id === "macarons-medios" && prev.includes("macarons-minis")) return prev;
+                                return [...prev, decoration.id];
+                              });
+                            }}
+                            className="mt-0.5 h-4 w-4 rounded border-rose-200 text-cocoa-800 focus:ring-cocoa-700/30 disabled:opacity-50"
+                          />
+                          <span className="flex flex-col">
+                            <span className="text-sm font-semibold text-cocoa-800">{decoration.label}</span>
+                            <span className="text-xs text-cocoa-600">+ {formatCurrency(decoration.price)}</span>
+                          </span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                <div className="text-base font-bold text-cocoa-700">
+                  Sabores dos docinhos
+                  <p className="mt-1 text-xs font-normal text-cocoa-600">Selecione exatamente 3 sabores para os 30 docinhos.</p>
+                  <div className="mt-3 space-y-2">
+                    {KIT_DOCINHO_OPTIONS.map((flavor) => {
+                      const checked = kitDocinhoIds.includes(flavor.id);
+                      const disabled = !checked && kitDocinhoIds.length >= 3;
+                      return (
+                        <label key={flavor.id} className="flex items-start gap-3 text-sm font-normal text-cocoa-700">
+                          <input
+                            type="checkbox"
+                            checked={checked}
+                            disabled={disabled}
+                            onChange={() => {
+                              setKitDocinhoIds((prev) => {
+                                if (prev.includes(flavor.id)) {
+                                  return prev.filter((item) => item !== flavor.id);
+                                }
+                                if (prev.length >= 3) return prev;
+                                return [...prev, flavor.id];
+                              });
+                              setKitDocinhoError("");
+                            }}
+                            className="mt-0.5 h-4 w-4 rounded border-rose-200 text-cocoa-800 focus:ring-cocoa-700/30 disabled:opacity-50"
+                          />
+                          <span className="text-sm font-semibold text-cocoa-800">{flavor.label}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                  {kitDocinhoError ? <p className="mt-2 text-xs font-semibold text-rose-700">{kitDocinhoError}</p> : null}
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-4">
+              <p className="text-lg font-semibold text-cocoa-900">Total: {formatCurrency(kitTotal)}</p>
+              <div className="mt-4 flex flex-row gap-3">
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="inline-flex h-12 flex-1 items-center justify-center rounded-lg border border-rose-200 px-4 text-base font-semibold uppercase tracking-[0.12em] text-cocoa-800 md:hover:bg-rose-50"
+                >
+                  Fechar
+                </button>
+                <button
+                  type="button"
+                  onClick={addKitToCart}
                   className="inline-flex h-12 flex-[2] items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 text-base font-semibold uppercase tracking-[0.12em] text-white md:hover:from-cocoa-800 md:hover:to-cocoa-950"
                 >
                   Adicionar ao carrinho
