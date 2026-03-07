@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AnalyticsScripts } from "@/components/analytics-scripts";
+import { BackToTop } from "@/components/back-to-top";
 import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
+import { WhatsAppFab } from "@/components/whatsapp-fab";
 import { brandSettings } from "@/lib/site-data";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://example.com";
@@ -52,6 +54,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Header />
         <main>{children}</main>
         <Footer />
+        <WhatsAppFab />
+        <BackToTop />
       </body>
     </html>
   );

@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { brandSettings } from "@/lib/site-data";
 import { assetPath } from "@/lib/asset-path";
 
@@ -142,17 +142,17 @@ const CART_STORAGE_KEY = "csg_cardapio_bolos_cart_v1";
 
 const categoryConfigs = [
   {
-    id: "kits",
-    label: "Kits para festa",
-    title: "Kits para festa",
-    description: "Combinações pensadas para celebrações pequenas e práticas.",
-    isReady: true
-  },
-  {
     id: "bolos",
     label: "Bolos artesanais",
     title: "Bolos artesanais",
     description: "Cada item corresponde a 1kg e pode ser ajustado pela quantidade escolhida (para bolos).",
+    isReady: true
+  },
+  {
+    id: "kits",
+    label: "Kits para festa",
+    title: "Kits para festa",
+    description: "Combinações pensadas para celebrações pequenas e práticas.",
     isReady: true
   },
   {
@@ -1027,6 +1027,44 @@ export default function CardapioPage() {
     return () => window.removeEventListener("csg:toggle-cart", handleExternalToggle);
   }, []);
 
+  const bodyScrollLockRef = useRef<{ overflow: string; paddingRight: string } | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const body = document.body;
+    const docEl = document.documentElement;
+
+    if (isCartOpen) {
+      if (!bodyScrollLockRef.current) {
+        bodyScrollLockRef.current = {
+          overflow: body.style.overflow,
+          paddingRight: body.style.paddingRight
+        };
+      }
+
+      // Prevent layout shift when the scrollbar disappears.
+      const scrollbarWidth = window.innerWidth - docEl.clientWidth;
+      body.style.overflow = "hidden";
+      body.style.paddingRight =
+        scrollbarWidth > 0 ? `${scrollbarWidth}px` : bodyScrollLockRef.current.paddingRight;
+      return;
+    }
+
+    if (bodyScrollLockRef.current) {
+      body.style.overflow = bodyScrollLockRef.current.overflow;
+      body.style.paddingRight = bodyScrollLockRef.current.paddingRight;
+      bodyScrollLockRef.current = null;
+    }
+
+    return () => {
+      if (!bodyScrollLockRef.current) return;
+      body.style.overflow = bodyScrollLockRef.current.overflow;
+      body.style.paddingRight = bodyScrollLockRef.current.paddingRight;
+      bodyScrollLockRef.current = null;
+    };
+  }, [isCartOpen]);
+
   const openModal = (bolo: Bolo) => {
     setSelectedDocinho(null);
     setSelectedBombom(null);
@@ -1682,6 +1720,9 @@ export default function CardapioPage() {
     <header className="mb-8 text-center">
       <p className="text-xs font-semibold uppercase tracking-[0.35em] text-rose-500">Cardápio na palma da sua mão</p>
       <h1 className="mt-3 font-serifDisplay text-5xl text-cocoa-900">{activeTabInfo.title}</h1>
+      <p className="mx-auto mt-3 max-w-2xl text-sm text-cocoa-700">
+        Escolha seus produtos, adicione ao carrinho e finalize o pedido pelo WhatsApp.
+      </p>
       <p className="mx-auto mt-3 max-w-2xl text-lg text-cocoa-700">{activeTabInfo.description}</p>
     </header>
 
@@ -2198,7 +2239,7 @@ export default function CardapioPage() {
                 <button
                   type="button"
                   onClick={addToCart}
-                  className="inline-flex h-12 flex-1 items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 text-base font-semibold uppercase tracking-[0.12em] text-white md:hover:from-cocoa-800 md:hover:to-cocoa-950"
+                  className="inline-flex min-h-[48px] flex-1 items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 py-2 text-center text-sm font-semibold uppercase leading-tight tracking-[0.08em] text-white whitespace-normal sm:h-12 sm:py-0 sm:text-base sm:whitespace-nowrap sm:tracking-[0.12em] md:hover:from-cocoa-800 md:hover:to-cocoa-950"
                 >
                   Adicionar ao carrinho
                 </button>
@@ -2283,7 +2324,7 @@ export default function CardapioPage() {
                   type="button"
                   onClick={addDocinhoToCart}
                   disabled={!selectedFlavor}
-                  className="inline-flex h-12 flex-[2] items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 text-base font-semibold uppercase tracking-[0.12em] text-white md:hover:from-cocoa-800 md:hover:to-cocoa-950 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex min-h-[48px] flex-[2] items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 py-2 text-center text-sm font-semibold uppercase leading-tight tracking-[0.08em] text-white whitespace-normal sm:h-12 sm:py-0 sm:text-base sm:whitespace-nowrap sm:tracking-[0.12em] md:hover:from-cocoa-800 md:hover:to-cocoa-950 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Adicionar ao carrinho
                 </button>
@@ -2404,7 +2445,7 @@ export default function CardapioPage() {
                 <button
                   type="button"
                   onClick={addBombomToCart}
-                  className="inline-flex h-12 flex-[2] items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 text-base font-semibold uppercase tracking-[0.12em] text-white md:hover:from-cocoa-800 md:hover:to-cocoa-950"
+                  className="inline-flex min-h-[48px] flex-[2] items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 py-2 text-center text-sm font-semibold uppercase leading-tight tracking-[0.08em] text-white whitespace-normal sm:h-12 sm:py-0 sm:text-base sm:whitespace-nowrap sm:tracking-[0.12em] md:hover:from-cocoa-800 md:hover:to-cocoa-950"
                 >
                   Adicionar ao carrinho
                 </button>
@@ -2506,7 +2547,7 @@ export default function CardapioPage() {
                 <button
                   type="button"
                   onClick={addCentoToCart}
-                  className="inline-flex h-12 flex-[2] items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 text-base font-semibold uppercase tracking-[0.12em] text-white md:hover:from-cocoa-800 md:hover:to-cocoa-950"
+                  className="inline-flex min-h-[48px] flex-[2] items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 py-2 text-center text-sm font-semibold uppercase leading-tight tracking-[0.08em] text-white whitespace-normal sm:h-12 sm:py-0 sm:text-base sm:whitespace-nowrap sm:tracking-[0.12em] md:hover:from-cocoa-800 md:hover:to-cocoa-950"
                 >
                   Adicionar ao carrinho
                 </button>
@@ -2593,7 +2634,7 @@ export default function CardapioPage() {
                   type="button"
                   onClick={addMacaronToCart}
                   disabled={Boolean(macaronQuantityError) || !selectedMacaronFlavor}
-                  className="inline-flex min-h-fit flex-1 flex-col items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-white text-center whitespace-normal transition sm:text-sm md:hover:from-cocoa-800 md:hover:to-cocoa-950 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex min-h-[48px] flex-1 items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 py-2 text-center text-xs font-semibold uppercase leading-tight tracking-[0.08em] text-white whitespace-normal transition sm:h-12 sm:py-0 sm:text-sm sm:whitespace-nowrap sm:tracking-[0.12em] md:hover:from-cocoa-800 md:hover:to-cocoa-950 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Adicionar ao carrinho
                 </button>
@@ -2695,7 +2736,7 @@ export default function CardapioPage() {
                 <button
                   type="button"
                   onClick={addBarraToCart}
-                  className="inline-flex h-12 flex-[2] items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 text-base font-semibold uppercase tracking-[0.12em] text-white md:hover:from-cocoa-800 md:hover:to-cocoa-950"
+                  className="inline-flex min-h-[48px] flex-[2] items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 py-2 text-center text-sm font-semibold uppercase leading-tight tracking-[0.08em] text-white whitespace-normal sm:h-12 sm:py-0 sm:text-base sm:whitespace-nowrap sm:tracking-[0.12em] md:hover:from-cocoa-800 md:hover:to-cocoa-950"
                 >
                   Adicionar ao carrinho
                 </button>
@@ -2757,7 +2798,7 @@ export default function CardapioPage() {
                 <button
                   type="button"
                   onClick={addBiscoitoFloridoToCart}
-                  className="inline-flex h-12 flex-[2] items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 text-base font-semibold uppercase tracking-[0.12em] text-white md:hover:from-cocoa-800 md:hover:to-cocoa-950"
+                  className="inline-flex min-h-[48px] flex-[2] items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 py-2 text-center text-sm font-semibold uppercase leading-tight tracking-[0.08em] text-white whitespace-normal sm:h-12 sm:py-0 sm:text-base sm:whitespace-nowrap sm:tracking-[0.12em] md:hover:from-cocoa-800 md:hover:to-cocoa-950"
                 >
                   Adicionar ao carrinho
                 </button>
@@ -2913,7 +2954,7 @@ export default function CardapioPage() {
                 <button
                   type="button"
                   onClick={addKitToCart}
-                  className="inline-flex h-12 flex-[2] items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 text-base font-semibold uppercase tracking-[0.12em] text-white md:hover:from-cocoa-800 md:hover:to-cocoa-950"
+                  className="inline-flex min-h-[48px] flex-[2] items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 py-2 text-center text-sm font-semibold uppercase leading-tight tracking-[0.08em] text-white whitespace-normal sm:h-12 sm:py-0 sm:text-base sm:whitespace-nowrap sm:tracking-[0.12em] md:hover:from-cocoa-800 md:hover:to-cocoa-950"
                 >
                   Adicionar ao carrinho
                 </button>

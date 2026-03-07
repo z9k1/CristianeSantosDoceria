@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useEffect } from "react";
 import { CtaLink } from "@/components/cta-link";
-import { BackToTop } from "@/components/back-to-top";
 import { Gallery } from "@/components/gallery";
 import { Reveal } from "@/components/reveal";
 import { assetPath } from "@/lib/asset-path";
@@ -15,11 +14,10 @@ export default function HomePage() {
 
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "/DemoSiteConfeitaria";
   const cardapioPath = `${basePath.replace(/\/$/, "")}/cardapio`;
+  const eventosPath = `${basePath.replace(/\/$/, "")}/eventos`;
 
   return (
     <div>
-      <BackToTop />
-
       {/* Hero minimalista */}
       <section className="mx-auto flex max-w-6xl flex-col gap-10 px-4 py-14 text-center lg:px-6">
         <Reveal>
@@ -38,10 +36,10 @@ export default function HomePage() {
         </Reveal>
         <Reveal delay={160}>
           <div className="flex flex-col items-center gap-3">
-            <CtaLink label="Ver cardápio" href={cardapioPath} eventName="click_ifood" className="px-8 py-3" external={false} />
+          <CtaLink label="Faça seu pedido aqui!" href={cardapioPath} eventName="click_ifood" className="px-8 py-3" external={false} />
             <CtaLink
               label="Briefing de eventos"
-              href="/eventos"
+              href={eventosPath}
               eventName="click_event_briefing"
               className="bg-teal-500 px-8 py-3 text-white hover:bg-teal-600"
               external={false}

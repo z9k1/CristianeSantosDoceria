@@ -1,5 +1,8 @@
 import { brandSettings } from "@/lib/site-data";
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "/DemoSiteConfeitaria";
+const policyPath = `${basePath.replace(/\/$/, "")}/politica-de-privacidade`;
+
 type IconLinkProps = {
   href: string;
   label: string;
@@ -41,6 +44,11 @@ export function Footer() {
             <li>
               <a href={brandSettings.instagramUrl} target="_blank" rel="noreferrer" className="hover:text-cocoa-900">
                 Instagram
+              </a>
+            </li>
+            <li>
+              <a href={policyPath} className="hover:text-cocoa-900">
+                Política de privacidade
               </a>
             </li>
             <li>{brandSettings.address}</li>
