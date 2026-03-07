@@ -2,8 +2,10 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { brandSettings } from "@/lib/site-data";
 import { assetPath } from "@/lib/asset-path";
+import { generateOrderId } from "@/lib/order-id";
 
 type Bolo = {
   id: string;
@@ -140,6 +142,7 @@ type CartItem = {
 };
 
 const CART_STORAGE_KEY = "csg_cardapio_bolos_cart_v1";
+const CART_TOAST_EVENT = "csg:cart-toast";
 
 const categoryConfigs = [
   {
@@ -748,11 +751,12 @@ function formatCurrency(value: number): string {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 }
 
-function todayISODate(): string {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = `${now.getMonth() + 1}`.padStart(2, "0");
-  const day = `${now.getDate()}`.padStart(2, "0");
+function minimumOrderDateISO(daysAhead = 5): string {
+  const date = new Date();
+  date.setDate(date.getDate() + daysAhead);
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, "0");
+  const day = `${date.getDate()}`.padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
 
@@ -818,10 +822,14 @@ export default function CardapioPage() {
   const [kitDocinhoIds, setKitDocinhoIds] = useState<string[]>([]);
   const [kitDocinhoError, setKitDocinhoError] = useState("");
   const [selectedMacaronFlavorId, setSelectedMacaronFlavorId] = useState("");
+  const [cartToastMessage, setCartToastMessage] = useState("");
   const [customerName, setCustomerName] = useState("");
   const [eventDate, setEventDate] = useState("");
   const [submitError, setSubmitError] = useState("");
   const [hasHydratedCart, setHasHydratedCart] = useState(false);
+  const searchParams = useSearchParams();
+  const cartToastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const minOrderDate = useMemo(() => minimumOrderDateISO(5), []);
   const activeTabInfo = categoryConfigs.find((tab) => tab.id === activeTab) ?? categoryConfigs[0];
   const minDocinhoPrice = useMemo(
     () => Math.min(...DOCINHO_FLAVORS.map((flavor) => flavor.price)),
@@ -881,6 +889,21 @@ export default function CardapioPage() {
     if (!hasHydratedCart) return;
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
   }, [cart, hasHydratedCart]);
+
+  useEffect(() => {
+    if (searchParams.get("openCart") === "1") {
+      setIsCartOpen(true);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    return () => {
+      if (cartToastTimeoutRef.current) {
+        clearTimeout(cartToastTimeoutRef.current);
+      }
+      window.dispatchEvent(new CustomEvent(CART_TOAST_EVENT, { detail: { visible: false } }));
+    };
+  }, []);
 
   const isModalOpen = Boolean(
     selectedBolo ||
@@ -1362,6 +1385,19 @@ export default function CardapioPage() {
     setQuantityInput("1");
   };
 
+  const showCartToast = (productName: string) => {
+    if (cartToastTimeoutRef.current) {
+      clearTimeout(cartToastTimeoutRef.current);
+    }
+    setCartToastMessage(`${productName} adicionado ao carrinho.`);
+    window.dispatchEvent(new CustomEvent(CART_TOAST_EVENT, { detail: { visible: true } }));
+    cartToastTimeoutRef.current = setTimeout(() => {
+      setCartToastMessage("");
+      window.dispatchEvent(new CustomEvent(CART_TOAST_EVENT, { detail: { visible: false } }));
+      cartToastTimeoutRef.current = null;
+    }, 1000);
+  };
+
   const addToCart = () => {
     if (!selectedBolo) return;
     const safeQuantity = validateBoloQuantity();
@@ -1403,6 +1439,7 @@ export default function CardapioPage() {
       return updated;
     });
 
+    showCartToast(newItem.productName);
     closeModal();
   };
 
@@ -1444,6 +1481,7 @@ export default function CardapioPage() {
       return updated;
     });
 
+    showCartToast(newItem.productName);
     closeModal();
   };
 
@@ -1492,6 +1530,7 @@ export default function CardapioPage() {
       return updated;
     });
 
+    showCartToast(newItem.productName);
     closeModal();
   };
 
@@ -1560,6 +1599,7 @@ export default function CardapioPage() {
       return updated;
     });
 
+    showCartToast(newItem.productName);
     closeModal();
   };
 
@@ -1599,6 +1639,7 @@ export default function CardapioPage() {
       return updated;
     });
 
+    showCartToast(newItem.productName);
     closeModal();
   };
 
@@ -1638,6 +1679,7 @@ export default function CardapioPage() {
       return updated;
     });
 
+    showCartToast(newItem.productName);
     closeModal();
   };
 
@@ -1676,6 +1718,7 @@ export default function CardapioPage() {
       return updated;
     });
 
+    showCartToast(newItem.productName);
     closeModal();
   };
 
@@ -1720,6 +1763,7 @@ export default function CardapioPage() {
       return updated;
     });
 
+    showCartToast(newItem.productName);
     closeModal();
   };
 
@@ -1780,6 +1824,7 @@ export default function CardapioPage() {
       return updated;
     });
 
+    showCartToast(newItem.productName);
     closeModal();
   };
 
@@ -1790,18 +1835,24 @@ export default function CardapioPage() {
   const validateDate = (): boolean => {
     if (!eventDate) return false;
     const inputDate = parseISODate(eventDate);
-    const minDate = parseISODate(todayISODate());
+    const minDate = parseISODate(minOrderDate);
     return inputDate.getTime() >= minDate.getTime();
+  };
+
+  const hasValidCustomerName = (value: string): boolean => {
+    const normalized = value.trim();
+    if (!normalized) return false;
+    return /[A-Za-zÀ-ÖØ-öø-ÿ]/.test(normalized);
   };
 
   const finalizeOrder = () => {
     if (cart.length === 0) return;
-    if (!customerName.trim()) {
-      setSubmitError("Informe seu nome para continuar.");
+    if (!hasValidCustomerName(customerName)) {
+      setSubmitError("Informe um nome válido para continuar.");
       return;
     }
     if (!validateDate()) {
-      setSubmitError("A data do evento não pode ser anterior à data atual.");
+      setSubmitError("A data da retirada deve ter no mínimo 5 dias de antecedência.");
       return;
     }
 
@@ -1809,30 +1860,32 @@ export default function CardapioPage() {
 
     const lines = cart
       .map((item) => {
-        if (item.category === "bombom") {
-          const line1 = `${item.quantity}x ${item.bombomModeLabel} - Bombons personalizados.`;
-          const line2 = `Sabor: ${item.bombomFlavorLabel}.`;
-          const line3 = item.bombomTheme ? `Tema: ${item.bombomTheme}.` : "";
-          return [line1, line2, line3].filter(Boolean).join("\n");
-        }
-        if (item.category === "barra") {
-          const details = item.detailLines.map((line) => `- ${line}`).join("\n");
-          return `${item.quantity}x ${item.productName}\n${details}`;
-        }
         const itemName =
           item.category === "bolo"
             ? `Bolo ${item.productName}`
             : item.category === "macaron"
               ? "Macarons"
               : item.productName;
-        const details = item.detailLines.length ? item.detailLines.join("\n  ") : "";
-        return `- ${item.quantity}x ${itemName}${details ? `\n  ${details}` : ""}`;
+        const quantityLabel = item.category === "bolo" ? `${item.quantity} kg` : `${item.quantity}x`;
+        const optionLines = item.detailLines.filter((line) => !line.toLowerCase().startsWith("quantidade:"));
+        if (item.category === "bombom" && item.bombomTheme) {
+          optionLines.push(`Tema: ${item.bombomTheme}`);
+        }
+        const options = optionLines.length ? `\n${optionLines.map((line) => `  - ${line}`).join("\n")}` : "";
+        return `\u2022 ${itemName} (${quantityLabel})${options}`;
       })
       .join("\n\n");
 
-    const message = `Olá! Gostaria de fazer o seguinte pedido:\n\n${lines}\n\nTotal estimado: ${formatCurrency(
+    const formattedEventDate = eventDate ? eventDate.split("-").reverse().join("/") : eventDate;
+    const now = new Date();
+    const orderId = generateOrderId(now);
+    const timestamp = `${new Intl.DateTimeFormat("pt-BR").format(now)} - ${new Intl.DateTimeFormat("pt-BR", {
+      hour: "2-digit",
+      minute: "2-digit"
+    }).format(now)}`;
+    const message = `*[PEDIDO VIA SITE]*\nID do pedido: ${orderId}\nData do pedido: ${timestamp}\n\n*[ITENS DO PEDIDO]*\n\n${lines}\n\n------------------------------\n\n*[TOTAL ESTIMADO]*\n${formatCurrency(
       cartTotal
-    )}\n(Aguardando confirmação de disponibilidade e valor final)\n\nNome: ${customerName.trim()}\nData do evento: ${eventDate}`;
+    )}\n(Aguardando confirmação de disponibilidade e valor final)\n\n*[DADOS DO CLIENTE]*\nNome: ${customerName.trim()}\nData da retirada/evento: ${formattedEventDate}`;
 
     const encoded = encodeURIComponent(message);
     window.open(`https://wa.me/${brandSettings.whatsappNumber}?text=${encoded}`, "_blank", "noopener,noreferrer");
@@ -1879,9 +1932,9 @@ export default function CardapioPage() {
             key={bolo.id}
             type="button"
             onClick={() => openModal(bolo)}
-            className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 md:hover:-translate-y-1 md:hover:shadow-2xl"
+            className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 md:hover:-translate-y-1 md:hover:shadow-2xl md:hover:ring-1 md:hover:ring-rose-200/70"
           >
-            <div className="relative h-60 w-full overflow-hidden rounded-t-lg">
+            <div className="relative h-64 w-full overflow-hidden rounded-t-lg">
               <Image
                 src={bolo.imageUrl}
                 alt={`Imagem do bolo ${bolo.name}`}
@@ -1893,7 +1946,12 @@ export default function CardapioPage() {
             <div className="flex flex-1 flex-col p-5">
               <h2 className="font-serifDisplay text-2xl text-cocoa-900">{bolo.name}</h2>
               <p className="mt-2 text-lg text-cocoa-700">{bolo.description}</p>
-              <p className="mt-auto pt-4 text-lg font-semibold text-cocoa-900">{formatCurrency(bolo.basePrice)} / 1kg</p>
+              <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+                <p className="text-lg font-semibold text-cocoa-900">{formatCurrency(bolo.basePrice)} / 1kg</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-600 transition group-hover:text-cocoa-900">
+                  Ver detalhes {"\u2192"}
+                </p>
+              </div>
             </div>
           </button>
         ))}
@@ -1905,9 +1963,9 @@ export default function CardapioPage() {
         <button
           type="button"
           onClick={() => openDocinhoModal(DOCINHO_PRODUCT)}
-          className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 md:hover:-translate-y-1 md:hover:shadow-2xl"
+          className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 md:hover:-translate-y-1 md:hover:shadow-2xl md:hover:ring-1 md:hover:ring-rose-200/70"
         >
-          <div className="relative h-60 w-full overflow-hidden rounded-t-lg">
+          <div className="relative h-64 w-full overflow-hidden rounded-t-lg">
             <Image
               src={DOCINHO_PRODUCT.imageUrl}
               alt={`Imagem do ${DOCINHO_PRODUCT.name}`}
@@ -1919,17 +1977,22 @@ export default function CardapioPage() {
           <div className="flex flex-1 flex-col p-5">
             <h2 className="font-serifDisplay text-2xl text-cocoa-900">{DOCINHO_PRODUCT.name}</h2>
             <p className="mt-2 text-lg text-cocoa-700">{DOCINHO_PRODUCT.description}</p>
-            <p className="mt-auto pt-4 text-lg font-semibold text-cocoa-900">
-              A partir de {formatCurrency(minDocinhoPrice)} / unidade
-            </p>
+            <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+              <p className="text-lg font-semibold text-cocoa-900">
+                A partir de {formatCurrency(minDocinhoPrice)} / unidade
+              </p>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-600 transition group-hover:text-cocoa-900">
+                Ver detalhes {"\u2192"}
+              </p>
+            </div>
           </div>
         </button>
         <button
           type="button"
           onClick={() => openCentoModal(CENTO_18G_PRODUCT)}
-          className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 md:hover:-translate-y-1 md:hover:shadow-2xl"
+          className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 md:hover:-translate-y-1 md:hover:shadow-2xl md:hover:ring-1 md:hover:ring-rose-200/70"
         >
-          <div className="relative h-60 w-full overflow-hidden rounded-t-lg">
+          <div className="relative h-64 w-full overflow-hidden rounded-t-lg">
             <Image
               src={CENTO_18G_PRODUCT.imageUrl}
               alt={`Imagem do ${CENTO_18G_PRODUCT.name}`}
@@ -1941,15 +2004,20 @@ export default function CardapioPage() {
           <div className="flex flex-1 flex-col p-5">
             <h2 className="font-serifDisplay text-2xl text-cocoa-900">{CENTO_18G_PRODUCT.name}</h2>
             <p className="mt-2 text-lg text-cocoa-700">{CENTO_18G_PRODUCT.description}</p>
-            <p className="mt-auto pt-4 text-lg font-semibold text-cocoa-900">{formatCurrency(CENTO_18G_PRODUCT.unitPrice)} / cento</p>
+            <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+              <p className="text-lg font-semibold text-cocoa-900">{formatCurrency(CENTO_18G_PRODUCT.unitPrice)} / cento</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-600 transition group-hover:text-cocoa-900">
+                Ver detalhes {"\u2192"}
+              </p>
+            </div>
           </div>
         </button>
         <button
           type="button"
           onClick={() => openCentoModal(CENTO_13G_PRODUCT)}
-          className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 md:hover:-translate-y-1 md:hover:shadow-2xl"
+          className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 md:hover:-translate-y-1 md:hover:shadow-2xl md:hover:ring-1 md:hover:ring-rose-200/70"
         >
-          <div className="relative h-60 w-full overflow-hidden rounded-t-lg">
+          <div className="relative h-64 w-full overflow-hidden rounded-t-lg">
             <Image
               src={CENTO_13G_PRODUCT.imageUrl}
               alt={`Imagem do ${CENTO_13G_PRODUCT.name}`}
@@ -1961,17 +2029,20 @@ export default function CardapioPage() {
           <div className="flex flex-1 flex-col p-5">
             <h2 className="font-serifDisplay text-2xl text-cocoa-900">{CENTO_13G_PRODUCT.name}</h2>
             <p className="mt-2 text-lg text-cocoa-700">{CENTO_13G_PRODUCT.description}</p>
-            <p className="mt-auto pt-4 text-lg font-semibold text-cocoa-900">
-              {formatCurrency(CENTO_13G_PRODUCT.unitPrice)} / cento
-            </p>
+            <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+              <p className="text-lg font-semibold text-cocoa-900">{formatCurrency(CENTO_13G_PRODUCT.unitPrice)} / cento</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-600 transition group-hover:text-cocoa-900">
+                Ver detalhes {"\u2192"}
+              </p>
+            </div>
           </div>
         </button>
         <button
           type="button"
           onClick={() => openBombomModal(BOMBOM_PRODUCT)}
-          className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 md:hover:-translate-y-1 md:hover:shadow-2xl"
+          className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 md:hover:-translate-y-1 md:hover:shadow-2xl md:hover:ring-1 md:hover:ring-rose-200/70"
         >
-          <div className="relative h-60 w-full overflow-hidden rounded-t-lg">
+          <div className="relative h-64 w-full overflow-hidden rounded-t-lg">
             <Image
               src={BOMBOM_PRODUCT.imageUrl}
               alt={`Imagem do ${BOMBOM_PRODUCT.name}`}
@@ -1983,7 +2054,14 @@ export default function CardapioPage() {
           <div className="flex flex-1 flex-col p-5">
             <h2 className="font-serifDisplay text-2xl text-cocoa-900">{BOMBOM_PRODUCT.name}</h2>
             <p className="mt-2 text-lg text-cocoa-700">{BOMBOM_PRODUCT.description}</p>
-            <p className="mt-auto pt-4 text-lg font-semibold text-cocoa-900">A partir de {formatCurrency(minBombomPrice)} / unidade</p>
+            <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+              <p className="text-lg font-semibold text-cocoa-900">
+                A partir de {formatCurrency(minBombomPrice)} / unidade
+              </p>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-600 transition group-hover:text-cocoa-900">
+                Ver detalhes {"\u2192"}
+              </p>
+            </div>
           </div>
         </button>
       </section>
@@ -1994,9 +2072,9 @@ export default function CardapioPage() {
         <button
           type="button"
           onClick={() => openMacaronModal(MACARON_PRODUCT)}
-          className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 md:hover:-translate-y-1 md:hover:shadow-2xl"
+          className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 md:hover:-translate-y-1 md:hover:shadow-2xl md:hover:ring-1 md:hover:ring-rose-200/70"
         >
-          <div className="relative h-60 w-full overflow-hidden rounded-t-lg">
+          <div className="relative h-64 w-full overflow-hidden rounded-t-lg">
             <Image
               src={MACARON_PRODUCT.imageUrl}
               alt={`Imagem do ${MACARON_PRODUCT.name}`}
@@ -2010,17 +2088,22 @@ export default function CardapioPage() {
             <p className="mt-2 whitespace-pre-line text-lg text-cocoa-700">
               {MACARON_PRODUCT.description}
             </p>
-            <p className="mt-auto pt-4 text-lg font-semibold text-cocoa-900">
-              A partir de {formatCurrency(minMacaronPrice)} / unidade
-            </p>
+            <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+              <p className="text-lg font-semibold text-cocoa-900">
+                A partir de {formatCurrency(minMacaronPrice)} / unidade
+              </p>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-600 transition group-hover:text-cocoa-900">
+                Ver detalhes {"\u2192"}
+              </p>
+            </div>
           </div>
         </button>
         <button
           type="button"
           onClick={() => openCentoModal(CENTO_MACARONS_MINI_PRODUCT)}
-          className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 md:hover:-translate-y-1 md:hover:shadow-2xl"
+          className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 md:hover:-translate-y-1 md:hover:shadow-2xl md:hover:ring-1 md:hover:ring-rose-200/70"
         >
-          <div className="relative h-60 w-full overflow-hidden rounded-t-lg">
+          <div className="relative h-64 w-full overflow-hidden rounded-t-lg">
             <Image
               src={CENTO_MACARONS_MINI_PRODUCT.imageUrl}
               alt={`Imagem do ${CENTO_MACARONS_MINI_PRODUCT.name}`}
@@ -2032,9 +2115,15 @@ export default function CardapioPage() {
           <div className="flex flex-1 flex-col p-5">
             <h2 className="font-serifDisplay text-2xl text-cocoa-900">{CENTO_MACARONS_MINI_PRODUCT.name}</h2>
             <p className="mt-2 text-lg text-cocoa-700">{CENTO_MACARONS_MINI_PRODUCT.description}</p>
-            <p className="mt-auto pt-4 text-lg font-semibold text-cocoa-900">
-              {CENTO_MACARONS_MINI_PRODUCT.priceLabel ?? `${formatCurrency(CENTO_MACARONS_MINI_PRODUCT.unitPrice)} / cento (por sabor)`}
-            </p>
+            <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+              <p className="text-lg font-semibold text-cocoa-900">
+                {CENTO_MACARONS_MINI_PRODUCT.priceLabel ??
+                  `${formatCurrency(CENTO_MACARONS_MINI_PRODUCT.unitPrice)} / cento (por sabor)`}
+              </p>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-600 transition group-hover:text-cocoa-900">
+                Ver detalhes {"\u2192"}
+              </p>
+            </div>
           </div>
         </button>
       </section>
@@ -2045,9 +2134,9 @@ export default function CardapioPage() {
         <button
           type="button"
           onClick={() => openBarraModal(BARRAS_FLORIDAS_PRODUCT)}
-          className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 md:hover:-translate-y-1 md:hover:shadow-2xl"
+          className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 md:hover:-translate-y-1 md:hover:shadow-2xl md:hover:ring-1 md:hover:ring-rose-200/70"
         >
-          <div className="relative h-60 w-full overflow-hidden rounded-t-lg">
+          <div className="relative h-64 w-full overflow-hidden rounded-t-lg">
             <Image
               src={BARRAS_FLORIDAS_PRODUCT.imageUrl}
               alt={`Imagem do ${BARRAS_FLORIDAS_PRODUCT.name}`}
@@ -2059,9 +2148,14 @@ export default function CardapioPage() {
           <div className="flex flex-1 flex-col p-5">
             <h2 className="font-serifDisplay text-2xl text-cocoa-900">{BARRAS_FLORIDAS_PRODUCT.name}</h2>
             <p className="mt-2 text-lg text-cocoa-700">{BARRAS_FLORIDAS_PRODUCT.description}</p>
-            <p className="mt-auto pt-4 text-lg font-semibold text-cocoa-900">
-              A partir de {formatCurrency(minBarraPrice)} / unidade
-            </p>
+            <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+              <p className="text-lg font-semibold text-cocoa-900">
+                A partir de {formatCurrency(minBarraPrice)} / unidade
+              </p>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-600 transition group-hover:text-cocoa-900">
+                Ver detalhes {"\u2192"}
+              </p>
+            </div>
           </div>
         </button>
       </section>
@@ -2072,9 +2166,9 @@ export default function CardapioPage() {
         <button
           type="button"
           onClick={() => openBiscoitoFloridoModal(BISCOITOS_FLORIDOS_PRODUCT)}
-          className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 md:hover:-translate-y-1 md:hover:shadow-2xl"
+          className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 md:hover:-translate-y-1 md:hover:shadow-2xl md:hover:ring-1 md:hover:ring-rose-200/70"
         >
-          <div className="relative h-60 w-full overflow-hidden rounded-t-lg">
+          <div className="relative h-64 w-full overflow-hidden rounded-t-lg">
             <Image
               src={BISCOITOS_FLORIDOS_PRODUCT.imageUrl}
               alt={`Imagem do ${BISCOITOS_FLORIDOS_PRODUCT.name}`}
@@ -2086,7 +2180,12 @@ export default function CardapioPage() {
           <div className="flex flex-1 flex-col p-5">
             <h2 className="font-serifDisplay text-2xl text-cocoa-900">{BISCOITOS_FLORIDOS_PRODUCT.name}</h2>
             <p className="mt-2 text-lg text-cocoa-700">{BISCOITOS_FLORIDOS_PRODUCT.description}</p>
-            <p className="mt-auto pt-4 text-lg font-semibold text-cocoa-900">{BISCOITOS_FLORIDOS_PRODUCT.priceLabel}</p>
+            <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+              <p className="text-lg font-semibold text-cocoa-900">{BISCOITOS_FLORIDOS_PRODUCT.priceLabel}</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-600 transition group-hover:text-cocoa-900">
+                Ver detalhes {"\u2192"}
+              </p>
+            </div>
           </div>
         </button>
       </section>
@@ -2094,27 +2193,15 @@ export default function CardapioPage() {
 
     {activeTab === "embalagens-macarons" ? (
       <section className="space-y-6">
-        <div className="rounded-lg border-l-4 border-rose-200/80 bg-rose-50/40 p-4 text-sm text-cocoa-700">
-          <p className="font-semibold text-cocoa-900">Informações importantes</p>
-          <p className="mt-2 text-sm">
-            Presenteie seus funcionários ou componha a caixa de convite de padrinhos.
-          </p>
-          <p className="mt-1 text-sm text-cocoa-700">
-            Para caixas de até 4 macarons, o pedido mínimo é de 10 caixinhas.
-          </p>
-          <p className="mt-1 text-sm text-cocoa-700">
-            Valores com TAG e fita inclusos.
-          </p>
-        </div>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {EMBALAGENS_MACARONS_PRODUCTS.map((item) => (
             <button
               key={item.id}
               type="button"
               onClick={() => openSimpleModal(item, "embalagens-macarons")}
-              className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 md:hover:-translate-y-1 md:hover:shadow-2xl"
+              className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 md:hover:-translate-y-1 md:hover:shadow-2xl md:hover:ring-1 md:hover:ring-rose-200/70"
             >
-              <div className="relative h-56 w-full overflow-hidden rounded-t-lg">
+              <div className="relative h-60 w-full overflow-hidden rounded-t-lg">
                 <Image
                   src={item.imageUrl}
                   alt={`Imagem da ${item.name}`}
@@ -2127,7 +2214,12 @@ export default function CardapioPage() {
                 <h2 className="font-serifDisplay text-2xl text-cocoa-900">{item.name}</h2>
                 <p className="mt-2 text-lg text-cocoa-700">{item.description}</p>
                 <p className="mt-1 text-xs text-cocoa-500">*consultar valor do mini macaron</p>
-                <p className="mt-auto pt-4 text-lg font-semibold text-cocoa-900">{item.priceLabel}</p>
+                <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+                  <p className="text-lg font-semibold text-cocoa-900">{item.priceLabel}</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-600 transition group-hover:text-cocoa-900">
+                    Ver detalhes {"\u2192"}
+                  </p>
+                </div>
               </div>
             </button>
           ))}
@@ -2143,9 +2235,9 @@ export default function CardapioPage() {
               key={item.id}
               type="button"
               onClick={() => openSimpleModal(item, "torres-macarons")}
-              className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 md:hover:-translate-y-1 md:hover:shadow-2xl"
+              className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 md:hover:-translate-y-1 md:hover:shadow-2xl md:hover:ring-1 md:hover:ring-rose-200/70"
             >
-              <div className="relative h-56 w-full overflow-hidden rounded-t-lg">
+              <div className="relative h-60 w-full overflow-hidden rounded-t-lg">
                 <Image
                   src={item.imageUrl}
                   alt={`Imagem da ${item.name}`}
@@ -2157,7 +2249,12 @@ export default function CardapioPage() {
               <div className="flex flex-1 flex-col p-5">
                 <h2 className="font-serifDisplay text-2xl text-cocoa-900">{item.name}</h2>
                 <p className="mt-2 text-lg text-cocoa-700">{item.description}</p>
-                <p className="mt-auto pt-4 text-lg font-semibold text-cocoa-900">{item.priceLabel}</p>
+                <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+                  <p className="text-lg font-semibold text-cocoa-900">{item.priceLabel}</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-600 transition group-hover:text-cocoa-900">
+                    Ver detalhes {"\u2192"}
+                  </p>
+                </div>
               </div>
             </button>
           ))}
@@ -2172,9 +2269,9 @@ export default function CardapioPage() {
             key={kit.id}
             type="button"
             onClick={() => openKitModal(kit)}
-            className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 md:hover:-translate-y-1 md:hover:shadow-2xl"
+            className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 md:hover:-translate-y-1 md:hover:shadow-2xl md:hover:ring-1 md:hover:ring-rose-200/70"
           >
-            <div className="relative h-60 w-full overflow-hidden rounded-t-lg">
+            <div className="relative h-64 w-full overflow-hidden rounded-t-lg">
               <Image
                 src={kit.imageUrl}
                 alt={`Imagem do ${kit.name}`}
@@ -2186,7 +2283,12 @@ export default function CardapioPage() {
             <div className="flex flex-1 flex-col p-5">
               <h2 className="font-serifDisplay text-2xl text-cocoa-900">{kit.name}</h2>
               <p className="mt-2 text-lg text-cocoa-700">{kit.description}</p>
-              <p className="mt-auto pt-4 text-lg font-semibold text-cocoa-900">{formatCurrency(kit.price)}</p>
+              <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+                <p className="text-lg font-semibold text-cocoa-900">{formatCurrency(kit.price)}</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-600 transition group-hover:text-cocoa-900">
+                  Ver detalhes {"\u2192"}
+                </p>
+              </div>
             </div>
           </button>
         ))}
@@ -2208,12 +2310,14 @@ export default function CardapioPage() {
     ) : null}
 
       {isCartOpen ? (
-        <aside className="fixed right-4 top-24 z-30 h-[min(85vh,calc(100vh-7rem))] w-[min(92vw,380px)] rounded-lg bg-white/95 p-5 shadow-soft backdrop-blur">
+        <aside className="fixed inset-x-0 bottom-0 top-14 z-10 w-screen overflow-hidden bg-white/95 px-5 pb-5 shadow-soft backdrop-blur sm:px-6 sm:pb-6">
           <div className="flex h-full flex-col">
-            <div className="relative z-10">
+            <div className="relative z-10 pt-3">
               <div className="flex items-baseline justify-between gap-3">
                 <h3 className="font-serifDisplay text-2xl text-cocoa-900">Resumo do pedido</h3>
-                <span className="text-sm font-semibold text-cocoa-700">{cart.length} itens</span>
+                <span className="text-sm font-semibold text-cocoa-700">
+                  {cart.length} {cart.length === 1 ? "item" : "itens"}
+                </span>
               </div>
             </div>
             <div className="relative z-0 mt-4 flex-1 max-h-[50vh] overflow-y-auto pr-1">
@@ -2226,14 +2330,16 @@ export default function CardapioPage() {
                       key={`${item.productId}-${item.decorationIds.join("|")}-${index}`}
                       className="rounded-xl bg-white shadow-md border border-gray-100 p-3"
                     >
-                      <p className="text-sm font-semibold text-cocoa-900">
-                      {item.quantity}x{" "}
-                      {item.category === "bolo"
-                        ? `Bolo ${item.productName}`
-                        : item.category === "macaron"
-                          ? "Macarons"
-                          : item.productName}
-                      </p>
+                      {item.category === "bolo" ? (
+                        <div>
+                          <p className="text-sm font-semibold text-cocoa-900">{`Bolo ${item.productName}`}</p>
+                          <p className="mt-0.5 text-xs font-semibold text-cocoa-700">{`${item.quantity} kg`}</p>
+                        </div>
+                      ) : (
+                        <p className="text-sm font-semibold text-cocoa-900">
+                          {`${item.quantity}x ${item.category === "macaron" ? "Macarons" : item.productName}`}
+                        </p>
+                      )}
                       {item.detailLines.map((line) => (
                         <p key={line} className="mt-1 text-xs text-cocoa-700">
                           {line}
@@ -2254,9 +2360,12 @@ export default function CardapioPage() {
             </div>
             <div className="mt-4 border-t border-rose-100 pt-4 pb-4">
               <div className="space-y-3">
-                <p className="text-sm font-semibold text-cocoa-900">Total geral: {formatCurrency(cartTotal)}</p>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-cocoa-700">Total geral</p>
+                  <p className="mt-1 text-2xl font-bold leading-none text-cocoa-900">{formatCurrency(cartTotal)}</p>
+                </div>
                 <label className="block text-base font-bold text-cocoa-900">
-                  Nome de quem vai receber o pedido
+                  Nome de quem vai retirar o pedido
                   <input
                     type="text"
                     value={customerName}
@@ -2270,7 +2379,7 @@ export default function CardapioPage() {
                   <input
                     type="date"
                     value={eventDate}
-                    min={todayISODate()}
+                    min={minOrderDate}
                     onChange={(event) => setEventDate(event.target.value)}
                     placeholder="Quando você precisa do pedido?"
                     className="mt-1 h-14 w-[calc(100%-0.5rem)] ml-2 rounded-lg border border-rose-200 px-6 py-2 text-lg leading-none outline-none ring-cocoa-700/30 focus:ring"
@@ -2353,8 +2462,8 @@ export default function CardapioPage() {
               </div>
             </div>
 
-            <div className="pt-4">
-              <p className="text-lg font-semibold text-cocoa-900">Total: {formatCurrency(modalTotal)}</p>
+            <div className="mt-4 shrink-0 border-t border-rose-100 bg-white pt-4">
+              <p className="text-2xl font-bold tracking-tight text-cocoa-900 sm:text-[1.75rem]">Total: {formatCurrency(modalTotal)}</p>
               <div className="modal-actions mt-4 flex w-full items-center justify-between gap-3">
                 <button
                   type="button"
@@ -2437,8 +2546,8 @@ export default function CardapioPage() {
               </div>
             </div>
 
-            <div className="pt-4">
-              <p className="text-lg font-semibold text-cocoa-900">Total: {formatCurrency(docinhoTotal)}</p>
+            <div className="mt-4 shrink-0 border-t border-rose-100 bg-white pt-4">
+              <p className="text-2xl font-bold tracking-tight text-cocoa-900 sm:text-[1.75rem]">Total: {formatCurrency(docinhoTotal)}</p>
               <div className="mt-4 flex flex-row gap-3">
                 <button
                   type="button"
@@ -2558,8 +2667,8 @@ export default function CardapioPage() {
               </div>
             </div>
 
-            <div className="pt-4">
-              <p className="text-lg font-semibold text-cocoa-900">Total: {formatCurrency(bombomTotal)}</p>
+            <div className="mt-4 shrink-0 border-t border-rose-100 bg-white pt-4">
+              <p className="text-2xl font-bold tracking-tight text-cocoa-900 sm:text-[1.75rem]">Total: {formatCurrency(bombomTotal)}</p>
               <p className="mt-1 text-xs text-cocoa-600">Consulte valores para quantidades maiores</p>
               <div className="mt-4 flex flex-row gap-3">
                 <button
@@ -2661,8 +2770,8 @@ export default function CardapioPage() {
               </div>
             </div>
 
-            <div className="pt-4">
-              <p className="text-lg font-semibold text-cocoa-900">Total: {formatCurrency(centoTotal)}</p>
+            <div className="mt-4 shrink-0 border-t border-rose-100 bg-white pt-4">
+              <p className="text-2xl font-bold tracking-tight text-cocoa-900 sm:text-[1.75rem]">Total: {formatCurrency(centoTotal)}</p>
               <div className="mt-4 flex flex-row gap-3">
                 <button
                   type="button"
@@ -2747,8 +2856,8 @@ export default function CardapioPage() {
               </div>
             </div>
 
-            <div className="pt-4">
-              <p className="text-lg font-semibold text-cocoa-900">Total: {formatCurrency(macaronTotal)}</p>
+            <div className="mt-4 shrink-0 border-t border-rose-100 bg-white pt-4">
+              <p className="text-2xl font-bold tracking-tight text-cocoa-900 sm:text-[1.75rem]">Total: {formatCurrency(macaronTotal)}</p>
               <div className="mt-4 flex flex-row gap-3">
                 <button
                   type="button"
@@ -2850,8 +2959,8 @@ export default function CardapioPage() {
               </div>
             </div>
 
-            <div className="pt-4">
-              <p className="text-lg font-semibold text-cocoa-900">Total: {formatCurrency(barraTotal)}</p>
+            <div className="mt-4 shrink-0 border-t border-rose-100 bg-white pt-4">
+              <p className="text-2xl font-bold tracking-tight text-cocoa-900 sm:text-[1.75rem]">Total: {formatCurrency(barraTotal)}</p>
               <div className="mt-4 flex flex-row gap-3">
                 <button
                   type="button"
@@ -2912,8 +3021,8 @@ export default function CardapioPage() {
               </div>
             </div>
 
-            <div className="pt-4">
-              <p className="text-lg font-semibold text-cocoa-900">Total: {formatCurrency(biscoitoFloridoTotal)}</p>
+            <div className="mt-4 shrink-0 border-t border-rose-100 bg-white pt-4">
+              <p className="text-2xl font-bold tracking-tight text-cocoa-900 sm:text-[1.75rem]">Total: {formatCurrency(biscoitoFloridoTotal)}</p>
               <div className="mt-4 flex flex-row gap-3">
                 <button
                   type="button"
@@ -2951,6 +3060,20 @@ export default function CardapioPage() {
               <h2 className="font-serifDisplay text-3xl text-cocoa-900">{selectedSimpleProduct.name}</h2>
               <p className="mt-2 text-lg text-cocoa-700">{selectedSimpleProduct.description}</p>
               <p className="mt-2 text-lg font-semibold text-cocoa-900">{selectedSimpleProduct.priceLabel}</p>
+              {selectedSimpleCategory === "embalagens-macarons" ? (
+                <div className="mt-3 rounded-lg bg-rose-50/35 p-4 text-sm text-cocoa-700">
+                  <p className="font-semibold text-cocoa-900">Informações importantes</p>
+                  <p className="mt-2 text-sm">
+                    Presenteie seus funcionários ou componha a caixa de convite de padrinhos.
+                  </p>
+                  <p className="mt-1 text-sm text-cocoa-700">
+                    Para caixas de até 4 macarons, o pedido mínimo é de 10 caixinhas.
+                  </p>
+                  <p className="mt-1 text-sm text-cocoa-700">
+                    Valores com TAG e fita inclusos.
+                  </p>
+                </div>
+              ) : null}
               {selectedSimpleCategory === "torres-macarons" ? (
                 <p className="mt-2 text-sm text-cocoa-700">
                   Caso haja devolução do suporte em perfeito estado, haverá estorno de R$90,00.
@@ -2975,8 +3098,8 @@ export default function CardapioPage() {
               </div>
             </div>
 
-            <div className="pt-4">
-              <p className="text-lg font-semibold text-cocoa-900">Total: {formatCurrency(simpleTotal)}</p>
+            <div className="mt-4 shrink-0 border-t border-rose-100 bg-white pt-4">
+              <p className="text-2xl font-bold tracking-tight text-cocoa-900 sm:text-[1.75rem]">Total: {formatCurrency(simpleTotal)}</p>
               <div className="mt-4 flex flex-row gap-3">
                 <button
                   type="button"
@@ -3131,8 +3254,8 @@ export default function CardapioPage() {
               </div>
             </div>
 
-            <div className="pt-4">
-              <p className="text-lg font-semibold text-cocoa-900">Total: {formatCurrency(kitTotal)}</p>
+            <div className="mt-4 shrink-0 border-t border-rose-100 bg-white pt-4">
+              <p className="text-2xl font-bold tracking-tight text-cocoa-900 sm:text-[1.75rem]">Total: {formatCurrency(kitTotal)}</p>
               <div className="mt-4 flex flex-row gap-3">
                 <button
                   type="button"
@@ -3150,6 +3273,14 @@ export default function CardapioPage() {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      ) : null}
+      {cartToastMessage ? (
+        <div className="pointer-events-none fixed bottom-24 left-4 right-4 z-50 flex justify-center md:bottom-6 md:left-auto md:right-6">
+          <div className="w-full max-w-sm rounded-xl border border-rose-100 bg-white/95 px-4 py-3 text-sm text-cocoa-800 shadow-2xl backdrop-blur-sm">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-rose-500">Carrinho</p>
+            <p className="mt-1 font-semibold text-cocoa-900">{cartToastMessage}</p>
           </div>
         </div>
       ) : null}

@@ -5,11 +5,13 @@ import { usePathname } from "next/navigation";
 import { brandSettings } from "@/lib/site-data";
 
 const CART_STATE_EVENT = "csg:cart-state";
+const CART_TOAST_EVENT = "csg:cart-toast";
 const DEFAULT_MESSAGE = "Olá! Vim pelo site e gostaria de fazer um pedido.";
 const HOME_SCROLL_THRESHOLD_PX = 240;
 
 export function WhatsAppFab() {
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isCartToastVisible, setIsCartToastVisible] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
   const href = `https://wa.me/${brandSettings.whatsappNumber}?text=${encodeURIComponent(DEFAULT_MESSAGE)}`;
@@ -27,8 +29,16 @@ export function WhatsAppFab() {
       const detail = (event as CustomEvent<{ isOpen: boolean }>).detail;
       setIsCartOpen(detail?.isOpen ?? false);
     };
+    const handleCartToast = (event: Event) => {
+      const detail = (event as CustomEvent<{ visible: boolean }>).detail;
+      setIsCartToastVisible(detail?.visible ?? false);
+    };
     window.addEventListener(CART_STATE_EVENT, handleCartState);
-    return () => window.removeEventListener(CART_STATE_EVENT, handleCartState);
+    window.addEventListener(CART_TOAST_EVENT, handleCartToast);
+    return () => {
+      window.removeEventListener(CART_STATE_EVENT, handleCartState);
+      window.removeEventListener(CART_TOAST_EVENT, handleCartToast);
+    };
   }, []);
 
   useEffect(() => {
@@ -39,6 +49,7 @@ export function WhatsAppFab() {
   }, []);
 
   if (isCartOpen) return null;
+  if (isCartToastVisible) return null;
   if (isEventosPage) return null;
   if (!isScrolled) return null;
 

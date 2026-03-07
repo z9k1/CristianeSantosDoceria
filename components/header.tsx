@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ShoppingCart, X } from "lucide-react";
 import { brandSettings } from "@/lib/site-data";
@@ -31,9 +32,19 @@ export function Header() {
     return () => window.removeEventListener(CART_STATE_EVENT, handleCartState);
   }, []);
 
+  const pathname = usePathname();
+  const router = useRouter();
+  const basePath = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "");
+  const cardapioPath = basePath ? `${basePath}/cardapio` : "/cardapio";
+  const normalizedPath = pathname.endsWith("/") ? pathname.slice(0, -1) : pathname;
+
   const toggleCart = () => {
     if (typeof window === "undefined") return;
-    window.dispatchEvent(new Event(CART_TOGGLE_EVENT));
+    if (normalizedPath === cardapioPath) {
+      window.dispatchEvent(new Event(CART_TOGGLE_EVENT));
+      return;
+    }
+    router.push(`${cardapioPath}?openCart=1`);
   };
 
   return (
