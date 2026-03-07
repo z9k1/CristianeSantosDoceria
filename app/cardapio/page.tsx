@@ -142,6 +142,13 @@ const CART_STORAGE_KEY = "csg_cardapio_bolos_cart_v1";
 
 const categoryConfigs = [
   {
+    id: "kits",
+    label: "Kits para festa",
+    title: "Kits para festa",
+    description: "Combinações pensadas para celebrações pequenas e práticas.",
+    isReady: true
+  },
+  {
     id: "bolos",
     label: "Bolos artesanais",
     title: "Bolos artesanais",
@@ -188,13 +195,6 @@ const categoryConfigs = [
     label: "Torres de macarons",
     title: "Torres de macarons",
     description: "Torres que elevam a mesa de doces.",
-    isReady: true
-  },
-  {
-    id: "kits",
-    label: "Kits para festa",
-    title: "Kits para festa",
-    description: "Combinações pensadas para celebrações pequenas e práticas.",
     isReady: true
   }
 ] as const;
@@ -1685,13 +1685,13 @@ export default function CardapioPage() {
       <p className="mx-auto mt-3 max-w-2xl text-lg text-cocoa-700">{activeTabInfo.description}</p>
     </header>
 
-  <nav className="mb-8 flex flex-wrap justify-center gap-8 text-xl !font-medium uppercase !tracking-tight">
+  <nav className="mb-8 flex flex-nowrap gap-5 overflow-x-auto whitespace-nowrap text-lg !font-medium uppercase !tracking-tight md:flex-wrap md:justify-center md:gap-8 md:text-xl">
       {categoryConfigs.map((tab) => (
         <button
           key={tab.id}
           type="button"
           onClick={() => setActiveTab(tab.id)}
-          className={`transition pb-1 ${activeTab === tab.id ? "border-b-2 border-cocoa-900 text-cocoa-900" : "text-cocoa-600 hover:text-cocoa-900"}`}
+          className={`shrink-0 rounded-full px-6 py-3.5 transition ${activeTab === tab.id ? "bg-rose-100/70 text-cocoa-900" : "text-cocoa-600 hover:text-cocoa-900"}`}
         >
           {tab.label}
         </button>

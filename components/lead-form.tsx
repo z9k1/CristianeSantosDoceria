@@ -104,11 +104,30 @@ export function LeadForm({ sourcePage }: LeadFormProps) {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
-        <div className="flex flex-col gap-1 pt-6">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-x-6 md:gap-y-2">
+        <label
+          htmlFor="event-type"
+          className="hidden text-base font-bold uppercase tracking-widest text-cocoa-500 md:block"
+        >
+          Selecionar tipo de evento
+        </label>
+        <label
+          htmlFor="event-date"
+          className="hidden text-base font-bold uppercase tracking-widest text-cocoa-800 md:block"
+        >
+          Data da Retirada / Evento
+        </label>
+        <label
+          htmlFor="guest-count"
+          className="hidden text-base font-bold uppercase tracking-widest text-cocoa-500 md:block"
+        >
+          Quantidade de convidados
+        </label>
+
+        <div className="flex flex-col gap-1">
           <label
             htmlFor="event-type"
-            className="text-base font-bold uppercase tracking-widest text-cocoa-500"
+            className="text-base font-bold uppercase tracking-widest text-cocoa-500 md:hidden"
           >
             Selecionar tipo de evento
           </label>
@@ -122,8 +141,14 @@ export function LeadForm({ sourcePage }: LeadFormProps) {
           />
         </div>
         <div className="flex flex-col gap-1">
-          <label className="text-base font-bold uppercase tracking-widest text-cocoa-800">Data da Retirada / Evento</label>
+          <label
+            htmlFor="event-date"
+            className="text-base font-bold uppercase tracking-widest text-cocoa-800 md:hidden"
+          >
+            Data da Retirada / Evento
+          </label>
           <input
+            id="event-date"
             type="date"
             value={form.date}
             placeholder="Quando você precisa do pedido?"
@@ -132,10 +157,10 @@ export function LeadForm({ sourcePage }: LeadFormProps) {
           />
           <p className="text-sm text-cocoa-700">Lembre-se: pedidos com no mínimo 5 dias de antecedência.</p>
         </div>
-        <div className="flex flex-col gap-1 pt-6">
+        <div className="flex flex-col gap-1">
           <label
             htmlFor="guest-count"
-            className="text-base font-bold uppercase tracking-widest text-cocoa-500"
+            className="text-base font-bold uppercase tracking-widest text-cocoa-500 md:hidden"
           >
             Quantidade de convidados
           </label>
@@ -144,7 +169,7 @@ export function LeadForm({ sourcePage }: LeadFormProps) {
             placeholder="Qtd. convidados"
             value={form.guest_count}
             onChange={(e) => setForm((prev) => ({ ...prev, guest_count: e.target.value }))}
-            className="min-w-[150px] h-14 w-full rounded-lg border border-rose-200 px-6 !text-lg placeholder:text-lg outline-none ring-cocoa-700/40 focus:ring"
+            className="h-14 w-full rounded-lg border border-rose-200 px-6 !text-lg placeholder:text-lg outline-none ring-cocoa-700/40 focus:ring"
           />
         </div>
       </div>
