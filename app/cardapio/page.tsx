@@ -767,6 +767,12 @@ function parseISODate(value: string): Date {
 }
 
 export default function CardapioPage() {
+  const productCardClass =
+    "group flex h-full w-full flex-col overflow-hidden rounded-2xl border border-rose-100/80 bg-white/92 text-left shadow-[0_16px_40px_rgba(93,55,44,0.09)] transition duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 md:hover:-translate-y-1.5 md:hover:shadow-[0_22px_52px_rgba(93,55,44,0.14)]";
+  const productImageClass = "object-cover transition duration-700 group-hover:scale-[1.04]";
+  const productMetaClass = "mt-auto flex items-end justify-between gap-3 pt-5";
+  const productCtaClass =
+    "text-[11px] font-semibold uppercase tracking-[0.14em] text-cocoa-500 transition group-hover:text-cocoa-800";
   const [activeTab, setActiveTab] = useState<TabId>("bolos");
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -2006,23 +2012,23 @@ export default function CardapioPage() {
             key={bolo.id}
             type="button"
             onClick={() => openModal(bolo)}
-            className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 md:hover:-translate-y-1 md:hover:shadow-2xl md:hover:ring-1 md:hover:ring-rose-200/70"
+            className={productCardClass}
           >
-            <div className="relative h-64 w-full overflow-hidden rounded-t-lg">
+            <div className="relative h-72 w-full overflow-hidden rounded-t-2xl">
               <Image
                 src={bolo.imageUrl}
                 alt={`Imagem do bolo ${bolo.name}`}
                 fill
-                className="object-cover transition duration-500 group-hover:scale-105"
+                className={productImageClass}
                 sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
               />
             </div>
             <div className="flex flex-1 flex-col p-5">
               <h2 className="font-serifDisplay text-2xl text-cocoa-900">{bolo.name}</h2>
               <p className="mt-2 text-lg text-cocoa-700">{bolo.description}</p>
-              <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+              <div className={productMetaClass}>
                 <p className="text-lg font-semibold text-cocoa-900">{formatCurrency(bolo.basePrice)} / 1kg</p>
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-600 transition group-hover:text-cocoa-900">
+                <p className={productCtaClass}>
                   Ver detalhes {"\u2192"}
                 </p>
               </div>
@@ -2037,25 +2043,25 @@ export default function CardapioPage() {
         <button
           type="button"
           onClick={() => openDocinhoModal(DOCINHO_PRODUCT)}
-          className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 md:hover:-translate-y-1 md:hover:shadow-2xl md:hover:ring-1 md:hover:ring-rose-200/70"
+          className={productCardClass}
         >
-          <div className="relative h-64 w-full overflow-hidden rounded-t-lg">
+          <div className="relative h-72 w-full overflow-hidden rounded-t-2xl">
             <Image
               src={DOCINHO_PRODUCT.imageUrl}
               alt={`Imagem do ${DOCINHO_PRODUCT.name}`}
               fill
-              className="object-cover transition duration-500 group-hover:scale-105"
+              className={productImageClass}
               sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
             />
           </div>
           <div className="flex flex-1 flex-col p-5">
             <h2 className="font-serifDisplay text-2xl text-cocoa-900">{DOCINHO_PRODUCT.name}</h2>
             <p className="mt-2 text-lg text-cocoa-700">{DOCINHO_PRODUCT.description}</p>
-            <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+            <div className={productMetaClass}>
               <p className="text-lg font-semibold text-cocoa-900">
                 A partir de {formatCurrency(minDocinhoPrice)} / unidade
               </p>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-600 transition group-hover:text-cocoa-900">
+              <p className={productCtaClass}>
                 Ver detalhes {"\u2192"}
               </p>
             </div>
@@ -2064,23 +2070,23 @@ export default function CardapioPage() {
         <button
           type="button"
           onClick={() => openCentoModal(CENTO_18G_PRODUCT)}
-          className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 md:hover:-translate-y-1 md:hover:shadow-2xl md:hover:ring-1 md:hover:ring-rose-200/70"
+          className={productCardClass}
         >
-          <div className="relative h-64 w-full overflow-hidden rounded-t-lg">
+          <div className="relative h-72 w-full overflow-hidden rounded-t-2xl">
             <Image
               src={CENTO_18G_PRODUCT.imageUrl}
               alt={`Imagem do ${CENTO_18G_PRODUCT.name}`}
               fill
-              className="object-cover transition duration-500 group-hover:scale-105"
+              className={productImageClass}
               sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
             />
           </div>
           <div className="flex flex-1 flex-col p-5">
             <h2 className="font-serifDisplay text-2xl text-cocoa-900">{CENTO_18G_PRODUCT.name}</h2>
             <p className="mt-2 text-lg text-cocoa-700">{CENTO_18G_PRODUCT.description}</p>
-            <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+            <div className={productMetaClass}>
               <p className="text-lg font-semibold text-cocoa-900">{formatCurrency(CENTO_18G_PRODUCT.unitPrice)} / cento</p>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-600 transition group-hover:text-cocoa-900">
+              <p className={productCtaClass}>
                 Ver detalhes {"\u2192"}
               </p>
             </div>
@@ -2089,23 +2095,23 @@ export default function CardapioPage() {
         <button
           type="button"
           onClick={() => openCentoModal(CENTO_13G_PRODUCT)}
-          className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 md:hover:-translate-y-1 md:hover:shadow-2xl md:hover:ring-1 md:hover:ring-rose-200/70"
+          className={productCardClass}
         >
-          <div className="relative h-64 w-full overflow-hidden rounded-t-lg">
+          <div className="relative h-72 w-full overflow-hidden rounded-t-2xl">
             <Image
               src={CENTO_13G_PRODUCT.imageUrl}
               alt={`Imagem do ${CENTO_13G_PRODUCT.name}`}
               fill
-              className="object-cover transition duration-500 group-hover:scale-105"
+              className={productImageClass}
               sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
             />
           </div>
           <div className="flex flex-1 flex-col p-5">
             <h2 className="font-serifDisplay text-2xl text-cocoa-900">{CENTO_13G_PRODUCT.name}</h2>
             <p className="mt-2 text-lg text-cocoa-700">{CENTO_13G_PRODUCT.description}</p>
-            <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+            <div className={productMetaClass}>
               <p className="text-lg font-semibold text-cocoa-900">{formatCurrency(CENTO_13G_PRODUCT.unitPrice)} / cento</p>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-600 transition group-hover:text-cocoa-900">
+              <p className={productCtaClass}>
                 Ver detalhes {"\u2192"}
               </p>
             </div>
@@ -2114,25 +2120,25 @@ export default function CardapioPage() {
         <button
           type="button"
           onClick={() => openBombomModal(BOMBOM_PRODUCT)}
-          className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 md:hover:-translate-y-1 md:hover:shadow-2xl md:hover:ring-1 md:hover:ring-rose-200/70"
+          className={productCardClass}
         >
-          <div className="relative h-64 w-full overflow-hidden rounded-t-lg">
+          <div className="relative h-72 w-full overflow-hidden rounded-t-2xl">
             <Image
               src={BOMBOM_PRODUCT.imageUrl}
               alt={`Imagem do ${BOMBOM_PRODUCT.name}`}
               fill
-              className="object-cover transition duration-500 group-hover:scale-105"
+              className={productImageClass}
               sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
             />
           </div>
           <div className="flex flex-1 flex-col p-5">
             <h2 className="font-serifDisplay text-2xl text-cocoa-900">{BOMBOM_PRODUCT.name}</h2>
             <p className="mt-2 text-lg text-cocoa-700">{BOMBOM_PRODUCT.description}</p>
-            <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+            <div className={productMetaClass}>
               <p className="text-lg font-semibold text-cocoa-900">
                 A partir de {formatCurrency(minBombomPrice)} / unidade
               </p>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-600 transition group-hover:text-cocoa-900">
+              <p className={productCtaClass}>
                 Ver detalhes {"\u2192"}
               </p>
             </div>
@@ -2146,14 +2152,14 @@ export default function CardapioPage() {
         <button
           type="button"
           onClick={() => openMacaronModal(MACARON_PRODUCT)}
-          className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 md:hover:-translate-y-1 md:hover:shadow-2xl md:hover:ring-1 md:hover:ring-rose-200/70"
+          className={productCardClass}
         >
-          <div className="relative h-64 w-full overflow-hidden rounded-t-lg">
+          <div className="relative h-72 w-full overflow-hidden rounded-t-2xl">
             <Image
               src={MACARON_PRODUCT.imageUrl}
               alt={`Imagem do ${MACARON_PRODUCT.name}`}
               fill
-              className="object-cover transition duration-500 group-hover:scale-105"
+              className={productImageClass}
               sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
             />
           </div>
@@ -2162,11 +2168,11 @@ export default function CardapioPage() {
             <p className="mt-2 whitespace-pre-line text-lg text-cocoa-700">
               {MACARON_PRODUCT.description}
             </p>
-            <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+            <div className={productMetaClass}>
               <p className="text-lg font-semibold text-cocoa-900">
                 A partir de {formatCurrency(minMacaronPrice)} / unidade
               </p>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-600 transition group-hover:text-cocoa-900">
+              <p className={productCtaClass}>
                 Ver detalhes {"\u2192"}
               </p>
             </div>
@@ -2175,26 +2181,26 @@ export default function CardapioPage() {
         <button
           type="button"
           onClick={() => openCentoModal(CENTO_MACARONS_MINI_PRODUCT)}
-          className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 md:hover:-translate-y-1 md:hover:shadow-2xl md:hover:ring-1 md:hover:ring-rose-200/70"
+          className={productCardClass}
         >
-          <div className="relative h-64 w-full overflow-hidden rounded-t-lg">
+          <div className="relative h-72 w-full overflow-hidden rounded-t-2xl">
             <Image
               src={CENTO_MACARONS_MINI_PRODUCT.imageUrl}
               alt={`Imagem do ${CENTO_MACARONS_MINI_PRODUCT.name}`}
               fill
-              className="object-cover transition duration-500 group-hover:scale-105"
+              className={productImageClass}
               sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
             />
           </div>
           <div className="flex flex-1 flex-col p-5">
             <h2 className="font-serifDisplay text-2xl text-cocoa-900">{CENTO_MACARONS_MINI_PRODUCT.name}</h2>
             <p className="mt-2 text-lg text-cocoa-700">{CENTO_MACARONS_MINI_PRODUCT.description}</p>
-            <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+            <div className={productMetaClass}>
               <p className="text-lg font-semibold text-cocoa-900">
                 {CENTO_MACARONS_MINI_PRODUCT.priceLabel ??
                   `${formatCurrency(CENTO_MACARONS_MINI_PRODUCT.unitPrice)} / cento (por sabor)`}
               </p>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-600 transition group-hover:text-cocoa-900">
+              <p className={productCtaClass}>
                 Ver detalhes {"\u2192"}
               </p>
             </div>
@@ -2208,25 +2214,25 @@ export default function CardapioPage() {
         <button
           type="button"
           onClick={() => openBarraModal(BARRAS_FLORIDAS_PRODUCT)}
-          className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 md:hover:-translate-y-1 md:hover:shadow-2xl md:hover:ring-1 md:hover:ring-rose-200/70"
+          className={productCardClass}
         >
-          <div className="relative h-64 w-full overflow-hidden rounded-t-lg">
+          <div className="relative h-72 w-full overflow-hidden rounded-t-2xl">
             <Image
               src={BARRAS_FLORIDAS_PRODUCT.imageUrl}
               alt={`Imagem do ${BARRAS_FLORIDAS_PRODUCT.name}`}
               fill
-              className="object-cover transition duration-500 group-hover:scale-105"
+              className={productImageClass}
               sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
             />
           </div>
           <div className="flex flex-1 flex-col p-5">
             <h2 className="font-serifDisplay text-2xl text-cocoa-900">{BARRAS_FLORIDAS_PRODUCT.name}</h2>
             <p className="mt-2 text-lg text-cocoa-700">{BARRAS_FLORIDAS_PRODUCT.description}</p>
-            <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+            <div className={productMetaClass}>
               <p className="text-lg font-semibold text-cocoa-900">
                 A partir de {formatCurrency(minBarraPrice)} / unidade
               </p>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-600 transition group-hover:text-cocoa-900">
+              <p className={productCtaClass}>
                 Ver detalhes {"\u2192"}
               </p>
             </div>
@@ -2240,23 +2246,23 @@ export default function CardapioPage() {
         <button
           type="button"
           onClick={() => openBiscoitoFloridoModal(BISCOITOS_FLORIDOS_PRODUCT)}
-          className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 md:hover:-translate-y-1 md:hover:shadow-2xl md:hover:ring-1 md:hover:ring-rose-200/70"
+          className={productCardClass}
         >
-          <div className="relative h-64 w-full overflow-hidden rounded-t-lg">
+          <div className="relative h-72 w-full overflow-hidden rounded-t-2xl">
             <Image
               src={BISCOITOS_FLORIDOS_PRODUCT.imageUrl}
               alt={`Imagem do ${BISCOITOS_FLORIDOS_PRODUCT.name}`}
               fill
-              className="object-cover transition duration-500 group-hover:scale-105"
+              className={productImageClass}
               sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
             />
           </div>
           <div className="flex flex-1 flex-col p-5">
             <h2 className="font-serifDisplay text-2xl text-cocoa-900">{BISCOITOS_FLORIDOS_PRODUCT.name}</h2>
             <p className="mt-2 text-lg text-cocoa-700">{BISCOITOS_FLORIDOS_PRODUCT.description}</p>
-            <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+            <div className={productMetaClass}>
               <p className="text-lg font-semibold text-cocoa-900">{BISCOITOS_FLORIDOS_PRODUCT.priceLabel}</p>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-600 transition group-hover:text-cocoa-900">
+              <p className={productCtaClass}>
                 Ver detalhes {"\u2192"}
               </p>
             </div>
@@ -2273,14 +2279,14 @@ export default function CardapioPage() {
               key={item.id}
               type="button"
               onClick={() => openSimpleModal(item, "embalagens-macarons")}
-              className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 md:hover:-translate-y-1 md:hover:shadow-2xl md:hover:ring-1 md:hover:ring-rose-200/70"
+              className={productCardClass}
             >
-              <div className="relative h-60 w-full overflow-hidden rounded-t-lg">
+              <div className="relative h-72 w-full overflow-hidden rounded-t-2xl">
                 <Image
                   src={item.imageUrl}
                   alt={`Imagem da ${item.name}`}
                   fill
-                  className="object-cover transition duration-500 group-hover:scale-105"
+                  className={productImageClass}
                   sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
                 />
               </div>
@@ -2290,9 +2296,9 @@ export default function CardapioPage() {
                 {item.id === "caixa-acrilica-7x4" ? (
                   <p className="mt-1 text-xs text-cocoa-500">*consultar valor do mini macaron</p>
                 ) : null}
-                <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+                <div className={productMetaClass}>
                   <p className="text-lg font-semibold text-cocoa-900">{item.priceLabel}</p>
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-600 transition group-hover:text-cocoa-900">
+                  <p className={productCtaClass}>
                     Ver detalhes {"\u2192"}
                   </p>
                 </div>
@@ -2311,23 +2317,23 @@ export default function CardapioPage() {
               key={item.id}
               type="button"
               onClick={() => openSimpleModal(item, "torres-macarons")}
-              className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 md:hover:-translate-y-1 md:hover:shadow-2xl md:hover:ring-1 md:hover:ring-rose-200/70"
+              className={productCardClass}
             >
-              <div className="relative h-60 w-full overflow-hidden rounded-t-lg">
+              <div className="relative h-72 w-full overflow-hidden rounded-t-2xl">
                 <Image
                   src={item.imageUrl}
                   alt={`Imagem da ${item.name}`}
                   fill
-                  className="object-cover transition duration-500 group-hover:scale-105"
+                  className={productImageClass}
                   sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
                 />
               </div>
               <div className="flex flex-1 flex-col p-5">
                 <h2 className="font-serifDisplay text-2xl text-cocoa-900">{item.name}</h2>
                 <p className="mt-2 text-lg text-cocoa-700">{item.description}</p>
-                <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+                <div className={productMetaClass}>
                   <p className="text-lg font-semibold text-cocoa-900">{item.priceLabel}</p>
-                  <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-600 transition group-hover:text-cocoa-900">
+                  <p className={productCtaClass}>
                     Ver detalhes {"\u2192"}
                   </p>
                 </div>
@@ -2345,23 +2351,23 @@ export default function CardapioPage() {
             key={kit.id}
             type="button"
             onClick={() => openKitModal(kit)}
-            className="group flex h-full w-full flex-col overflow-hidden rounded-lg bg-white/90 text-left shadow-panel transition duration-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-300/70 md:hover:-translate-y-1 md:hover:shadow-2xl md:hover:ring-1 md:hover:ring-rose-200/70"
+            className={productCardClass}
           >
-            <div className="relative h-64 w-full overflow-hidden rounded-t-lg">
+            <div className="relative h-72 w-full overflow-hidden rounded-t-2xl">
               <Image
                 src={kit.imageUrl}
                 alt={`Imagem do ${kit.name}`}
                 fill
-                className="object-cover transition duration-500 group-hover:scale-105"
+                className={productImageClass}
                 sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
               />
             </div>
             <div className="flex flex-1 flex-col p-5">
               <h2 className="font-serifDisplay text-2xl text-cocoa-900">{kit.name}</h2>
               <p className="mt-2 text-lg text-cocoa-700">{kit.description}</p>
-              <div className="mt-auto flex items-end justify-between gap-3 pt-4">
+              <div className={productMetaClass}>
                 <p className="text-lg font-semibold text-cocoa-900">{formatCurrency(kit.price)}</p>
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-600 transition group-hover:text-cocoa-900">
+                <p className={productCtaClass}>
                   Ver detalhes {"\u2192"}
                 </p>
               </div>
@@ -2386,34 +2392,38 @@ export default function CardapioPage() {
     ) : null}
 
       {isCartOpen ? (
-        <div className="fixed inset-0 z-30 bg-cocoa-950/40 backdrop-blur-[2px]">
+        <div className="animate-cart-fade-in fixed inset-0 z-30 bg-cocoa-950/32 backdrop-blur-[2px]">
           <button
             type="button"
             aria-label="Fechar resumo do pedido"
             onClick={() => setIsCartOpen(false)}
             className="absolute inset-0 sm:hidden"
           />
-          <aside className="absolute inset-x-0 bottom-0 flex h-[min(90dvh,46rem)] flex-col overflow-hidden rounded-t-[2rem] bg-white shadow-soft sm:inset-y-0 sm:right-0 sm:left-auto sm:h-screen sm:w-full sm:max-w-[28rem] sm:rounded-none sm:bg-white/95">
-            <div className="flex items-center justify-center pt-3 sm:hidden">
-              <span className="h-1.5 w-14 rounded-full bg-cocoa-200" />
+          <aside className="animate-cart-sheet-in absolute inset-x-0 bottom-0 flex h-[min(90dvh,46rem)] flex-col overflow-hidden rounded-t-[2rem] bg-white shadow-soft sm:inset-y-0 sm:right-0 sm:left-auto sm:h-screen sm:w-full sm:max-w-[28rem] sm:rounded-none sm:bg-white/95">
+            <div className="flex items-center justify-center pt-2.5 sm:hidden">
+              <span className="h-1.5 w-12 rounded-full bg-cocoa-200/90" />
             </div>
-            <div className="flex items-start justify-between gap-4 px-5 pb-4 pt-4 sm:px-6 sm:pb-5 sm:pt-14">
+            <div className="flex items-start justify-between gap-4 px-5 pb-3 pt-3 sm:px-6 sm:pb-5 sm:pt-14">
               <div>
-                <h3 className="font-serifDisplay text-[1.95rem] leading-none text-cocoa-900 sm:text-2xl">
+                <h3 className="font-serifDisplay text-[1.8rem] leading-none text-cocoa-900 sm:text-2xl">
                   Resumo do pedido
                 </h3>
-                <p className="mt-2 text-sm text-cocoa-700">Revise os itens antes de finalizar.</p>
+                <p className="mt-1.5 text-sm text-cocoa-600">Revise os itens antes de finalizar.</p>
               </div>
-              <div className="flex items-center gap-3">
-                <span className="pt-1 text-sm font-semibold text-cocoa-700">
+              <div className="flex items-center gap-2.5">
+                <span className="pt-0.5 text-sm font-medium text-cocoa-600">
                   {cart.length} {cart.length === 1 ? "item" : "itens"}
                 </span>
                 <button
                   type="button"
                   onClick={() => setIsCartOpen(false)}
-                  className="inline-flex h-11 items-center justify-center rounded-full border border-rose-200 px-5 text-sm font-semibold text-cocoa-800 transition md:hover:bg-rose-50"
+                  aria-label="Fechar resumo do pedido"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-rose-200/90 text-cocoa-700 transition md:hover:bg-rose-50"
                 >
-                  Fechar
+                  <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true">
+                    <path d="M6 6l12 12" strokeLinecap="round" />
+                    <path d="M18 6L6 18" strokeLinecap="round" />
+                  </svg>
                 </button>
               </div>
             </div>
