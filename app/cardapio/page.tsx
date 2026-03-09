@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { brandSettings } from "@/lib/site-data";
 import { assetPath } from "@/lib/asset-path";
+import { getBusinessHoursStatus } from "@/lib/business-hours";
 import { generateOrderId } from "@/lib/order-id";
 
 type Bolo = {
@@ -362,7 +363,7 @@ const BOMBOM_PRODUCT: BombomProduct = {
   name: "Bombons personalizados",
   description:
     "Bombons finos e personalizados para eventos e presentes. Feitos com chocolate nobre e acabamento artístico.",
-  imageUrl: assetPath("/images/bolos/ipiranga2.jpeg")
+  imageUrl: assetPath("/images/bolos/caixa-2-bombons-personalizados.jpeg")
 };
 
 const BOMBOM_MODES: BombomMode[] = [
@@ -533,7 +534,7 @@ const EMBALAGENS_MACARONS_PRODUCTS: SimpleProduct[] = [
     description: "Acomoda 4 mini macarons*",
     unitPrice: 18,
     priceLabel: "R$ 18,00",
-    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+    imageUrl: assetPath("/images/bolos/caixade4minimacarons.jpeg")
   },
   {
     id: "caixa-acrilica-6x6",
@@ -541,7 +542,7 @@ const EMBALAGENS_MACARONS_PRODUCTS: SimpleProduct[] = [
     description: "Acomoda 2 macarons médios",
     unitPrice: 18,
     priceLabel: "R$ 18,00",
-    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+    imageUrl: assetPath("/images/bolos/macaronspers.jpeg")
   },
   {
     id: "caixa-visor-1",
@@ -549,7 +550,7 @@ const EMBALAGENS_MACARONS_PRODUCTS: SimpleProduct[] = [
     description: "Acomoda 1 macaron médio",
     unitPrice: 10,
     priceLabel: "R$ 10,00",
-    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+    imageUrl: assetPath("/images/bolos/macaronspers.jpeg")
   },
   {
     id: "caixa-visor-2",
@@ -557,7 +558,7 @@ const EMBALAGENS_MACARONS_PRODUCTS: SimpleProduct[] = [
     description: "Acomoda 2 macarons médios",
     unitPrice: 18,
     priceLabel: "R$ 18,00",
-    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+    imageUrl: assetPath("/images/bolos/macaronspers.jpeg")
   },
   {
     id: "caixa-visor-3",
@@ -565,7 +566,7 @@ const EMBALAGENS_MACARONS_PRODUCTS: SimpleProduct[] = [
     description: "Acomoda 3 macarons médios",
     unitPrice: 25,
     priceLabel: "R$ 25,00",
-    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+    imageUrl: assetPath("/images/bolos/3macaronmediosemvisor.jpeg")
   },
   {
     id: "caixa-visor-4",
@@ -573,7 +574,7 @@ const EMBALAGENS_MACARONS_PRODUCTS: SimpleProduct[] = [
     description: "Acomoda 4 macarons médios",
     unitPrice: 30,
     priceLabel: "R$ 30,00",
-    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+    imageUrl: assetPath("/images/bolos/caixacomxande4macarons.jpeg")
   },
   {
     id: "caixa-visor-6",
@@ -581,7 +582,7 @@ const EMBALAGENS_MACARONS_PRODUCTS: SimpleProduct[] = [
     description: "Acomoda 6 macarons médios",
     unitPrice: 50,
     priceLabel: "R$ 50,00",
-    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+    imageUrl: assetPath("/images/bolos/macaronspers.jpeg")
   },
   {
     id: "caixa-visor-7-champanhe",
@@ -589,7 +590,7 @@ const EMBALAGENS_MACARONS_PRODUCTS: SimpleProduct[] = [
     description: "Acomoda 7 macarons médios + champanhe à escolha",
     unitPrice: 110,
     priceLabel: "A partir de R$ 110,00",
-    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+    imageUrl: assetPath("/images/bolos/caixa7macaronscomchampanheaescolha.jpeg")
   }
 ];
 
@@ -600,7 +601,7 @@ const TORRES_MACARONS_PRODUCTS: SimpleProduct[] = [
     description: "47 macarons | Altura: 15cm | Base: 18cm",
     unitPrice: 395,
     priceLabel: "R$ 395,00",
-    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+    imageUrl: assetPath("/images/bolos/torremacaron4andares.jpeg")
   },
   {
     id: "torre-5-andares",
@@ -608,7 +609,7 @@ const TORRES_MACARONS_PRODUCTS: SimpleProduct[] = [
     description: "69 macarons | Altura: 21cm | Base: 20cm",
     unitPrice: 575,
     priceLabel: "R$ 575,00",
-    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+    imageUrl: assetPath("/images/bolos/torremacaron5andares.jpeg")
   },
   {
     id: "torre-6-andares",
@@ -616,7 +617,7 @@ const TORRES_MACARONS_PRODUCTS: SimpleProduct[] = [
     description: "95 macarons | Altura: 25cm | Base: 23cm",
     unitPrice: 745,
     priceLabel: "R$ 745,00",
-    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+    imageUrl: assetPath("/images/bolos/torremacaron6andares.jpeg")
   },
   {
     id: "torre-8-andares",
@@ -624,7 +625,7 @@ const TORRES_MACARONS_PRODUCTS: SimpleProduct[] = [
     description: "159 macarons | Altura: 35cm | Base: 28cm",
     unitPrice: 1195,
     priceLabel: "R$ 1.195,00",
-    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+    imageUrl: assetPath("/images/bolos/torremacaron8andares.jpeg")
   },
   {
     id: "torre-10-andares",
@@ -632,7 +633,7 @@ const TORRES_MACARONS_PRODUCTS: SimpleProduct[] = [
     description: "237 macarons | Altura: 55cm | Base: 33cm",
     unitPrice: 1750,
     priceLabel: "R$ 1.750,00",
-    imageUrl: assetPath("/images/bolos/bolo-placeholder.jpg")
+    imageUrl: assetPath("/images/bolos/torremacaron10andares.jpeg")
   }
 ];
 
@@ -731,7 +732,7 @@ const MACARON_PRODUCT: MacaronProduct = {
   name: "Macarons",
   description:
     "Macarons artesanais por unidade.\nPedido mínimo: 10 unidades\n10 a 19 unidades: até 2 sabores e 1 cor\nAcima de 20 unidades: até 4 sabores e 2 cores.",
-  imageUrl: assetPath("/images/bolos/macarons.jpeg")
+  imageUrl: assetPath("/images/bolos/macaronspers.jpeg")
 };
 
 const MACARON_FLAVORS: MacaronFlavor[] = [
@@ -826,6 +827,7 @@ export default function CardapioPage() {
   const [eventDate, setEventDate] = useState("");
   const [submitError, setSubmitError] = useState("");
   const [hasHydratedCart, setHasHydratedCart] = useState(false);
+  const [businessClock, setBusinessClock] = useState(() => new Date());
   const cartToastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const minOrderDate = useMemo(() => minimumOrderDateISO(5), []);
   const activeTabInfo = categoryConfigs.find((tab) => tab.id === activeTab) ?? categoryConfigs[0];
@@ -903,6 +905,14 @@ export default function CardapioPage() {
       }
       window.dispatchEvent(new CustomEvent(CART_TOAST_EVENT, { detail: { visible: false } }));
     };
+  }, []);
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setBusinessClock(new Date());
+    }, 30000);
+
+    return () => window.clearInterval(intervalId);
   }, []);
 
   const isModalOpen = Boolean(
@@ -1053,6 +1063,7 @@ export default function CardapioPage() {
     () => cart.reduce((acc, item) => acc + item.lineTotal, 0),
     [cart]
   );
+  const businessStatus = useMemo(() => getBusinessHoursStatus(businessClock), [businessClock]);
 
   const badgeCount = useMemo(() => cart.length, [cart]);
 
@@ -1847,6 +1858,10 @@ export default function CardapioPage() {
 
   const finalizeOrder = () => {
     if (cart.length === 0) return;
+    if (!businessStatus.isOpen) {
+      setSubmitError(`Fora do horário de funcionamento. ${businessStatus.nextOpenLabel}`);
+      return;
+    }
     if (!hasValidCustomerName(customerName)) {
       setSubmitError("Informe um nome válido para continuar.");
       return;
@@ -1902,6 +1917,22 @@ export default function CardapioPage() {
       <p className="mx-auto mt-3 max-w-2xl text-lg text-cocoa-700">
         Doces artesanais para festas e eventos, com pedido rápido e finalização pelo WhatsApp.
       </p>
+      <div
+        className={`mx-auto mt-5 max-w-2xl rounded-xl border px-4 py-3 text-left shadow-sm ${
+          businessStatus.isOpen ? "border-emerald-200 bg-emerald-50/80" : "border-amber-200 bg-amber-50/90"
+        }`}
+      >
+        <p className={`text-sm font-semibold ${businessStatus.isOpen ? "text-emerald-800" : "text-amber-800"}`}>
+          {businessStatus.statusLabel}
+        </p>
+        <p className="mt-1 text-sm text-cocoa-800">{businessStatus.detailLabel}</p>
+        <p className="mt-1 text-sm text-cocoa-700">{businessStatus.nextOpenLabel}</p>
+        {businessStatus.countdownLabel ? (
+          <p className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-cocoa-600">
+            {businessStatus.countdownLabel}
+          </p>
+        ) : null}
+      </div>
     </header>
 
   <div className="mb-10">
@@ -2213,7 +2244,9 @@ export default function CardapioPage() {
               <div className="flex flex-1 flex-col p-5">
                 <h2 className="font-serifDisplay text-2xl text-cocoa-900">{item.name}</h2>
                 <p className="mt-2 text-lg text-cocoa-700">{item.description}</p>
-                <p className="mt-1 text-xs text-cocoa-500">*consultar valor do mini macaron</p>
+                {item.id === "caixa-acrilica-7x4" ? (
+                  <p className="mt-1 text-xs text-cocoa-500">*consultar valor do mini macaron</p>
+                ) : null}
                 <div className="mt-auto flex items-end justify-between gap-3 pt-4">
                   <p className="text-lg font-semibold text-cocoa-900">{item.priceLabel}</p>
                   <p className="text-xs font-semibold uppercase tracking-[0.16em] text-cocoa-600 transition group-hover:text-cocoa-900">
@@ -2388,11 +2421,27 @@ export default function CardapioPage() {
                     Lembre-se: pedidos com no mínimo 5 dias de antecedência.
                   </p>
                 </label>
+                <div
+                  className={`rounded-lg border px-4 py-3 text-sm ${
+                    businessStatus.isOpen ? "border-emerald-200 bg-emerald-50/70" : "border-amber-200 bg-amber-50/80"
+                  }`}
+                >
+                  <p className={`font-semibold ${businessStatus.isOpen ? "text-emerald-800" : "text-amber-800"}`}>
+                    {businessStatus.statusLabel}
+                  </p>
+                  <p className="mt-1 text-cocoa-700">{businessStatus.detailLabel}</p>
+                  <p className="mt-1 text-cocoa-700">{businessStatus.nextOpenLabel}</p>
+                  {businessStatus.countdownLabel ? (
+                    <p className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-cocoa-600">
+                      {businessStatus.countdownLabel}
+                    </p>
+                  ) : null}
+                </div>
                 {submitError ? <p className="text-xs text-rose-700">{submitError}</p> : null}
                 <button
                   type="button"
                   onClick={finalizeOrder}
-                  disabled={cart.length === 0}
+                  disabled={cart.length === 0 || !businessStatus.isOpen}
                   className="inline-flex h-12 md:h-14 w-full items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-6 text-base md:text-lg font-semibold uppercase tracking-[0.2em] text-white transition md:enabled:hover:from-cocoa-800 md:enabled:hover:to-cocoa-950 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Finalizar pedido
@@ -3059,6 +3108,9 @@ export default function CardapioPage() {
               </div>
               <h2 className="font-serifDisplay text-3xl text-cocoa-900">{selectedSimpleProduct.name}</h2>
               <p className="mt-2 text-lg text-cocoa-700">{selectedSimpleProduct.description}</p>
+              {selectedSimpleProduct.id === "caixa-acrilica-7x4" ? (
+                <p className="mt-1 text-xs text-cocoa-500">*consultar valor do mini macaron</p>
+              ) : null}
               <p className="mt-2 text-lg font-semibold text-cocoa-900">{selectedSimpleProduct.priceLabel}</p>
               {selectedSimpleCategory === "embalagens-macarons" ? (
                 <div className="mt-3 rounded-lg bg-rose-50/35 p-4 text-sm text-cocoa-700">
