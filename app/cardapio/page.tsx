@@ -773,6 +773,16 @@ export default function CardapioPage() {
   const productMetaClass = "mt-auto flex items-end justify-between gap-3 pt-5";
   const productCtaClass =
     "text-[11px] font-semibold uppercase tracking-[0.14em] text-cocoa-500 transition group-hover:text-cocoa-800";
+  const modalOverlayClass = "animate-modal-fade fixed inset-0 z-40 flex items-center justify-center bg-cocoa-900/52 p-4";
+  const modalPanelClass =
+    "animate-modal-pop flex w-full max-h-[92vh] flex-col overflow-hidden rounded-[1.65rem] border border-rose-100/80 bg-white p-5 shadow-[0_28px_60px_rgba(50,30,24,0.28)] sm:p-7";
+  const modalImageWrapClass = "relative mb-5 h-60 w-full overflow-hidden rounded-[1.2rem] bg-rose-50/40";
+  const modalImageClass = "object-cover transition duration-700";
+  const modalFooterClass = "mt-5 shrink-0 border-t border-rose-100 bg-white pt-4";
+  const modalSecondaryButtonClass =
+    "inline-flex h-12 flex-1 items-center justify-center rounded-xl border border-rose-200 px-4 text-base font-semibold uppercase tracking-[0.1em] text-cocoa-800 transition md:hover:bg-rose-50";
+  const modalPrimaryButtonClass =
+    "inline-flex min-h-[48px] items-center justify-center rounded-xl bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 py-2 text-center text-sm font-semibold uppercase leading-tight tracking-[0.08em] text-white whitespace-normal transition sm:h-12 sm:py-0 sm:text-base sm:whitespace-nowrap sm:tracking-[0.12em] md:hover:from-cocoa-800 md:hover:to-cocoa-950";
   const [activeTab, setActiveTab] = useState<TabId>("bolos");
   const [cart, setCart] = useState<CartItem[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -2529,16 +2539,16 @@ export default function CardapioPage() {
       ) : null}
 
       {selectedBolo ? (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-cocoa-900/50 p-4">
-          <div className="flex w-full max-w-[520px] max-h-[90vh] flex-col rounded-lg bg-white p-6 shadow-soft sm:p-8">
+        <div className={modalOverlayClass}>
+          <div className={`${modalPanelClass} max-w-[560px]`}>
             <div className="flex-1 overflow-y-auto">
               <div className="modal-body flex w-full flex-col gap-4 [&>*]:w-full">
-                <div className="relative h-56 w-full overflow-hidden rounded-lg">
+                <div className={modalImageWrapClass}>
                 <Image
                   src={selectedBolo.imageUrl}
                   alt={`Imagem do bolo ${selectedBolo.name}`}
                   fill
-                  className="object-cover"
+                  className={modalImageClass}
                   sizes="(max-width: 768px) 100vw, 540px"
                 />
                 </div>
@@ -2605,20 +2615,20 @@ export default function CardapioPage() {
               </div>
             </div>
 
-            <div className="mt-4 shrink-0 border-t border-rose-100 bg-white pt-4">
+            <div className={modalFooterClass}>
               <p className="text-2xl font-bold tracking-tight text-cocoa-900 sm:text-[1.75rem]">Total: {formatCurrency(modalTotal)}</p>
               <div className="modal-actions mt-4 flex w-full items-center justify-between gap-3">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="inline-flex h-12 flex-1 items-center justify-center rounded-lg border border-rose-200 px-4 text-base font-semibold uppercase tracking-[0.12em] text-cocoa-800 md:hover:bg-rose-50"
+                  className={modalSecondaryButtonClass}
                 >
                   Fechar
                 </button>
                 <button
                   type="button"
                   onClick={addToCart}
-                  className="inline-flex min-h-[48px] flex-1 items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 py-2 text-center text-sm font-semibold uppercase leading-tight tracking-[0.08em] text-white whitespace-normal sm:h-12 sm:py-0 sm:text-base sm:whitespace-nowrap sm:tracking-[0.12em] md:hover:from-cocoa-800 md:hover:to-cocoa-950"
+                  className={`${modalPrimaryButtonClass} flex-1`}
                 >
                   Adicionar ao carrinho
                 </button>
@@ -2629,15 +2639,15 @@ export default function CardapioPage() {
       ) : null}
 
       {selectedDocinho ? (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-cocoa-900/50 p-4">
-          <div className="w-full max-w-lg max-h-[95vh] rounded-lg bg-white p-6 sm:p-8 shadow-soft flex flex-col">
+        <div className={modalOverlayClass}>
+          <div className={`${modalPanelClass} max-w-lg`}>
             <div className="flex-1 overflow-y-auto pr-1">
-              <div className="relative mb-4 h-56 w-full overflow-hidden rounded-lg">
+              <div className={modalImageWrapClass}>
                 <Image
                   src={selectedDocinho.imageUrl}
                   alt={`Imagem do ${selectedDocinho.name}`}
                   fill
-                  className="object-cover"
+                  className={modalImageClass}
                   sizes="(max-width: 768px) 100vw, 540px"
                 />
               </div>
@@ -2670,7 +2680,7 @@ export default function CardapioPage() {
                   Seleção de sabor
                   <div className="mt-3 space-y-2 pb-4">
                     {DOCINHO_FLAVORS.map((flavor) => (
-                      <label key={flavor.id} className="flex items-start gap-3 text-sm font-normal text-cocoa-700">
+                      <label key={flavor.id} className="option-row flex items-start gap-3 text-sm font-normal text-cocoa-700">
                         <input
                           type="radio"
                           name="docinho-flavor"
@@ -2689,13 +2699,13 @@ export default function CardapioPage() {
               </div>
             </div>
 
-            <div className="mt-4 shrink-0 border-t border-rose-100 bg-white pt-4">
+            <div className={modalFooterClass}>
               <p className="text-2xl font-bold tracking-tight text-cocoa-900 sm:text-[1.75rem]">Total: {formatCurrency(docinhoTotal)}</p>
               <div className="mt-4 flex flex-row gap-3">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="inline-flex h-12 flex-1 items-center justify-center rounded-lg border border-rose-200 px-4 text-base font-semibold uppercase tracking-[0.12em] text-cocoa-800 md:hover:bg-rose-50"
+                  className={modalSecondaryButtonClass}
                 >
                   Fechar
                 </button>
@@ -2703,7 +2713,7 @@ export default function CardapioPage() {
                   type="button"
                   onClick={addDocinhoToCart}
                   disabled={!selectedFlavor}
-                  className="inline-flex min-h-[48px] flex-[2] items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 py-2 text-center text-sm font-semibold uppercase leading-tight tracking-[0.08em] text-white whitespace-normal sm:h-12 sm:py-0 sm:text-base sm:whitespace-nowrap sm:tracking-[0.12em] md:hover:from-cocoa-800 md:hover:to-cocoa-950 disabled:cursor-not-allowed disabled:opacity-50"
+                  className={`${modalPrimaryButtonClass} flex-[2] disabled:cursor-not-allowed disabled:opacity-50`}
                 >
                   Adicionar ao carrinho
                 </button>
@@ -2714,15 +2724,15 @@ export default function CardapioPage() {
       ) : null}
 
       {selectedBombom ? (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-cocoa-900/50 p-4">
-          <div className="w-full max-w-lg max-h-[95vh] rounded-lg bg-white p-6 sm:p-8 shadow-soft flex flex-col">
+        <div className={modalOverlayClass}>
+          <div className={`${modalPanelClass} max-w-lg`}>
             <div className="flex-1 overflow-y-auto pr-1">
-              <div className="relative mb-4 h-56 w-full overflow-hidden rounded-lg">
+              <div className={modalImageWrapClass}>
                 <Image
                   src={selectedBombom.imageUrl}
                   alt={`Imagem do ${selectedBombom.name}`}
                   fill
-                  className="object-cover"
+                  className={modalImageClass}
                   sizes="(max-width: 768px) 100vw, 540px"
                 />
               </div>
@@ -2734,7 +2744,7 @@ export default function CardapioPage() {
                   Modalidade de compra
                   <div className="mt-3 space-y-2">
                     {BOMBOM_MODES.map((mode) => (
-                      <label key={mode.id} className="flex items-start gap-3 text-sm font-normal text-cocoa-700">
+                      <label key={mode.id} className="option-row flex items-start gap-3 text-sm font-normal text-cocoa-700">
                         <input
                           type="radio"
                           name="bombom-mode"
@@ -2784,7 +2794,7 @@ export default function CardapioPage() {
                   Seleção de sabor
                   <div className="mt-3 space-y-2">
                     {BOMBOM_FLAVORS.map((flavor) => (
-                      <label key={flavor.id} className="flex items-start gap-3 text-sm font-normal text-cocoa-700">
+                      <label key={flavor.id} className="option-row flex items-start gap-3 text-sm font-normal text-cocoa-700">
                         <input
                           type="radio"
                           name="bombom-flavor"
@@ -2810,21 +2820,21 @@ export default function CardapioPage() {
               </div>
             </div>
 
-            <div className="mt-4 shrink-0 border-t border-rose-100 bg-white pt-4">
+            <div className={modalFooterClass}>
               <p className="text-2xl font-bold tracking-tight text-cocoa-900 sm:text-[1.75rem]">Total: {formatCurrency(bombomTotal)}</p>
               <p className="mt-1 text-xs text-cocoa-600">Consulte valores para quantidades maiores</p>
               <div className="mt-4 flex flex-row gap-3">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="inline-flex h-12 flex-1 items-center justify-center rounded-lg border border-rose-200 px-4 text-base font-semibold uppercase tracking-[0.12em] text-cocoa-800 md:hover:bg-rose-50"
+                  className={modalSecondaryButtonClass}
                 >
                   Fechar
                 </button>
                 <button
                   type="button"
                   onClick={addBombomToCart}
-                  className="inline-flex min-h-[48px] flex-[2] items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 py-2 text-center text-sm font-semibold uppercase leading-tight tracking-[0.08em] text-white whitespace-normal sm:h-12 sm:py-0 sm:text-base sm:whitespace-nowrap sm:tracking-[0.12em] md:hover:from-cocoa-800 md:hover:to-cocoa-950"
+                  className={`${modalPrimaryButtonClass} flex-[2]`}
                 >
                   Adicionar ao carrinho
                 </button>
@@ -2835,15 +2845,15 @@ export default function CardapioPage() {
       ) : null}
 
       {selectedCento ? (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-cocoa-900/50 p-4">
-          <div className="w-full max-w-lg max-h-[95vh] rounded-lg bg-white p-6 sm:p-8 shadow-soft flex flex-col">
+        <div className={modalOverlayClass}>
+          <div className={`${modalPanelClass} max-w-lg`}>
             <div className="flex-1 overflow-y-auto pr-1">
-              <div className="relative mb-4 h-56 w-full overflow-hidden rounded-lg">
+              <div className={modalImageWrapClass}>
                 <Image
                   src={selectedCento.imageUrl}
                   alt={`Imagem do ${selectedCento.name}`}
                   fill
-                  className="object-cover"
+                  className={modalImageClass}
                   sizes="(max-width: 768px) 100vw, 540px"
                 />
               </div>
@@ -2874,7 +2884,7 @@ export default function CardapioPage() {
                       const checked = selectedCentoFlavorIds.includes(flavor.id);
                       const isAtLimit = selectedCentoFlavorIds.length >= maxCentoFlavors;
                       return (
-                        <label key={flavor.id} className="flex items-start gap-3 text-sm font-normal text-cocoa-700">
+                        <label key={flavor.id} className="option-row flex items-start gap-3 text-sm font-normal text-cocoa-700">
                           <input
                             type="checkbox"
                             checked={checked}
@@ -2913,20 +2923,20 @@ export default function CardapioPage() {
               </div>
             </div>
 
-            <div className="mt-4 shrink-0 border-t border-rose-100 bg-white pt-4">
+            <div className={modalFooterClass}>
               <p className="text-2xl font-bold tracking-tight text-cocoa-900 sm:text-[1.75rem]">Total: {formatCurrency(centoTotal)}</p>
               <div className="mt-4 flex flex-row gap-3">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="inline-flex h-12 flex-1 items-center justify-center rounded-lg border border-rose-200 px-4 text-base font-semibold uppercase tracking-[0.12em] text-cocoa-800 md:hover:bg-rose-50"
+                  className={modalSecondaryButtonClass}
                 >
                   Fechar
                 </button>
                 <button
                   type="button"
                   onClick={addCentoToCart}
-                  className="inline-flex min-h-[48px] flex-[2] items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 py-2 text-center text-sm font-semibold uppercase leading-tight tracking-[0.08em] text-white whitespace-normal sm:h-12 sm:py-0 sm:text-base sm:whitespace-nowrap sm:tracking-[0.12em] md:hover:from-cocoa-800 md:hover:to-cocoa-950"
+                  className={`${modalPrimaryButtonClass} flex-[2]`}
                 >
                   Adicionar ao carrinho
                 </button>
@@ -2937,15 +2947,15 @@ export default function CardapioPage() {
       ) : null}
 
       {selectedMacaron ? (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-cocoa-900/50 p-4">
-          <div className="w-full max-w-lg max-h-[95vh] rounded-lg bg-white p-6 sm:p-8 shadow-soft flex flex-col">
+        <div className={modalOverlayClass}>
+          <div className={`${modalPanelClass} max-w-lg`}>
             <div className="flex-1 overflow-y-auto pr-1">
-              <div className="relative mb-4 h-56 w-full overflow-hidden rounded-lg">
+              <div className={modalImageWrapClass}>
                 <Image
                   src={selectedMacaron.imageUrl}
                   alt={`Imagem do ${selectedMacaron.name}`}
                   fill
-                  className="object-cover"
+                  className={modalImageClass}
                   sizes="(max-width: 768px) 100vw, 540px"
                 />
               </div>
@@ -2980,7 +2990,7 @@ export default function CardapioPage() {
                   Sabores disponíveis
                   <div className="mt-3 space-y-2 pb-2">
                     {MACARON_FLAVORS.map((flavor) => (
-                      <label key={flavor.id} className="flex items-start gap-3 text-sm font-normal text-cocoa-700">
+                      <label key={flavor.id} className="option-row flex items-start gap-3 text-sm font-normal text-cocoa-700">
                         <input
                           type="radio"
                           name="macaron-flavor"
@@ -2999,13 +3009,13 @@ export default function CardapioPage() {
               </div>
             </div>
 
-            <div className="mt-4 shrink-0 border-t border-rose-100 bg-white pt-4">
+            <div className={modalFooterClass}>
               <p className="text-2xl font-bold tracking-tight text-cocoa-900 sm:text-[1.75rem]">Total: {formatCurrency(macaronTotal)}</p>
               <div className="mt-4 flex flex-row gap-3">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="inline-flex h-12 flex-1 items-center justify-center rounded-lg border border-rose-200 px-4 text-base font-semibold uppercase tracking-[0.12em] text-cocoa-800 md:hover:bg-rose-50"
+                  className={modalSecondaryButtonClass}
                 >
                   Fechar
                 </button>
@@ -3013,7 +3023,7 @@ export default function CardapioPage() {
                   type="button"
                   onClick={addMacaronToCart}
                   disabled={Boolean(macaronQuantityError) || !selectedMacaronFlavor}
-                  className="inline-flex min-h-[48px] flex-1 items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 py-2 text-center text-xs font-semibold uppercase leading-tight tracking-[0.08em] text-white whitespace-normal transition sm:h-12 sm:py-0 sm:text-sm sm:whitespace-nowrap sm:tracking-[0.12em] md:hover:from-cocoa-800 md:hover:to-cocoa-950 disabled:cursor-not-allowed disabled:opacity-50"
+                  className={`${modalPrimaryButtonClass} flex-1 text-xs sm:text-sm disabled:cursor-not-allowed disabled:opacity-50`}
                 >
                   Adicionar ao carrinho
                 </button>
@@ -3024,15 +3034,15 @@ export default function CardapioPage() {
       ) : null}
 
       {selectedBarra ? (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-cocoa-900/50 p-4">
-          <div className="w-full max-w-lg max-h-[95vh] rounded-lg bg-white p-6 sm:p-8 shadow-soft flex flex-col">
+        <div className={modalOverlayClass}>
+          <div className={`${modalPanelClass} max-w-lg`}>
             <div className="flex-1 overflow-y-auto pr-1">
-              <div className="relative mb-4 h-56 w-full overflow-hidden rounded-lg">
+              <div className={modalImageWrapClass}>
                 <Image
                   src={selectedBarra.imageUrl}
                   alt={`Imagem do ${selectedBarra.name}`}
                   fill
-                  className="object-cover"
+                  className={modalImageClass}
                   sizes="(max-width: 768px) 100vw, 540px"
                 />
               </div>
@@ -3044,7 +3054,7 @@ export default function CardapioPage() {
                   Seleção de tamanho
                   <div className="mt-3 space-y-2">
                     {BARRAS_FLORIDAS_SIZES.map((size) => (
-                      <label key={size.id} className="flex items-start gap-3 text-sm font-normal text-cocoa-700">
+                      <label key={size.id} className="option-row flex items-start gap-3 text-sm font-normal text-cocoa-700">
                         <input
                           type="radio"
                           name="barra-size"
@@ -3067,7 +3077,7 @@ export default function CardapioPage() {
                     {BARRAS_FLORIDAS_CHOCOLATES.map((chocolate) => (
                       <label
                         key={chocolate.id}
-                        className="flex items-start gap-3 text-sm font-normal text-cocoa-700"
+                        className="option-row flex items-start gap-3 text-sm font-normal text-cocoa-700"
                       >
                         <input
                           type="radio"
@@ -3102,20 +3112,20 @@ export default function CardapioPage() {
               </div>
             </div>
 
-            <div className="mt-4 shrink-0 border-t border-rose-100 bg-white pt-4">
+            <div className={modalFooterClass}>
               <p className="text-2xl font-bold tracking-tight text-cocoa-900 sm:text-[1.75rem]">Total: {formatCurrency(barraTotal)}</p>
               <div className="mt-4 flex flex-row gap-3">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="inline-flex h-12 flex-1 items-center justify-center rounded-lg border border-rose-200 px-4 text-base font-semibold uppercase tracking-[0.12em] text-cocoa-800 md:hover:bg-rose-50"
+                  className={modalSecondaryButtonClass}
                 >
                   Fechar
                 </button>
                 <button
                   type="button"
                   onClick={addBarraToCart}
-                  className="inline-flex min-h-[48px] flex-[2] items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 py-2 text-center text-sm font-semibold uppercase leading-tight tracking-[0.08em] text-white whitespace-normal sm:h-12 sm:py-0 sm:text-base sm:whitespace-nowrap sm:tracking-[0.12em] md:hover:from-cocoa-800 md:hover:to-cocoa-950"
+                  className={`${modalPrimaryButtonClass} flex-[2]`}
                 >
                   Adicionar ao carrinho
                 </button>
@@ -3126,15 +3136,15 @@ export default function CardapioPage() {
       ) : null}
 
       {selectedBiscoitoFlorido ? (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-cocoa-900/50 p-4">
-          <div className="w-full max-w-lg max-h-[95vh] rounded-lg bg-white p-6 sm:p-8 shadow-soft flex flex-col">
+        <div className={modalOverlayClass}>
+          <div className={`${modalPanelClass} max-w-lg`}>
             <div className="flex-1 overflow-y-auto pr-1">
-              <div className="relative mb-4 h-56 w-full overflow-hidden rounded-lg">
+              <div className={modalImageWrapClass}>
                 <Image
                   src={selectedBiscoitoFlorido.imageUrl}
                   alt={`Imagem do ${selectedBiscoitoFlorido.name}`}
                   fill
-                  className="object-cover"
+                  className={modalImageClass}
                   sizes="(max-width: 768px) 100vw, 540px"
                 />
               </div>
@@ -3164,20 +3174,20 @@ export default function CardapioPage() {
               </div>
             </div>
 
-            <div className="mt-4 shrink-0 border-t border-rose-100 bg-white pt-4">
+            <div className={modalFooterClass}>
               <p className="text-2xl font-bold tracking-tight text-cocoa-900 sm:text-[1.75rem]">Total: {formatCurrency(biscoitoFloridoTotal)}</p>
               <div className="mt-4 flex flex-row gap-3">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="inline-flex h-12 flex-1 items-center justify-center rounded-lg border border-rose-200 px-4 text-base font-semibold uppercase tracking-[0.12em] text-cocoa-800 md:hover:bg-rose-50"
+                  className={modalSecondaryButtonClass}
                 >
                   Fechar
                 </button>
                 <button
                   type="button"
                   onClick={addBiscoitoFloridoToCart}
-                  className="inline-flex min-h-[48px] flex-[2] items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 py-2 text-center text-sm font-semibold uppercase leading-tight tracking-[0.08em] text-white whitespace-normal sm:h-12 sm:py-0 sm:text-base sm:whitespace-nowrap sm:tracking-[0.12em] md:hover:from-cocoa-800 md:hover:to-cocoa-950"
+                  className={`${modalPrimaryButtonClass} flex-[2]`}
                 >
                   Adicionar ao carrinho
                 </button>
@@ -3188,15 +3198,15 @@ export default function CardapioPage() {
       ) : null}
 
       {selectedSimpleProduct ? (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-cocoa-900/50 p-4">
-          <div className="w-full max-w-lg max-h-[95vh] rounded-lg bg-white p-6 sm:p-8 shadow-soft flex flex-col">
+        <div className={modalOverlayClass}>
+          <div className={`${modalPanelClass} max-w-lg`}>
             <div className="flex-1 overflow-y-auto pr-1">
-              <div className="relative mb-4 h-56 w-full overflow-hidden rounded-lg">
+              <div className={modalImageWrapClass}>
                 <Image
                   src={selectedSimpleProduct.imageUrl}
                   alt={`Imagem do ${selectedSimpleProduct.name}`}
                   fill
-                  className="object-cover"
+                  className={modalImageClass}
                   sizes="(max-width: 768px) 100vw, 540px"
                 />
               </div>
@@ -3244,20 +3254,20 @@ export default function CardapioPage() {
               </div>
             </div>
 
-            <div className="mt-4 shrink-0 border-t border-rose-100 bg-white pt-4">
+            <div className={modalFooterClass}>
               <p className="text-2xl font-bold tracking-tight text-cocoa-900 sm:text-[1.75rem]">Total: {formatCurrency(simpleTotal)}</p>
               <div className="mt-4 flex flex-row gap-3">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="inline-flex h-12 flex-1 items-center justify-center rounded-lg border border-rose-200 px-4 text-base font-semibold uppercase tracking-[0.12em] text-cocoa-800 md:hover:bg-rose-50"
+                  className={modalSecondaryButtonClass}
                 >
                   Fechar
                 </button>
                 <button
                   type="button"
                   onClick={addSimpleToCart}
-                  className="inline-flex min-h-[48px] flex-[2] items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 py-2 text-center text-sm font-semibold uppercase leading-tight tracking-[0.08em] text-white whitespace-normal sm:h-12 sm:py-0 sm:text-base sm:whitespace-nowrap sm:tracking-[0.12em] md:hover:from-cocoa-800 md:hover:to-cocoa-950"
+                  className={`${modalPrimaryButtonClass} flex-[2]`}
                 >
                   Adicionar ao carrinho
                 </button>
@@ -3268,15 +3278,15 @@ export default function CardapioPage() {
       ) : null}
 
       {selectedKitProduct ? (
-        <div className="fixed inset-0 z-40 flex items-center justify-center bg-cocoa-900/50 p-4">
-          <div className="w-full max-w-lg max-h-[95vh] rounded-lg bg-white p-6 sm:p-8 shadow-soft flex flex-col">
+        <div className={modalOverlayClass}>
+          <div className={`${modalPanelClass} max-w-lg`}>
             <div className="flex-1 overflow-y-auto pr-1">
-              <div className="relative mb-4 h-56 w-full overflow-hidden rounded-lg">
+              <div className={modalImageWrapClass}>
                 <Image
                   src={selectedKitProduct.imageUrl}
                   alt={`Imagem do ${selectedKitProduct.name}`}
                   fill
-                  className="object-cover"
+                  className={modalImageClass}
                   sizes="(max-width: 768px) 100vw, 540px"
                 />
               </div>
@@ -3288,7 +3298,7 @@ export default function CardapioPage() {
                   Sabor do bolo
                   <div className="mt-3 space-y-2">
                     {KIT_CAKE_FLAVORS.map((flavor) => (
-                      <label key={flavor.id} className="flex items-start gap-3 text-sm font-normal text-cocoa-700">
+                      <label key={flavor.id} className="option-row flex items-start gap-3 text-sm font-normal text-cocoa-700">
                         <input
                           type="radio"
                           name="kit-cake-flavor"
@@ -3309,7 +3319,7 @@ export default function CardapioPage() {
                   Cobertura do bolo
                   <div className="mt-3 space-y-2">
                     {KIT_COVERINGS.map((covering) => (
-                      <label key={covering.id} className="flex items-start gap-3 text-sm font-normal text-cocoa-700">
+                      <label key={covering.id} className="option-row flex items-start gap-3 text-sm font-normal text-cocoa-700">
                         <input
                           type="radio"
                           name="kit-covering"
@@ -3337,7 +3347,7 @@ export default function CardapioPage() {
                       const disabled = (!checked && atLimit) || macaronsBlocked;
 
                       return (
-                        <label key={decoration.id} className="flex items-start gap-3 text-sm font-normal text-cocoa-700">
+                        <label key={decoration.id} className="option-row flex items-start gap-3 text-sm font-normal text-cocoa-700">
                           <input
                             type="checkbox"
                             checked={checked}
@@ -3396,7 +3406,7 @@ export default function CardapioPage() {
                       const checked = kitDocinhoIds.includes(flavor.id);
                       const disabled = !checked && kitDocinhoIds.length >= 3;
                       return (
-                        <label key={flavor.id} className="flex items-start gap-3 text-sm font-normal text-cocoa-700">
+                        <label key={flavor.id} className="option-row flex items-start gap-3 text-sm font-normal text-cocoa-700">
                           <input
                             type="checkbox"
                             checked={checked}
@@ -3423,20 +3433,20 @@ export default function CardapioPage() {
               </div>
             </div>
 
-            <div className="mt-4 shrink-0 border-t border-rose-100 bg-white pt-4">
+            <div className={modalFooterClass}>
               <p className="text-2xl font-bold tracking-tight text-cocoa-900 sm:text-[1.75rem]">Total: {formatCurrency(kitTotal)}</p>
               <div className="mt-4 flex flex-row gap-3">
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="inline-flex h-12 flex-1 items-center justify-center rounded-lg border border-rose-200 px-4 text-base font-semibold uppercase tracking-[0.12em] text-cocoa-800 md:hover:bg-rose-50"
+                  className={modalSecondaryButtonClass}
                 >
                   Fechar
                 </button>
                 <button
                   type="button"
                   onClick={addKitToCart}
-                  className="inline-flex min-h-[48px] flex-[2] items-center justify-center rounded-lg bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-4 py-2 text-center text-sm font-semibold uppercase leading-tight tracking-[0.08em] text-white whitespace-normal sm:h-12 sm:py-0 sm:text-base sm:whitespace-nowrap sm:tracking-[0.12em] md:hover:from-cocoa-800 md:hover:to-cocoa-950"
+                  className={`${modalPrimaryButtonClass} flex-[2]`}
                 >
                   Adicionar ao carrinho
                 </button>
