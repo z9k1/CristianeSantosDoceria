@@ -144,7 +144,7 @@ export default function HomePage() {
           <p className="mt-3 text-sm text-cocoa-700">Ação única para conferir opções e sabores disponíveis.</p>
         </Reveal>
         <div className="mt-6 flex justify-center">
-          <CtaLink label="Ver cardápio" href="/cardapio" eventName="click_ifood" className="px-8 py-3" external={false} />
+          <CtaLink label="Ver cardápio" href={cardapioPath} eventName="click_ifood" className="px-8 py-3" external={false} />
         </div>
       </section>
     </div>

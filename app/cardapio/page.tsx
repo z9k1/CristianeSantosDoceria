@@ -2508,7 +2508,7 @@ export default function CardapioPage() {
                   type="button"
                   onClick={finalizeOrder}
                   disabled={cart.length === 0 || !businessStatus.isOpen}
-                  className="inline-flex h-12 w-full items-center justify-center rounded-xl bg-gradient-to-br from-cocoa-700 to-cocoa-900 px-6 text-base font-semibold uppercase tracking-[0.14em] text-white transition md:h-14 md:text-lg md:tracking-[0.2em] md:enabled:hover:from-cocoa-800 md:enabled:hover:to-cocoa-950 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex h-12 w-full items-center justify-center rounded-xl bg-gradient-to-br from-rose-500 to-rose-700 px-6 text-base font-semibold uppercase tracking-[0.14em] text-white transition md:h-14 md:text-lg md:tracking-[0.2em] md:enabled:hover:from-rose-700 md:enabled:hover:to-rose-900 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Finalizar pedido
                 </button>
