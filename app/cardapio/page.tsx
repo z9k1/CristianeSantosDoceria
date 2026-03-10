@@ -72,7 +72,7 @@ type BarraProduct = {
 };
 
 type BarraSizeOption = {
-  id: "mini-30g" | "barra-130g" | "barra-200g";
+  id: "mini-30g" | "mini-30g-fita-tag" | "barra-130g" | "barra-200g";
   label: string;
   price: number;
 };
@@ -173,13 +173,6 @@ const categoryConfigs = [
     label: "Doces finos",
     title: "Doces finos",
     description: "Pedidos por cento. Sabores exclusivos para sua festa.",
-    isReady: true
-  },
-  {
-    id: "doces-lembrancas",
-    label: "Lembrancinhas",
-    title: "Lembrancinhas",
-    description: "Opções presenteáveis e lembranças para datas especiais.",
     isReady: true
   },
   {
@@ -487,6 +480,16 @@ const CENTO_MACARONS_MINI_FLAVORS: CentoFlavor[] = [
   { id: "pistache", label: "Pistache" }
 ];
 
+const CENTO_CAKE_DONUT_PRODUCT: CentoProduct = {
+  id: "cento-cake-donuts",
+  name: "Cento de Cake Donuts",
+  description:
+    "Donuts artesanais com cobertura de chocolate e decoração florida. R$ 400,00 / cento, com escolha de até 4 sabores.",
+  imageUrl: assetPath("/images/bolos/cake-donuts.jpeg"),
+  unitPrice: 400,
+  priceLabel: "R$ 400,00 / cento"
+};
+
 function getCentoFlavors(productId: string): CentoFlavor[] {
   if (productId === CENTO_MACARONS_MINI_PRODUCT.id) return CENTO_MACARONS_MINI_FLAVORS;
   if (productId === CENTO_18G_PRODUCT.id) return CENTO_18G_FLAVORS;
@@ -514,6 +517,7 @@ const BISCOITOS_FLORIDOS_PRODUCT = {
 
 const BARRAS_FLORIDAS_SIZES: BarraSizeOption[] = [
   { id: "mini-30g", label: "Mini barra (30 gramas)", price: 8 },
+  { id: "mini-30g-fita-tag", label: "Mini barra com fita e tag ou no cartão", price: 10 },
   { id: "barra-130g", label: "Barra de 130 gramas", price: 28 },
   { id: "barra-200g", label: "Barras de 200 gramas", price: 40 }
 ];
@@ -669,6 +673,22 @@ const MINI_MACARON_FLAVOR_OPTIONS = [
 
 const DOCES_MIMOS_SIMPLE_PRODUCTS: SimpleProduct[] = [
   {
+    id: "kit-docura-1",
+    name: "Kit Doçura 1",
+    description: "Um macaron, um bombom e dois docinhos.",
+    unitPrice: 22,
+    priceLabel: "R$ 22,00",
+    imageUrl: assetPath("/images/bolos/kit-docura-1.jpeg")
+  },
+  {
+    id: "kit-docura-5",
+    name: "Kit Doçura 5",
+    description: "Três docinhos, três macarons e três bombons nuts.",
+    unitPrice: 45,
+    priceLabel: "R$ 45,00",
+    imageUrl: assetPath("/images/bolos/kit-docura-5.jpeg")
+  },
+  {
     id: "caixa-docinho-1",
     name: "Caixa com 1 docinho + fita e tag",
     description: "Embalagem individual para presente.",
@@ -700,10 +720,7 @@ const DOCES_MIMOS_SIMPLE_PRODUCTS: SimpleProduct[] = [
     priceLabel: "R$ 10,00",
     imageUrl: assetPath("/images/bolos/caixa-1-bombom-1-mini-macaron-10.jpeg"),
     flavorOptions: MINI_MACARON_FLAVOR_OPTIONS
-  }
-];
-
-const LEMBRANCINHAS_SIMPLE_PRODUCTS: SimpleProduct[] = [
+  },
   {
     id: "caixa-4-docinhos-personalizacao",
     name: "Caixa com 4 docinhos com personalização",
@@ -719,8 +736,49 @@ const LEMBRANCINHAS_SIMPLE_PRODUCTS: SimpleProduct[] = [
     unitPrice: 18,
     priceLabel: "R$ 18,00",
     imageUrl: assetPath("/images/bolos/caixa-docinhos-flores-18.jpeg")
+  },
+  {
+    id: "caixa-1-bombom-personalizado",
+    name: "Caixa com 1 bombom personalizado",
+    description: "Caixinha individual com 1 bombom personalizado, acompanha fita e tag.",
+    unitPrice: 7,
+    priceLabel: "R$ 7,00",
+    imageUrl: assetPath("/images/bolos/caixa-1-bombom-personalizado.jpeg")
+  },
+  {
+    id: "caixa-3-bombons-personalizados",
+    name: "Caixa com 3 bombons personalizados",
+    description: "Caixa transparente com 3 bombons personalizados, acompanha fita e tag.",
+    unitPrice: 18,
+    priceLabel: "R$ 18,00",
+    imageUrl: assetPath("/images/bolos/caixa-3-bombons-personalizados.jpeg")
+  },
+  {
+    id: "kit-docura-2",
+    name: "Kit Doçura 2",
+    description: "Dois bombons e dois macarons personalizados.",
+    unitPrice: 20,
+    priceLabel: "R$ 20,00",
+    imageUrl: assetPath("/images/bolos/kit-docura-2.jpeg")
+  },
+  {
+    id: "kit-docura-3",
+    name: "Kit Doçura 3",
+    description: "Dois docinhos, um bombom nuts e um bombom personalizado.",
+    unitPrice: 20,
+    priceLabel: "R$ 20,00",
+    imageUrl: assetPath("/images/bolos/kit-docura-3.jpeg")
+  },
+  {
+    id: "kit-docura-4",
+    name: "Kit Doçura 4",
+    description: "Dois docinhos e dois macarons personalizados.",
+    unitPrice: 25,
+    priceLabel: "R$ 25,00",
+    imageUrl: assetPath("/images/bolos/kit-docura-4.jpeg")
   }
 ];
+
 
 const MACARONS_SIMPLE_PRODUCTS: SimpleProduct[] = [];
 
@@ -975,7 +1033,7 @@ export default function CardapioPage() {
   const [selectedBiscoitoFlorido, setSelectedBiscoitoFlorido] = useState<BiscoitoFloridoProduct | null>(null);
   const [selectedSimpleProduct, setSelectedSimpleProduct] = useState<SimpleProduct | null>(null);
   const [selectedSimpleCategory, setSelectedSimpleCategory] = useState<
-    "macarons-presentear" | "torres-macarons" | "docinhos" | "doces-lembrancas" | "doces-mimos" | "macarons" | null
+    "macarons-presentear" | "torres-macarons" | "docinhos" | "doces-mimos" | "macarons" | null
   >(null);
   const [selectedSimpleFlavor, setSelectedSimpleFlavor] = useState("");
   const [selectedKitProduct, setSelectedKitProduct] = useState<KitProduct | null>(null);
@@ -1203,7 +1261,8 @@ export default function CardapioPage() {
     const isFixedPriceCento =
       selectedCento.id === CENTO_MACARONS_MINI_PRODUCT.id ||
       selectedCento.id === CENTO_18G_PRODUCT.id ||
-      selectedCento.id === CENTO_13G_PRODUCT.id;
+      selectedCento.id === CENTO_13G_PRODUCT.id ||
+      selectedCento.id === CENTO_CAKE_DONUT_PRODUCT.id;
     return selectedCento.unitPrice * centoQuantity * (isFixedPriceCento ? 1 : flavorsCount);
   }, [selectedCento, centoQuantity, selectedCentoFlavorIds.length]);
 
@@ -1475,7 +1534,7 @@ export default function CardapioPage() {
 
   const openSimpleModal = (
     product: SimpleProduct,
-    category: "macarons-presentear" | "torres-macarons" | "docinhos" | "doces-lembrancas" | "doces-mimos" | "macarons"
+    category: "macarons-presentear" | "torres-macarons" | "docinhos" | "doces-mimos" | "macarons"
   ) => {
     setSelectedBolo(null);
     setSelectedDocinho(null);
@@ -1795,7 +1854,8 @@ export default function CardapioPage() {
     const selectedFlavors = getCentoFlavors(selectedCento.id).filter((flavor) =>
       selectedCentoFlavorIds.includes(flavor.id)
     );
-    if (selectedFlavors.length === 0) {
+    const isCakeDonut = selectedCento.id === CENTO_CAKE_DONUT_PRODUCT.id;
+    if (!isCakeDonut && selectedFlavors.length === 0) {
       setCentoError("Selecione ao menos 1 sabor.");
       return;
     }
@@ -1807,10 +1867,11 @@ export default function CardapioPage() {
     const isFixedPriceCento =
       selectedCento.id === CENTO_MACARONS_MINI_PRODUCT.id ||
       selectedCento.id === CENTO_18G_PRODUCT.id ||
-      selectedCento.id === CENTO_13G_PRODUCT.id;
+      selectedCento.id === CENTO_13G_PRODUCT.id ||
+      isCakeDonut;
     const lineTotal = selectedCento.unitPrice * safeQuantity * (isFixedPriceCento ? 1 : selectedFlavors.length);
     const detailLines = [
-      `Sabores: ${flavorLabels.join(", ")}`,
+      ...(isCakeDonut ? [] : [`Sabores: ${flavorLabels.join(", ")}`]),
       `Quantidade: ${safeQuantity} cento(s)`
     ];
     if (selectedCento.id === CENTO_MACARONS_MINI_PRODUCT.id && centoColors.trim()) {
@@ -1845,7 +1906,8 @@ export default function CardapioPage() {
       const isFixedPriceCento =
         existing.productId === CENTO_MACARONS_MINI_PRODUCT.id ||
         existing.productId === CENTO_18G_PRODUCT.id ||
-        existing.productId === CENTO_13G_PRODUCT.id;
+        existing.productId === CENTO_13G_PRODUCT.id ||
+        existing.productId === CENTO_CAKE_DONUT_PRODUCT.id;
       updated[existingIndex] = {
         ...existing,
         quantity: mergedQuantity,
@@ -1997,8 +2059,6 @@ export default function CardapioPage() {
           ? "Torres de macarons"
           : selectedSimpleCategory === "docinhos"
             ? "Doces finos"
-            : selectedSimpleCategory === "doces-lembrancas"
-              ? "Lembrancinhas"
               : selectedSimpleCategory === "doces-mimos"
                 ? "Doces mimos"
               : "Macarons";
@@ -2380,39 +2440,31 @@ export default function CardapioPage() {
             </div>
           </div>
         </button>
-      </section>
-    ) : null}
-
-    {activeTab === "doces-lembrancas" ? (
-      <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {LEMBRANCINHAS_SIMPLE_PRODUCTS.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => openSimpleModal(item, "doces-lembrancas")}
-            className={productCardClass}
-          >
-            <div className="relative h-72 w-full overflow-hidden rounded-t-2xl">
-              <Image
-                src={item.imageUrl}
-                alt={`Imagem do ${item.name}`}
-                fill
-                className={productImageClass}
-                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-              />
+        <button
+          type="button"
+          onClick={() => openCentoModal(CENTO_CAKE_DONUT_PRODUCT)}
+          className={productCardClass}
+        >
+          <div className="relative h-72 w-full overflow-hidden rounded-t-2xl">
+            <Image
+              src={CENTO_CAKE_DONUT_PRODUCT.imageUrl}
+              alt={`Imagem do ${CENTO_CAKE_DONUT_PRODUCT.name}`}
+              fill
+              className={productImageClass}
+              sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+            />
+          </div>
+          <div className="flex flex-1 flex-col p-5">
+            <h2 className="font-serifDisplay text-2xl text-cocoa-900">{CENTO_CAKE_DONUT_PRODUCT.name}</h2>
+            <p className="mt-2 text-lg text-cocoa-700">{CENTO_CAKE_DONUT_PRODUCT.description}</p>
+            <div className={productMetaClass}>
+              <p className="text-lg font-semibold text-cocoa-900">{CENTO_CAKE_DONUT_PRODUCT.priceLabel}</p>
+              <p className={productCtaClass}>
+                Ver detalhes {"\u2192"}
+              </p>
             </div>
-            <div className="flex flex-1 flex-col p-5">
-              <h2 className="font-serifDisplay text-2xl text-cocoa-900">{item.name}</h2>
-              <p className="mt-2 text-lg text-cocoa-700">{item.description}</p>
-              <div className={productMetaClass}>
-                <p className="text-lg font-semibold text-cocoa-900">{item.priceLabel}</p>
-                <p className={productCtaClass}>
-                  Ver detalhes {"\u2192"}
-                </p>
-              </div>
-            </div>
-          </button>
-        ))}
+          </div>
+        </button>
       </section>
     ) : null}
 
@@ -2805,7 +2857,6 @@ export default function CardapioPage() {
     activeTab !== "docinhos" &&
     activeTab !== "barras" &&
     activeTab !== "macarons" &&
-    activeTab !== "doces-lembrancas" &&
     activeTab !== "doces-mimos" &&
     activeTab !== "biscoitos-floridos" &&
     activeTab !== "macarons-presentear" &&
@@ -3428,6 +3479,8 @@ export default function CardapioPage() {
                 </label>
 
                 <div className="text-base font-bold text-cocoa-700">
+                  {selectedCento.id !== CENTO_CAKE_DONUT_PRODUCT.id && (
+                    <>
                   Seleção de sabores (até {maxCentoFlavors})
                   <div className="mt-3 space-y-2 pb-4">
                     {getCentoFlavors(selectedCento.id).map((flavor) => {
@@ -3468,6 +3521,8 @@ export default function CardapioPage() {
                       />
                     </label>
                   ) : null}
+                    </>
+                  )}
                   {centoError ? <p className="text-xs font-semibold text-rose-700">{centoError}</p> : null}
                 </div>
               </div>

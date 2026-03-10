@@ -79,11 +79,11 @@ export function CartBar() {
       <button
         type="button"
         onClick={openCart}
-        className="flex w-full items-center justify-center gap-3 rounded-xl bg-gradient-to-br from-cocoa-800 to-cocoa-900 px-5 py-4 text-sm font-semibold uppercase tracking-[0.18em] text-white shadow-2xl transition duration-300 ease-out active:scale-[0.99]"
+        className="flex h-16 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-br from-cocoa-800 to-cocoa-900 px-4 text-[13px] font-semibold uppercase tracking-[0.12em] text-white shadow-2xl transition duration-300 ease-out active:scale-[0.99]"
         aria-label="Ver carrinho"
       >
         <ShoppingCart size={18} strokeWidth={2.25} aria-hidden="true" />
-        <span>{label}</span>
+        <span className="max-w-[calc(100%-4.5rem)] truncate whitespace-nowrap leading-none">{label}</span>
         <span className="ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-rose-500 px-1.5 text-[11px] font-bold leading-none text-white">
           {badgeCount}
         </span>
@@ -91,4 +91,3 @@ export function CartBar() {
     </div>
   );
 }
-

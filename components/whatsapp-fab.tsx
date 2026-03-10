@@ -6,13 +6,31 @@ import { brandSettings } from "@/lib/site-data";
 
 const CART_STATE_EVENT = "csg:cart-state";
 const CART_TOAST_EVENT = "csg:cart-toast";
+const CART_STORAGE_KEY = "csg_cardapio_bolos_cart_v1";
 const DEFAULT_MESSAGE = "Olá! Vim pelo site e gostaria de fazer um pedido.";
 const HOME_SCROLL_THRESHOLD_PX = 240;
+
+function getCartCountFromStorage() {
+  if (typeof window === "undefined") return 0;
+  try {
+    const raw = window.localStorage.getItem(CART_STORAGE_KEY);
+    if (!raw) return 0;
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return 0;
+    return parsed.reduce((total, item) => {
+      const quantity = typeof item?.quantity === "number" ? item.quantity : 0;
+      return total + (Number.isFinite(quantity) ? quantity : 0);
+    }, 0);
+  } catch {
+    return 0;
+  }
+}
 
 export function WhatsAppFab() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCartToastVisible, setIsCartToastVisible] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
   const pathname = usePathname();
   const href = `https://wa.me/${brandSettings.whatsappNumber}?text=${encodeURIComponent(DEFAULT_MESSAGE)}`;
 
@@ -22,12 +40,19 @@ export function WhatsAppFab() {
     pathname === "/eventos/" ||
     (basePath !== "" &&
       (pathname === `${basePath}/eventos` || pathname === `${basePath}/eventos/`));
+  const isCardapioPage =
+    pathname === "/cardapio" ||
+    pathname === "/cardapio/" ||
+    (basePath !== "" && (pathname === `${basePath}/cardapio` || pathname === `${basePath}/cardapio/`));
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     const handleCartState = (event: Event) => {
-      const detail = (event as CustomEvent<{ isOpen: boolean }>).detail;
+      const detail = (event as CustomEvent<{ isOpen: boolean; badgeCount?: number }>).detail;
       setIsCartOpen(detail?.isOpen ?? false);
+      if (typeof detail?.badgeCount === "number") {
+        setCartCount(detail.badgeCount);
+      }
     };
     const handleCartToast = (event: Event) => {
       const detail = (event as CustomEvent<{ visible: boolean }>).detail;
@@ -39,6 +64,20 @@ export function WhatsAppFab() {
       window.removeEventListener(CART_STATE_EVENT, handleCartState);
       window.removeEventListener(CART_TOAST_EVENT, handleCartToast);
     };
+  }, []);
+
+  useEffect(() => {
+    setCartCount(getCartCountFromStorage());
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key !== CART_STORAGE_KEY) return;
+      setCartCount(getCartCountFromStorage());
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
   }, []);
 
   useEffect(() => {
@@ -58,7 +97,11 @@ export function WhatsAppFab() {
       href={href}
       target="_blank"
       rel="noreferrer"
-      className="fixed bottom-20 right-6 z-30 flex h-12 w-12 items-center justify-center rounded-full bg-cocoa-700 text-white shadow-lg transition hover:bg-cocoa-800 focus:outline-none focus:ring-2 focus:ring-cocoa-700/30"
+      className={`fixed right-5 z-30 flex h-12 w-12 items-center justify-center rounded-full bg-cocoa-700 text-white shadow-lg transition hover:bg-cocoa-800 focus:outline-none focus:ring-2 focus:ring-cocoa-700/30 ${
+        isCardapioPage && cartCount > 0
+          ? "bottom-[calc(env(safe-area-inset-bottom)+5.75rem)]"
+          : "bottom-[calc(env(safe-area-inset-bottom)+1.25rem)]"
+      }`}
       aria-label="Falar no WhatsApp"
     >
       <svg
