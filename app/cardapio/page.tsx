@@ -375,7 +375,7 @@ const BOLOS: Bolo[] = [
     name: "Casadinho",
     basePrice: 89.9,
     description: "Massa branca sendo uma camada de brigadeiro branco e uma de brigadeiro cremoso",
-    imageUrl: assetPath("/images/bolos/ipiranga.jpeg")
+    imageUrl: assetPath("/images/bolos/haha.jpeg")
   },
   {
     id: "bolo-pudim",
@@ -396,7 +396,7 @@ const BOLOS: Bolo[] = [
     name: "Brigadeiro com creme de ninho",
     basePrice: 94.9,
     description: "Massa branca uma camada de brigadeiro cremoso e uma camada de creme de ninho",
-    imageUrl: assetPath("/images/bolos/nb.jpeg")
+    imageUrl: assetPath("/images/bolos/nb1.jpeg")
   }
 ];
 
