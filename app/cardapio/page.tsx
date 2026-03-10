@@ -130,6 +130,10 @@ type SimpleProduct = {
   priceLabel: string;
   imageUrl: string;
   flavorOptions?: string[];
+  flavorLabel?: string;
+  flavorHelperText?: string;
+  maxFlavorSelections?: number;
+  selectionSummaryLabel?: string;
   minimumQuantity?: number;
 };
 
@@ -365,6 +369,34 @@ const BOLOS: Bolo[] = [
     basePrice: 92.9,
     description: "Massa de chocolate com recheio de brigadeiro e brigadeiro branco com morangos frescos",
     imageUrl: assetPath("/images/bolos/bv.jpeg")
+  },
+  {
+    id: "casadinho",
+    name: "Casadinho",
+    basePrice: 89.9,
+    description: "Massa branca sendo uma camada de brigadeiro branco e uma de brigadeiro cremoso",
+    imageUrl: assetPath("/images/bolos/ipiranga.jpeg")
+  },
+  {
+    id: "bolo-pudim",
+    name: "Bolo pudim",
+    basePrice: 119.8,
+    description: "Massa branca uma camada de pudim e uma camada de mousse de doce de leite",
+    imageUrl: assetPath("/images/bolos/ipiranga2.jpeg")
+  },
+  {
+    id: "trufado-chocolate",
+    name: "Trufado de chocolate",
+    basePrice: 108.9,
+    description: "Massa de chocolate com uma camada de recheio branco e uma de recheio meio amargo",
+    imageUrl: assetPath("/images/bolos/ninho-com-morangos.jpeg")
+  },
+  {
+    id: "brigadeiro-creme-ninho",
+    name: "Brigadeiro com creme de ninho",
+    basePrice: 94.9,
+    description: "Massa branca uma camada de brigadeiro cremoso e uma camada de creme de ninho",
+    imageUrl: assetPath("/images/bolos/nb.jpeg")
   }
 ];
 
@@ -588,7 +620,7 @@ const KIT_FESTA_30_PRODUCT: KitProduct = {
   description:
     "Bolo de 3 kg a 3,2 kg + 90 docinhos de 25 gramas. Escolha o sabor do bolo, cobertura, sabores de docinhos e personalize a decoração.",
   price: 460,
-  imageUrl: assetPath("/images/bolos/kitfesta3.jpeg")
+  imageUrl: assetPath("/images/bolos/kitfesta4.jpeg")
 };
 
 const KIT_FESTA_40_PRODUCT: KitProduct = {
@@ -597,7 +629,7 @@ const KIT_FESTA_40_PRODUCT: KitProduct = {
   description:
     "Bolo de 4 kg a 4,2 kg + 120 docinhos de 25 gramas. Escolha o sabor do bolo, cobertura, sabores de docinhos e personalize a decoração.",
   price: 600,
-  imageUrl: assetPath("/images/bolos/kitfesta2.jpeg")
+  imageUrl: assetPath("/images/bolos/kitfesta5.jpeg")
 };
 
 const KIT_FESTA_50_PRODUCT: KitProduct = {
@@ -706,6 +738,23 @@ const MINI_MACARON_FLAVOR_OPTIONS = [
   "Praliné de Nozes"
 ];
 
+const DONUTS_ASSADOS_PRODUCT: SimpleProduct = {
+  id: "donuts-assados",
+  name: "Donuts assados",
+  description: "Donuts assados com cobertura de chocolate e confeitos.",
+  unitPrice: 100,
+  priceLabel: "A partir de R$ 100,00",
+  imageUrl: assetPath("/images/bolos/cake-donuts.jpeg"),
+  flavorLabel: "Quantidade de donuts",
+  flavorHelperText: "Pedido mínimo de 25 unidades.",
+  selectionSummaryLabel: "Pacote",
+  flavorOptions: [
+    "25 unidades - R$ 100,00",
+    "50 unidades - R$ 200,00",
+    "100 unidades - R$ 350,00"
+  ]
+};
+
 const DOCES_MIMOS_SIMPLE_PRODUCTS: SimpleProduct[] = [
   {
     id: "kit-docura-1",
@@ -745,7 +794,10 @@ const DOCES_MIMOS_SIMPLE_PRODUCTS: SimpleProduct[] = [
     description: "Cupcake individual na caixinha, ideal para presentes e lembranças.",
     unitPrice: 13,
     priceLabel: "R$ 13,00",
-    imageUrl: assetPath("/images/bolos/cupcakepersonalizado13.jpeg")
+    imageUrl: assetPath("/images/bolos/cupcakepersonalizado13.jpeg"),
+    flavorLabel: "Sabor do cupcake",
+    selectionSummaryLabel: "Sabor",
+    flavorOptions: ["Brigadeiro", "Brigadeiro branco", "Limão siciliano com geleia de frutas vermelhas"]
   },
   {
     id: "caixa-1-bombom-1-mini-macaron",
@@ -779,6 +831,9 @@ const DOCES_MIMOS_SIMPLE_PRODUCTS: SimpleProduct[] = [
     unitPrice: 7,
     priceLabel: "R$ 7,00",
     imageUrl: assetPath("/images/bolos/caixa-1-bombom-personalizado.jpeg"),
+    flavorLabel: "Sabor do bombom",
+    selectionSummaryLabel: "Sabor",
+    flavorOptions: ["Castanhas", "Limão", "Frutas secas"],
     minimumQuantity: 10
   },
   {
@@ -788,6 +843,11 @@ const DOCES_MIMOS_SIMPLE_PRODUCTS: SimpleProduct[] = [
     unitPrice: 18,
     priceLabel: "R$ 18,00",
     imageUrl: assetPath("/images/bolos/caixa-3-bombons-personalizados.jpeg"),
+    flavorLabel: "Sabores do bombom",
+    flavorOptions: ["Castanhas", "Limão", "Frutas secas"],
+    flavorHelperText: "Escolha até 2 sabores.",
+    maxFlavorSelections: 2,
+    selectionSummaryLabel: "Sabores",
     minimumQuantity: 10
   },
   {
@@ -796,12 +856,17 @@ const DOCES_MIMOS_SIMPLE_PRODUCTS: SimpleProduct[] = [
     description: "Caixa transparente com 4 bombons personalizados, acompanha fita e tag.",
     unitPrice: 25,
     priceLabel: "R$ 25,00",
-    imageUrl: assetPath("/images/bolos/caixa-4-bombons-personalizados.jpeg")
+    imageUrl: assetPath("/images/bolos/caixa-4-bombons-personalizados.jpeg"),
+    flavorLabel: "Sabores do bombom",
+    flavorOptions: ["Castanhas", "Limão", "Frutas secas"],
+    flavorHelperText: "Escolha até 2 sabores.",
+    maxFlavorSelections: 2,
+    selectionSummaryLabel: "Sabores"
   },
   {
     id: "kit-docura-2",
     name: "Kit Doçura 2",
-    description: "Dois bombons e dois macarons personalizados.",
+    description: "Dois bombons e dois macarons sem personalização.",
     unitPrice: 20,
     priceLabel: "R$ 20,00",
     imageUrl: assetPath("/images/bolos/kit-docura-2.jpeg")
@@ -903,6 +968,26 @@ const KIT_CAKE_FLAVORS = [
     description: "Massa de chocolate com recheio de trufa de chocolate e morangos frescos ou geleia de morango artesanal"
   },
   {
+    id: "casadinho",
+    label: "Casadinho",
+    description: "Massa branca sendo uma camada de brigadeiro branco e uma de brigadeiro cremoso"
+  },
+  {
+    id: "bolo-pudim",
+    label: "Bolo pudim",
+    description: "Massa branca uma camada de pudim e uma camada de mousse de doce de leite"
+  },
+  {
+    id: "trufado-chocolate",
+    label: "Trufado de chocolate",
+    description: "Massa de chocolate com uma camada de recheio branco e uma de recheio meio amargo"
+  },
+  {
+    id: "brigadeiro-creme-ninho",
+    label: "Brigadeiro com creme de ninho",
+    description: "Massa branca uma camada de brigadeiro cremoso e uma camada de creme de ninho"
+  },
+  {
     id: "morango-chocolate-branco",
     label: "Morango com chocolate branco",
     description: "Massa branca com recheio de trufa de chocolate branco e morangos frescos ou geleia de morango artesanal"
@@ -931,6 +1016,26 @@ const KIT_CAKE_FLAVORS = [
     id: "surpresa-uva",
     label: "Surpresa de uva",
     description: "Massa branca com recheio de leite Ninho e uvas verdes sem sementes"
+  },
+  {
+    id: "casadinho",
+    label: "Casadinho",
+    description: "Massa branca sendo uma camada de brigadeiro branco e uma de brigadeiro cremoso"
+  },
+  {
+    id: "bolo-pudim",
+    label: "Bolo pudim",
+    description: "Massa branca uma camada de pudim e uma camada de mousse de doce de leite"
+  },
+  {
+    id: "trufado-chocolate",
+    label: "Trufado de chocolate",
+    description: "Massa de chocolate com uma camada de recheio branco e uma de recheio meio amargo"
+  },
+  {
+    id: "brigadeiro-creme-ninho",
+    label: "Brigadeiro com creme de ninho",
+    description: "Massa branca uma camada de brigadeiro cremoso e uma camada de creme de ninho"
   }
 ] as const;
 
@@ -964,7 +1069,7 @@ const MACARON_PRODUCT: MacaronProduct = {
   id: "macarons",
   name: "Macarons",
   description:
-    "Macarons artesanais por unidade.\nPedido mínimo: 10 unidades\n10 a 19 unidades: até 2 sabores e 1 cor\nAcima de 20 unidades: até 4 sabores e 2 cores.",
+    "Macarons artesanais por unidade.\nPedido mínimo: 10 unidades.\n1 cor e até 2 sabores.",
   imageUrl: assetPath("/images/bolos/macaronspers.jpeg"),
   minimumQuantity: 10,
   priceAdjustment: 0
@@ -974,7 +1079,7 @@ const MACARONS_PERSONALIZADOS_PRODUCT: MacaronProduct = {
   id: "macarons-personalizados",
   name: "Macarons personalizados",
   description:
-    "Macaron personalizado com logo, escrita ou desenho.\nPedido mínimo: 10 unidades.",
+    "Macaron personalizado com logo, escrita ou desenho.\nPedido mínimo: 10 unidades.\n1 cor e até 2 sabores.",
   imageUrl: assetPath("/images/bolos/macaronpersonalizado.jpeg"),
   minimumQuantity: 10,
   priceAdjustment: 2
@@ -1081,7 +1186,8 @@ export default function CardapioPage() {
   const [selectedSimpleCategory, setSelectedSimpleCategory] = useState<
     "macarons-presentear" | "torres-macarons" | "docinhos" | "doces-mimos" | "macarons" | null
   >(null);
-  const [selectedSimpleFlavor, setSelectedSimpleFlavor] = useState("");
+  const [selectedSimpleFlavors, setSelectedSimpleFlavors] = useState<string[]>([]);
+  const [simpleFlavorError, setSimpleFlavorError] = useState("");
   const [selectedKitProduct, setSelectedKitProduct] = useState<KitProduct | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [quantityInput, setQuantityInput] = useState("1");
@@ -1180,6 +1286,18 @@ export default function CardapioPage() {
         searchText: normalizeSearchText(`Doces finos ${DOCINHO_PRODUCT.name} ${DOCINHO_PRODUCT.description}`),
         kind: "docinho" as const,
         product: DOCINHO_PRODUCT
+      },
+      {
+        id: `simple-${DONUTS_ASSADOS_PRODUCT.id}`,
+        name: DONUTS_ASSADOS_PRODUCT.name,
+        description: DONUTS_ASSADOS_PRODUCT.description,
+        imageUrl: DONUTS_ASSADOS_PRODUCT.imageUrl,
+        priceLabel: DONUTS_ASSADOS_PRODUCT.priceLabel,
+        categoryLabel: "Doces finos",
+        searchText: normalizeSearchText(`Doces finos ${DONUTS_ASSADOS_PRODUCT.name} ${DONUTS_ASSADOS_PRODUCT.description}`),
+        kind: "simple" as const,
+        product: DONUTS_ASSADOS_PRODUCT,
+        simpleCategory: "docinhos" as const
       },
       ...[CENTO_18G_PRODUCT, CENTO_13G_PRODUCT, CENTO_MACARONS_MINI_PRODUCT].map((cento) => ({
         id: `cento-${cento.id}`,
@@ -1753,7 +1871,8 @@ export default function CardapioPage() {
     setSimpleQuantity(minQuantity);
     setSimpleQuantityInput(minQuantity.toString());
     setSimpleQuantityError("");
-    setSelectedSimpleFlavor(product.flavorOptions?.[0] ?? "");
+    setSimpleFlavorError("");
+    setSelectedSimpleFlavors(product.flavorOptions?.[0] ? [product.flavorOptions[0]] : []);
   };
 
   const toggleDecoration = (id: string) => {
@@ -1879,7 +1998,8 @@ export default function CardapioPage() {
     setSelectedSimpleProduct(null);
     setSelectedSimpleCategory(null);
     setSelectedKitProduct(null);
-    setSelectedSimpleFlavor("");
+    setSelectedSimpleFlavors([]);
+    setSimpleFlavorError("");
     setQuantity(1);
     setQuantityInput("1");
     setTopoChocolateMessage("");
@@ -2249,10 +2369,11 @@ export default function CardapioPage() {
   const addSimpleToCart = () => {
     if (!selectedSimpleProduct || !selectedSimpleCategory) return;
     const safeQuantity = validateSimpleQuantity();
-    if (selectedSimpleProduct.flavorOptions?.length && !selectedSimpleFlavor) {
-      setSimpleQuantityError("Selecione um sabor para continuar.");
+    if (selectedSimpleProduct.flavorOptions?.length && selectedSimpleFlavors.length === 0) {
+      setSimpleFlavorError("Selecione ao menos 1 sabor para continuar.");
       return;
     }
+    setSimpleFlavorError("");
     const lineTotal = selectedSimpleProduct.unitPrice * safeQuantity;
     const categoryLabel =
       selectedSimpleCategory === "macarons-presentear"
@@ -2265,8 +2386,11 @@ export default function CardapioPage() {
                 ? "Doces mimos"
               : "Macarons";
     const detailLines = [`Categoria: ${categoryLabel}`];
-    if (selectedSimpleFlavor) {
-      detailLines.push(`Sabor: ${selectedSimpleFlavor}`);
+    if (selectedSimpleFlavors.length) {
+      const summaryLabel =
+        selectedSimpleProduct.selectionSummaryLabel ??
+        (selectedSimpleFlavors.length > 1 ? "Sabores" : "Sabor");
+      detailLines.push(`${summaryLabel}: ${selectedSimpleFlavors.join(", ")}`);
     }
 
     const newItem: CartItem = {
@@ -2275,8 +2399,8 @@ export default function CardapioPage() {
       productName: selectedSimpleProduct.name,
       basePrice: selectedSimpleProduct.unitPrice,
       quantity: safeQuantity,
-      decorationIds: [selectedSimpleCategory, selectedSimpleFlavor].filter(Boolean),
-      decorationLabels: [categoryLabel, selectedSimpleFlavor].filter(Boolean),
+      decorationIds: [selectedSimpleCategory, ...selectedSimpleFlavors].filter(Boolean),
+      decorationLabels: [categoryLabel, ...selectedSimpleFlavors].filter(Boolean),
       decorationTotal: 0,
       lineTotal,
       detailLines
@@ -2761,23 +2885,23 @@ export default function CardapioPage() {
         </button>
         <button
           type="button"
-          onClick={() => openCentoModal(CENTO_CAKE_DONUT_PRODUCT)}
+          onClick={() => openSimpleModal(DONUTS_ASSADOS_PRODUCT, "docinhos")}
           className={productCardClass}
         >
           <div className="relative h-72 w-full overflow-hidden rounded-t-2xl">
             <Image
-              src={CENTO_CAKE_DONUT_PRODUCT.imageUrl}
-              alt={`Imagem do ${CENTO_CAKE_DONUT_PRODUCT.name}`}
+              src={DONUTS_ASSADOS_PRODUCT.imageUrl}
+              alt={`Imagem do ${DONUTS_ASSADOS_PRODUCT.name}`}
               fill
               className={productImageClass}
               sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
             />
           </div>
           <div className="flex flex-1 flex-col p-5">
-            <h2 className="font-serifDisplay text-2xl text-cocoa-900">{CENTO_CAKE_DONUT_PRODUCT.name}</h2>
-            <p className="mt-2 text-lg text-cocoa-700">{CENTO_CAKE_DONUT_PRODUCT.description}</p>
+            <h2 className="font-serifDisplay text-2xl text-cocoa-900">{DONUTS_ASSADOS_PRODUCT.name}</h2>
+            <p className="mt-2 text-lg text-cocoa-700">{DONUTS_ASSADOS_PRODUCT.description}</p>
             <div className={productMetaClass}>
-              <p className="text-lg font-semibold text-cocoa-900">{CENTO_CAKE_DONUT_PRODUCT.priceLabel}</p>
+              <p className="text-lg font-semibold text-cocoa-900">{DONUTS_ASSADOS_PRODUCT.priceLabel}</p>
               <p className={productCtaClass}>
                 Ver detalhes {"\u2192"}
               </p>
@@ -3890,10 +4014,7 @@ export default function CardapioPage() {
                 <p className="font-semibold text-cocoa-900">{selectedMacaron.description.split("\n")[0]}</p>
                 <p>Pedido mínimo: {selectedMacaron.minimumQuantity} unidade{selectedMacaron.minimumQuantity > 1 ? "s" : ""}</p>
                 {selectedMacaron.id === MACARON_PRODUCT.id || selectedMacaron.id === MACARONS_PERSONALIZADOS_PRODUCT.id ? (
-                  <>
-                    <p>10 a 19 unidades: até 2 sabores e 1 cor</p>
-                    <p>Acima de 20 unidades: até 4 sabores e 2 cores.</p>
-                  </>
+                  <p>1 cor e até 2 sabores.</p>
                 ) : null}
               </div>
 
@@ -4182,17 +4303,30 @@ export default function CardapioPage() {
                 </label>
                 {selectedSimpleProduct.flavorOptions?.length ? (
                   <div className="text-base font-bold text-cocoa-700">
-                    Sabor do mini macaron
+                    {selectedSimpleProduct.flavorLabel ?? "Sabor"}
+                    {selectedSimpleProduct.flavorHelperText ? (
+                      <p className="mt-1 text-sm font-normal text-cocoa-600">{selectedSimpleProduct.flavorHelperText}</p>
+                    ) : null}
                     <div className="mt-3 space-y-2">
                       {selectedSimpleProduct.flavorOptions.map((flavor) => (
                         <label key={flavor} className="option-row flex items-start gap-3 text-sm font-normal text-cocoa-700">
                           <input
-                            type="radio"
+                            type={(selectedSimpleProduct.maxFlavorSelections ?? 1) > 1 ? "checkbox" : "radio"}
                             name="simple-flavor"
-                            checked={selectedSimpleFlavor === flavor}
+                            checked={selectedSimpleFlavors.includes(flavor)}
                             onChange={() => {
-                              setSelectedSimpleFlavor(flavor);
                               setSimpleQuantityError("");
+                              setSimpleFlavorError("");
+                              setSelectedSimpleFlavors((prev) => {
+                                const maxSelections = selectedSimpleProduct.maxFlavorSelections ?? 1;
+                                if (maxSelections <= 1) return [flavor];
+                                if (prev.includes(flavor)) return prev.filter((item) => item !== flavor);
+                                if (prev.length >= maxSelections) {
+                                  setSimpleFlavorError(`Escolha até ${maxSelections} sabores.`);
+                                  return prev;
+                                }
+                                return [...prev, flavor];
+                              });
                             }}
                             className="mt-0.5 h-4 w-4 border-rose-200 text-cocoa-800 focus:ring-cocoa-700/30"
                           />
@@ -4200,6 +4334,9 @@ export default function CardapioPage() {
                         </label>
                       ))}
                     </div>
+                    {simpleFlavorError ? (
+                      <p className="mt-2 text-xs font-semibold text-rose-700">{simpleFlavorError}</p>
+                    ) : null}
                   </div>
                 ) : null}
               </div>
