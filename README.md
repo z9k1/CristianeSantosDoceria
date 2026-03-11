@@ -1,4 +1,4 @@
-# DemoSiteConfeitaria
+# CristianeSantosDoceria
 
 MVP institucional-comercial para confeitaria local com foco em leads via WhatsApp.
 
