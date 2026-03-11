@@ -373,7 +373,7 @@ const BOLOS: Bolo[] = [
     name: "Brigadeiro com morangos",
     basePrice: 92.9,
     description: "Massa de chocolate com recheio de brigadeiro e brigadeiro branco com morangos frescos",
-    imageUrl: assetPath("/images/bolos/bv.jpeg")
+    imageUrl: assetPath("/images/bolos/ninho-com-morangos.jpeg")
   },
   {
     id: "casadinho",
@@ -394,7 +394,7 @@ const BOLOS: Bolo[] = [
     name: "Trufado de chocolate",
     basePrice: 108.9,
     description: "Massa de chocolate com uma camada de recheio branco e uma de recheio meio amargo",
-    imageUrl: assetPath("/images/bolos/ninho-com-morangos.jpeg")
+    imageUrl: assetPath("/images/bolos/bv.jpeg")
   },
   {
     id: "brigadeiro-creme-ninho",
@@ -661,7 +661,8 @@ const EMBALAGENS_MACARONS_PRODUCTS: SimpleProduct[] = [
     name: "Caixa com 7 macarons e champanhe",
     description: "Acomoda 7 macarons médios + champanhe à escolha",
     unitPrice: 110,
-    priceLabel: "A partir de R$ 110,00",
+    unitPrice: 120,
+    priceLabel: "A partir de R$ 120,00",
     imageUrl: assetPath("/images/bolos/caixa7macaronscomchampanheaescolha.jpeg"),
     minimumQuantity: 1
   },
