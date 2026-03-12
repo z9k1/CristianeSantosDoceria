@@ -7,6 +7,14 @@ import { assetPath } from "@/lib/asset-path";
 import { getBusinessHoursStatus } from "@/lib/business-hours";
 import { generateOrderId } from "@/lib/order-id";
 
+type ErrorFieldKey =
+  | "bolo-topper"
+  | "docinho-flavor"
+  | "cento-flavors"
+  | "simple-flavors"
+  | "kit-topper"
+  | "kit-docinhos";
+
 type Bolo = {
   id: string;
   name: string;
@@ -1203,6 +1211,7 @@ export default function CardapioPage() {
   const [selectedFlavorId, setSelectedFlavorId] = useState("");
   const [docinhoQuantityInput, setDocinhoQuantityInput] = useState(DOCINHO_MIN_QTY.toString());
   const [docinhoQuantityError, setDocinhoQuantityError] = useState("");
+  const [docinhoFlavorError, setDocinhoFlavorError] = useState("");
   const [selectedBombomModeId, setSelectedBombomModeId] = useState<BombomMode["id"]>("unidades");
   const [selectedBombomFlavorId, setSelectedBombomFlavorId] = useState(BOMBOM_FLAVORS[0]?.id ?? "");
   const [bombomQuantity, setBombomQuantity] = useState(BOMBOM_MODES[0]?.minQty ?? 35);
@@ -1253,6 +1262,9 @@ export default function CardapioPage() {
   const [hasHydratedCart, setHasHydratedCart] = useState(false);
   const [businessClock, setBusinessClock] = useState(() => new Date());
   const cartToastTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const errorHighlightTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const errorFieldRefs = useRef<Partial<Record<ErrorFieldKey, HTMLDivElement | null>>>({});
+  const [activeErrorField, setActiveErrorField] = useState<ErrorFieldKey | null>(null);
   const minOrderDate = useMemo(() => minimumOrderDateISO(5), []);
   const activeTabInfo = categoryConfigs.find((tab) => tab.id === activeTab) ?? categoryConfigs[0];
   const minDocinhoPrice = useMemo(
@@ -1656,6 +1668,28 @@ export default function CardapioPage() {
   );
   const businessStatus = useMemo(() => getBusinessHoursStatus(businessClock), [businessClock]);
 
+  const scrollToErrorField = useCallback((field: ErrorFieldKey) => {
+    setActiveErrorField(field);
+    if (errorHighlightTimeoutRef.current) {
+      clearTimeout(errorHighlightTimeoutRef.current);
+    }
+    requestAnimationFrame(() => {
+      errorFieldRefs.current[field]?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+    errorHighlightTimeoutRef.current = setTimeout(() => {
+      setActiveErrorField((current) => (current === field ? null : current));
+      errorHighlightTimeoutRef.current = null;
+    }, 1800);
+  }, []);
+
+  const getErrorSectionClass = useCallback(
+    (field: ErrorFieldKey) =>
+      activeErrorField === field
+        ? "rounded-xl border border-rose-300 bg-rose-50/40 p-3 ring-2 ring-rose-200/80 transition"
+        : "",
+    [activeErrorField]
+  );
+
   const badgeCount = useMemo(() => cart.length, [cart]);
 
   const broadcastCartState = useCallback(
@@ -1749,6 +1783,7 @@ export default function CardapioPage() {
     setDocinhoQuantity(DOCINHO_MIN_QTY);
     setDocinhoQuantityInput(DOCINHO_MIN_QTY.toString());
     setDocinhoQuantityError("");
+    setDocinhoFlavorError("");
     setSelectedFlavorId("");
   };
 
@@ -2005,12 +2040,18 @@ export default function CardapioPage() {
     setSelectedKitProduct(null);
     setSelectedSimpleFlavors([]);
     setSimpleFlavorError("");
+    setDocinhoFlavorError("");
+    setActiveErrorField(null);
     setQuantity(1);
     setQuantityInput("1");
     setTopoChocolateMessage("");
     setTopoChocolateError("");
     setKitTopoChocolateMessage("");
     setKitTopoChocolateError("");
+    if (errorHighlightTimeoutRef.current) {
+      clearTimeout(errorHighlightTimeoutRef.current);
+      errorHighlightTimeoutRef.current = null;
+    }
   };
 
   const showCartToast = (productName: string) => {
@@ -2033,6 +2074,7 @@ export default function CardapioPage() {
     const trimmedTopperMessage = topoChocolateMessage.trim();
     if (hasChocolateTopper && !trimmedTopperMessage) {
       setTopoChocolateError("Digite o texto do topo de chocolate.");
+      scrollToErrorField("bolo-topper");
       return;
     }
     setTopoChocolateError("");
@@ -2085,7 +2127,13 @@ export default function CardapioPage() {
   };
 
   const addDocinhoToCart = () => {
-    if (!selectedDocinho || !selectedFlavor) return;
+    if (!selectedDocinho) return;
+    if (!selectedFlavor) {
+      setDocinhoFlavorError("Selecione um sabor para continuar.");
+      scrollToErrorField("docinho-flavor");
+      return;
+    }
+    setDocinhoFlavorError("");
     const safeQuantity = validateDocinhoQuantity();
     const lineTotal = selectedFlavor.price * safeQuantity;
     const newItem: CartItem = {
@@ -2184,6 +2232,7 @@ export default function CardapioPage() {
     const isCakeDonut = selectedCento.id === CENTO_CAKE_DONUT_PRODUCT.id;
     if (!isCakeDonut && selectedFlavors.length === 0) {
       setCentoError("Selecione ao menos 1 sabor.");
+      scrollToErrorField("cento-flavors");
       return;
     }
 
@@ -2376,6 +2425,7 @@ export default function CardapioPage() {
     const safeQuantity = validateSimpleQuantity();
     if (selectedSimpleProduct.flavorOptions?.length && selectedSimpleFlavors.length === 0) {
       setSimpleFlavorError("Selecione ao menos 1 sabor para continuar.");
+      scrollToErrorField("simple-flavors");
       return;
     }
     setSimpleFlavorError("");
@@ -2438,12 +2488,14 @@ export default function CardapioPage() {
     if (!selectedKitProduct) return;
     if (kitDocinhoIds.length !== 3) {
       setKitDocinhoError("Selecione exatamente 3 sabores de docinhos.");
+      scrollToErrorField("kit-docinhos");
       return;
     }
     const hasChocolateTopper = kitDecorationIds.includes("topo-chocolate");
     const trimmedTopperMessage = kitTopoChocolateMessage.trim();
     if (hasChocolateTopper && !trimmedTopperMessage) {
       setKitTopoChocolateError("Digite o texto do topo de chocolate.");
+      scrollToErrorField("kit-topper");
       return;
     }
 
@@ -3640,6 +3692,12 @@ export default function CardapioPage() {
                     ))}
                   </div>
                   {selectedDecorationIds.includes("topo-chocolate") ? (
+                    <div
+                      ref={(node) => {
+                        errorFieldRefs.current["bolo-topper"] = node;
+                      }}
+                      className={getErrorSectionClass("bolo-topper")}
+                    >
                     <label className="block text-sm font-semibold text-cocoa-800">
                       Texto do topo de chocolate
                       <input
@@ -3656,6 +3714,7 @@ export default function CardapioPage() {
                         <p className="mt-2 text-xs font-semibold text-rose-700">{topoChocolateError}</p>
                       ) : null}
                     </label>
+                    </div>
                   ) : null}
                 </div>
               </div>
@@ -3722,7 +3781,12 @@ export default function CardapioPage() {
                     </p>
                   )}
                 </label>
-                <div className="text-base font-bold text-cocoa-700">
+                <div
+                  ref={(node) => {
+                    errorFieldRefs.current["docinho-flavor"] = node;
+                  }}
+                  className={`text-base font-bold text-cocoa-700 ${getErrorSectionClass("docinho-flavor")}`}
+                >
                   Seleção de sabor
                   <div className="mt-3 space-y-2 pb-4">
                     {DOCINHO_FLAVORS.map((flavor) => (
@@ -3741,6 +3805,7 @@ export default function CardapioPage() {
                       </label>
                     ))}
                   </div>
+                  {docinhoFlavorError ? <p className="text-xs font-semibold text-rose-700">{docinhoFlavorError}</p> : null}
                 </div>
               </div>
             </div>
@@ -3928,7 +3993,12 @@ export default function CardapioPage() {
                   <p className="mt-1 text-xs font-normal text-cocoa-600">Cada pedido corresponde a 100 unidades no total.</p>
                 </label>
 
-                <div className="text-base font-bold text-cocoa-700">
+                <div
+                  ref={(node) => {
+                    errorFieldRefs.current["cento-flavors"] = node;
+                  }}
+                  className={`text-base font-bold text-cocoa-700 ${getErrorSectionClass("cento-flavors")}`}
+                >
                   {selectedCento.id !== CENTO_CAKE_DONUT_PRODUCT.id && (
                     <>
                   Seleção de sabores (até {maxCentoFlavors})
@@ -4307,7 +4377,12 @@ export default function CardapioPage() {
                   ) : null}
                 </label>
                 {selectedSimpleProduct.flavorOptions?.length ? (
-                  <div className="text-base font-bold text-cocoa-700">
+                  <div
+                    ref={(node) => {
+                      errorFieldRefs.current["simple-flavors"] = node;
+                    }}
+                    className={`text-base font-bold text-cocoa-700 ${getErrorSectionClass("simple-flavors")}`}
+                  >
                     {selectedSimpleProduct.flavorLabel ?? "Sabor"}
                     {selectedSimpleProduct.flavorHelperText ? (
                       <p className="mt-1 text-sm font-normal text-cocoa-600">{selectedSimpleProduct.flavorHelperText}</p>
@@ -4472,6 +4547,12 @@ export default function CardapioPage() {
                     })}
                   </div>
                   {kitDecorationIds.includes("topo-chocolate") ? (
+                    <div
+                      ref={(node) => {
+                        errorFieldRefs.current["kit-topper"] = node;
+                      }}
+                      className={getErrorSectionClass("kit-topper")}
+                    >
                     <label className="mt-3 block text-sm font-semibold text-cocoa-800">
                       Texto do topo de chocolate
                       <input
@@ -4488,10 +4569,16 @@ export default function CardapioPage() {
                         <p className="mt-2 text-xs font-semibold text-rose-700">{kitTopoChocolateError}</p>
                       ) : null}
                     </label>
+                    </div>
                   ) : null}
                 </div>
 
-                <div className="text-base font-bold text-cocoa-700">
+                <div
+                  ref={(node) => {
+                    errorFieldRefs.current["kit-docinhos"] = node;
+                  }}
+                  className={`text-base font-bold text-cocoa-700 ${getErrorSectionClass("kit-docinhos")}`}
+                >
                   Sabores dos docinhos
                   <p className="mt-1 text-xs font-normal text-cocoa-600">Selecione exatamente 3 sabores para os 30 docinhos.</p>
                   <div className="mt-3 space-y-2">
