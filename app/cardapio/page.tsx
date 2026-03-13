@@ -1308,6 +1308,7 @@ export default function CardapioPage() {
   const [deliveryAddress, setDeliveryAddress] = useState("");
   const [deliveryNeighborhood, setDeliveryNeighborhood] = useState("");
   const [deliveryComplement, setDeliveryComplement] = useState("");
+  const [deliveryPreferredTime, setDeliveryPreferredTime] = useState("");
   const [isReceivingModalOpen, setIsReceivingModalOpen] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [hasHydratedCart, setHasHydratedCart] = useState(false);
@@ -2706,6 +2707,8 @@ export default function CardapioPage() {
       receivingMode === "entrega"
         ? `Forma de recebimento: Entrega\nEndereço: ${deliveryAddress.trim()}\nBairro: ${deliveryNeighborhood.trim()}${
             deliveryComplement.trim() ? `\nComplemento: ${deliveryComplement.trim()}` : ""
+          }${
+            deliveryPreferredTime.trim() ? `\nHorário preferencial para entrega: ${deliveryPreferredTime.trim()}` : ""
           }\n${DELIVERY_FEE_NOTICE}`
         : `Forma de recebimento: Retirada\nRetirada (Maps): ${PICKUP_MAPS_URL}`;
     const message = `*[PEDIDO VIA SITE]*\nID do pedido: ${orderId}\nData do pedido: ${timestamp}\n\n*[ITENS DO PEDIDO]*\n\n${lines}\n\n------------------------------\n\n*[TOTAL ESTIMADO]*\n${formatCurrency(
@@ -3669,6 +3672,17 @@ export default function CardapioPage() {
                           placeholder="Ex.: apartamento, bloco, referência"
                           className="mt-1 h-12 w-full rounded-lg border border-rose-200 px-4 text-base outline-none ring-cocoa-700/30 focus:ring"
                         />
+                      </label>
+                      <label className="block text-sm font-semibold text-cocoa-900">
+                        Horário preferencial para entrega (opcional)
+                        <input
+                          type="text"
+                          value={deliveryPreferredTime}
+                          onChange={(event) => setDeliveryPreferredTime(event.target.value)}
+                          placeholder="Ex.: entre 14h e 16h"
+                          className="mt-1 h-12 w-full rounded-lg border border-rose-200 px-4 text-base outline-none ring-cocoa-700/30 focus:ring"
+                        />
+                        <p className="mt-1 text-xs font-normal text-cocoa-600">Sujeito à confirmação da loja.</p>
                       </label>
                       <p className="text-sm text-cocoa-700">{DELIVERY_FEE_NOTICE}</p>
                     </div>
