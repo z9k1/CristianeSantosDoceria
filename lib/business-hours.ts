@@ -115,6 +115,10 @@ function formatNextOpenShortLabel(opensAt: Date, now: Date): string {
   return `Abre ${dayLabel} às ${formatOpenTimeLabel(opensAt)}`;
 }
 
+function formatStoreConfirmationLabel(opensAt: Date, now: Date): string {
+  return `Confirmação da loja: ${formatNextOpenShortLabel(opensAt, now).replace(/^Abre /, "")}`;
+}
+
 function getNextOpeningDate(date: Date): Date {
   const parts = getZonedDateParts(date);
 
@@ -146,8 +150,8 @@ export function getBusinessHoursStatus(date = new Date()): BusinessHoursStatus {
       opensAt,
       closesAt,
       nextTransitionAt: closesAt,
-      statusLabel: "Aberto agora",
-      detailLabel: "Recebemos pedidos de segunda a sexta das 9h às 18h.",
+      statusLabel: "WhatsApp em atendimento",
+      detailLabel: "Você pode enviar seu pedido a qualquer hora. A confirmação da loja acontece de segunda a sexta, das 9h às 18h.",
       nextOpenLabel: "",
       countdownLabel: ""
     };
@@ -167,8 +171,8 @@ export function getBusinessHoursStatus(date = new Date()): BusinessHoursStatus {
       opensAt: zonedLocalToDate(parts.year, parts.month, parts.day, OPEN_HOUR, 0),
       closesAt,
       nextTransitionAt: closesAt,
-      statusLabel: "Aberto agora",
-      detailLabel: "Recebemos pedidos de segunda a sexta das 9h às 18h.",
+      statusLabel: "WhatsApp em atendimento",
+      detailLabel: "Você pode enviar seu pedido a qualquer hora. A confirmação da loja acontece de segunda a sexta, das 9h às 18h.",
       nextOpenLabel: "",
       countdownLabel: ""
     };
@@ -181,9 +185,9 @@ export function getBusinessHoursStatus(date = new Date()): BusinessHoursStatus {
     opensAt,
     closesAt: null,
     nextTransitionAt: opensAt,
-    statusLabel: "Fechado agora",
-    detailLabel: "Atendimento pelo Whatsapp disponível de segunda a sexta, das 9h às 18h",
-    nextOpenLabel: formatNextOpenShortLabel(opensAt, date),
+    statusLabel: "Pedido sujeito à confirmação",
+    detailLabel: "Você pode enviar seu pedido agora. A confirmação da loja acontece de segunda a sexta, das 9h às 18h.",
+    nextOpenLabel: formatStoreConfirmationLabel(opensAt, date),
     countdownLabel: ""
   };
 }

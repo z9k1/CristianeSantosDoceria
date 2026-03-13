@@ -12,6 +12,7 @@ type ErrorFieldKey =
   | "docinho-flavor"
   | "cento-flavors"
   | "simple-flavors"
+  | "simple-detail"
   | "kit-topper"
   | "kit-docinhos";
 
@@ -142,6 +143,13 @@ type SimpleProduct = {
   flavorHelperText?: string;
   maxFlavorSelections?: number;
   selectionSummaryLabel?: string;
+  detailInputLabel?: string;
+  detailInputHelperText?: string;
+  detailInputPlaceholder?: string;
+  detailSummaryLabel?: string;
+  detailInputRequired?: boolean;
+  detailInputMinEntries?: number;
+  detailInputMaxEntries?: number;
   minimumQuantity?: number;
 };
 
@@ -903,7 +911,48 @@ const DOCES_MIMOS_SIMPLE_PRODUCTS: SimpleProduct[] = [
 ];
 
 
-const MACARONS_SIMPLE_PRODUCTS: SimpleProduct[] = [];
+const MACARONS_SIMPLE_PRODUCTS: SimpleProduct[] = [
+  {
+    id: "macarons-10-unidades",
+    name: "Macarons - 10 unidades",
+    description: "Pacote com 10 macarons. Escolha até 2 sabores e 1 cor para o pedido.",
+    unitPrice: 80,
+    priceLabel: "R$ 80,00",
+    imageUrl: assetPath("/images/bolos/macaronspers.jpeg"),
+    flavorLabel: "Sabores",
+    flavorHelperText: "Escolha até 2 sabores.",
+    flavorOptions: MINI_MACARON_FLAVOR_OPTIONS,
+    maxFlavorSelections: 2,
+    selectionSummaryLabel: "Sabores",
+    detailInputLabel: "Cor do pedido",
+    detailInputHelperText: "Informe 1 cor.",
+    detailInputPlaceholder: "Ex.: rosa",
+    detailSummaryLabel: "Cor",
+    detailInputRequired: true,
+    detailInputMinEntries: 1,
+    detailInputMaxEntries: 1
+  },
+  {
+    id: "macarons-20-unidades",
+    name: "Macarons - 20 unidades",
+    description: "Pacote com 20 macarons. Escolha até 4 sabores e até 2 cores para o pedido.",
+    unitPrice: 160,
+    priceLabel: "R$ 160,00",
+    imageUrl: assetPath("/images/bolos/macaronspers.jpeg"),
+    flavorLabel: "Sabores",
+    flavorHelperText: "Escolha até 4 sabores.",
+    flavorOptions: MINI_MACARON_FLAVOR_OPTIONS,
+    maxFlavorSelections: 4,
+    selectionSummaryLabel: "Sabores",
+    detailInputLabel: "Cores do pedido",
+    detailInputHelperText: "Informe até 2 cores.",
+    detailInputPlaceholder: "Ex.: rosa e branco",
+    detailSummaryLabel: "Cores",
+    detailInputRequired: true,
+    detailInputMinEntries: 1,
+    detailInputMaxEntries: 2
+  }
+];
 
 const TORRES_MACARONS_PRODUCTS: SimpleProduct[] = [
   {
@@ -1147,7 +1196,7 @@ function formatCurrency(value: number): string {
   return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value);
 }
 
-function minimumOrderDateISO(daysAhead = 5): string {
+function minimumOrderDateISO(daysAhead = 1): string {
   const date = new Date();
   date.setDate(date.getDate() + daysAhead);
   const year = date.getFullYear();
@@ -1201,6 +1250,8 @@ export default function CardapioPage() {
   >(null);
   const [selectedSimpleFlavors, setSelectedSimpleFlavors] = useState<string[]>([]);
   const [simpleFlavorError, setSimpleFlavorError] = useState("");
+  const [simpleDetailInput, setSimpleDetailInput] = useState("");
+  const [simpleDetailError, setSimpleDetailError] = useState("");
   const [selectedKitProduct, setSelectedKitProduct] = useState<KitProduct | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [quantityInput, setQuantityInput] = useState("1");
@@ -1265,7 +1316,7 @@ export default function CardapioPage() {
   const errorHighlightTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const errorFieldRefs = useRef<Partial<Record<ErrorFieldKey, HTMLDivElement | null>>>({});
   const [activeErrorField, setActiveErrorField] = useState<ErrorFieldKey | null>(null);
-  const minOrderDate = useMemo(() => minimumOrderDateISO(5), []);
+  const minOrderDate = useMemo(() => minimumOrderDateISO(1), []);
   const activeTabInfo = categoryConfigs.find((tab) => tab.id === activeTab) ?? categoryConfigs[0];
   const minDocinhoPrice = useMemo(
     () => Math.min(...DOCINHO_FLAVORS.map((flavor) => flavor.price)),
@@ -1361,6 +1412,18 @@ export default function CardapioPage() {
         searchText: normalizeSearchText(`Macarons para presentear ${product.name} ${product.description}`),
         kind: "macaron" as const,
         product
+      })),
+      ...MACARONS_SIMPLE_PRODUCTS.map((item) => ({
+        id: `macarons-simple-${item.id}`,
+        name: item.name,
+        description: item.description,
+        imageUrl: item.imageUrl,
+        priceLabel: item.priceLabel,
+        categoryLabel: "Macarons",
+        searchText: normalizeSearchText(`Macarons ${item.name} ${item.description}`),
+        kind: "simple" as const,
+        product: item,
+        simpleCategory: "macarons" as const
       })),
       ...DOCES_MIMOS_SIMPLE_PRODUCTS.map((item) => ({
         id: `mimo-${item.id}`,
@@ -1912,6 +1975,8 @@ export default function CardapioPage() {
     setSimpleQuantityInput(minQuantity.toString());
     setSimpleQuantityError("");
     setSimpleFlavorError("");
+    setSimpleDetailInput("");
+    setSimpleDetailError("");
     setSelectedSimpleFlavors(product.flavorOptions?.[0] ? [product.flavorOptions[0]] : []);
   };
 
@@ -2040,6 +2105,8 @@ export default function CardapioPage() {
     setSelectedKitProduct(null);
     setSelectedSimpleFlavors([]);
     setSimpleFlavorError("");
+    setSimpleDetailInput("");
+    setSimpleDetailError("");
     setDocinhoFlavorError("");
     setActiveErrorField(null);
     setQuantity(1);
@@ -2429,6 +2496,35 @@ export default function CardapioPage() {
       return;
     }
     setSimpleFlavorError("");
+    const trimmedSimpleDetail = simpleDetailInput.trim();
+    const detailEntries = trimmedSimpleDetail
+      .split(/[;,/]+/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+    if (selectedSimpleProduct.detailInputRequired && !trimmedSimpleDetail) {
+      setSimpleDetailError(
+        `Informe ${selectedSimpleProduct.detailInputLabel?.toLowerCase() ?? "os detalhes"} para continuar.`
+      );
+      scrollToErrorField("simple-detail");
+      return;
+    }
+    if (
+      selectedSimpleProduct.detailInputMinEntries &&
+      detailEntries.length < selectedSimpleProduct.detailInputMinEntries
+    ) {
+      setSimpleDetailError(`Informe pelo menos ${selectedSimpleProduct.detailInputMinEntries} opção(ões).`);
+      scrollToErrorField("simple-detail");
+      return;
+    }
+    if (
+      selectedSimpleProduct.detailInputMaxEntries &&
+      detailEntries.length > selectedSimpleProduct.detailInputMaxEntries
+    ) {
+      setSimpleDetailError(`Informe no máximo ${selectedSimpleProduct.detailInputMaxEntries} opção(ões).`);
+      scrollToErrorField("simple-detail");
+      return;
+    }
+    setSimpleDetailError("");
     const lineTotal = selectedSimpleProduct.unitPrice * safeQuantity;
     const categoryLabel =
       selectedSimpleCategory === "macarons-presentear"
@@ -2447,6 +2543,9 @@ export default function CardapioPage() {
         (selectedSimpleFlavors.length > 1 ? "Sabores" : "Sabor");
       detailLines.push(`${summaryLabel}: ${selectedSimpleFlavors.join(", ")}`);
     }
+    if (trimmedSimpleDetail) {
+      detailLines.push(`${selectedSimpleProduct.detailSummaryLabel ?? "Detalhes"}: ${trimmedSimpleDetail}`);
+    }
 
     const newItem: CartItem = {
       category: "simple",
@@ -2454,8 +2553,8 @@ export default function CardapioPage() {
       productName: selectedSimpleProduct.name,
       basePrice: selectedSimpleProduct.unitPrice,
       quantity: safeQuantity,
-      decorationIds: [selectedSimpleCategory, ...selectedSimpleFlavors].filter(Boolean),
-      decorationLabels: [categoryLabel, ...selectedSimpleFlavors].filter(Boolean),
+      decorationIds: [selectedSimpleCategory, ...selectedSimpleFlavors, trimmedSimpleDetail].filter(Boolean),
+      decorationLabels: [categoryLabel, ...selectedSimpleFlavors, trimmedSimpleDetail].filter(Boolean),
       decorationTotal: 0,
       lineTotal,
       detailLines
@@ -2486,8 +2585,8 @@ export default function CardapioPage() {
 
   const addKitToCart = () => {
     if (!selectedKitProduct) return;
-    if (kitDocinhoIds.length !== 3) {
-      setKitDocinhoError("Selecione exatamente 3 sabores de docinhos.");
+    if (kitDocinhoIds.length === 0 || kitDocinhoIds.length > 3) {
+      setKitDocinhoError("Selecione de 1 a 3 sabores de docinhos.");
       scrollToErrorField("kit-docinhos");
       return;
     }
@@ -2611,7 +2710,7 @@ export default function CardapioPage() {
         : `Forma de recebimento: Retirada\nRetirada (Maps): ${PICKUP_MAPS_URL}`;
     const message = `*[PEDIDO VIA SITE]*\nID do pedido: ${orderId}\nData do pedido: ${timestamp}\n\n*[ITENS DO PEDIDO]*\n\n${lines}\n\n------------------------------\n\n*[TOTAL ESTIMADO]*\n${formatCurrency(
       cartTotal
-    )}\n(Aguardando confirmação de disponibilidade e valor final)\n\n*[DADOS DO CLIENTE]*\nNome: ${customerName.trim()}\nData da retirada/evento: ${formattedEventDate}\n${receivingLines}`;
+    )}\n(Aguardando confirmação de disponibilidade e valor final)\n\n*[DADOS DO CLIENTE]*\nNome: ${customerName.trim()}\nData da retirada/evento: ${formattedEventDate}\n${receivingLines}\nConfirmação da loja: dentro do horário de atendimento do WhatsApp.`;
 
     const encoded = encodeURIComponent(message);
     window.open(`https://wa.me/${brandSettings.whatsappNumber}?text=${encoded}`, "_blank", "noopener,noreferrer");
@@ -2619,16 +2718,12 @@ export default function CardapioPage() {
 
   const finalizeOrder = () => {
     if (cart.length === 0) return;
-    if (!businessStatus.isOpen) {
-      setSubmitError(`Fora do horário de funcionamento. ${businessStatus.nextOpenLabel}`);
-      return;
-    }
     if (!hasValidCustomerName(customerName)) {
       setSubmitError("Informe um nome válido para continuar.");
       return;
     }
     if (!validateDate()) {
-      setSubmitError("A data da retirada deve ter no mínimo 5 dias de antecedência.");
+      setSubmitError("A data da retirada deve ter no mínimo 1 dia de antecedência.");
       return;
     }
 
@@ -2703,7 +2798,9 @@ export default function CardapioPage() {
           {businessStatus.statusLabel}
         </p>
         <p className="mt-1 text-sm text-cocoa-600">{businessStatus.detailLabel}</p>
-        <p className="mt-1 text-sm text-cocoa-600">{businessStatus.nextOpenLabel}</p>
+        {businessStatus.nextOpenLabel ? (
+          <p className="mt-1 text-sm text-cocoa-600">{businessStatus.nextOpenLabel}</p>
+        ) : null}
         <p className="mt-2 text-sm text-cocoa-600">
           Retirada:{" "}
           <a
@@ -3474,11 +3571,12 @@ export default function CardapioPage() {
                         className="mt-1 h-14 w-full rounded-lg border border-rose-200 px-6 py-2 text-lg leading-none outline-none ring-cocoa-700/30 focus:ring"
                       />
                       <p className="mt-1 text-sm font-normal text-cocoa-700">
-                        Lembre-se: pedidos com no mínimo 5 dias de antecedência.
+                        Lembrete: pedidos para o dia seguinte ficam sujeitos à confirmação da loja.
                       </p>
                     </label>
                     <p className="text-sm leading-relaxed text-cocoa-700">
-                      Atendimento pelo WhatsApp de segunda a sexta, das 9h às 18h. {businessStatus.nextOpenLabel}
+                      Você pode enviar seu pedido a qualquer hora. A confirmação da loja acontece de segunda a sexta,
+                      das 9h às 18h.
                     </p>
                   </div>
                 </div>
@@ -3588,6 +3686,11 @@ export default function CardapioPage() {
                     </p>
                   )}
 
+                  <p className="mt-4 text-sm leading-relaxed text-cocoa-700">
+                    O pedido será enviado agora e a confirmação da loja acontece dentro do horário de atendimento do
+                    WhatsApp.
+                  </p>
+
                   {submitError ? <p className="mt-3 text-xs text-rose-700">{submitError}</p> : null}
                 </div>
 
@@ -3624,7 +3727,7 @@ export default function CardapioPage() {
                 <button
                   type="button"
                   onClick={finalizeOrder}
-                  disabled={cart.length === 0 || !businessStatus.isOpen}
+                  disabled={cart.length === 0}
                   className="inline-flex h-12 w-full items-center justify-center rounded-xl bg-gradient-to-br from-rose-500 to-rose-700 px-6 text-base font-semibold uppercase tracking-[0.14em] text-white transition md:h-14 md:text-lg md:tracking-[0.2em] md:enabled:hover:from-rose-700 md:enabled:hover:to-rose-900 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   Finalizar pedido
@@ -4419,6 +4522,36 @@ export default function CardapioPage() {
                     ) : null}
                   </div>
                 ) : null}
+                {selectedSimpleProduct.detailInputLabel ? (
+                  <div
+                    ref={(node) => {
+                      errorFieldRefs.current["simple-detail"] = node;
+                    }}
+                    className={getErrorSectionClass("simple-detail")}
+                  >
+                    <label className="flex flex-col gap-1 text-base font-bold text-cocoa-700">
+                      {selectedSimpleProduct.detailInputLabel}
+                      {selectedSimpleProduct.detailInputHelperText ? (
+                        <p className="mt-1 text-sm font-normal text-cocoa-600">
+                          {selectedSimpleProduct.detailInputHelperText}
+                        </p>
+                      ) : null}
+                      <input
+                        type="text"
+                        value={simpleDetailInput}
+                        onChange={(event) => {
+                          setSimpleDetailInput(event.target.value);
+                          setSimpleDetailError("");
+                        }}
+                        placeholder={selectedSimpleProduct.detailInputPlaceholder}
+                        className="mt-1 h-14 w-full rounded-lg border border-rose-200 px-6 text-lg outline-none ring-cocoa-700/20 focus:ring-1"
+                      />
+                      {simpleDetailError ? (
+                        <p className="mt-1 text-xs font-semibold text-rose-700">{simpleDetailError}</p>
+                      ) : null}
+                    </label>
+                  </div>
+                ) : null}
               </div>
             </div>
 
@@ -4580,7 +4713,7 @@ export default function CardapioPage() {
                   className={`text-base font-bold text-cocoa-700 ${getErrorSectionClass("kit-docinhos")}`}
                 >
                   Sabores dos docinhos
-                  <p className="mt-1 text-xs font-normal text-cocoa-600">Selecione exatamente 3 sabores para os 30 docinhos.</p>
+                  <p className="mt-1 text-xs font-normal text-cocoa-600">Selecione de 1 a 3 sabores para os docinhos do kit.</p>
                   <div className="mt-3 space-y-2">
                     {KIT_DOCINHO_OPTIONS.map((flavor) => {
                       const checked = kitDocinhoIds.includes(flavor.id);
