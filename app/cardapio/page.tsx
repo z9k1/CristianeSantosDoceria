@@ -200,6 +200,7 @@ type SearchableItem = {
 };
 
 const CART_STORAGE_KEY = "csg_cardapio_bolos_cart_v1";
+const DELIVERY_DETAILS_STORAGE_KEY = "csg_cardapio_delivery_details_v1";
 const CART_TOAST_EVENT = "csg:cart-toast";
 
 const categoryConfigs = [
@@ -1312,6 +1313,8 @@ export default function CardapioPage() {
   const [deliveryNeighborhood, setDeliveryNeighborhood] = useState("");
   const [deliveryComplement, setDeliveryComplement] = useState("");
   const [deliveryPreferredTime, setDeliveryPreferredTime] = useState("");
+  const [rememberDeliveryDetails, setRememberDeliveryDetails] = useState(false);
+  const [hasSavedDeliveryDetails, setHasSavedDeliveryDetails] = useState(false);
   const [isReceivingModalOpen, setIsReceivingModalOpen] = useState(false);
   const [submitError, setSubmitError] = useState("");
   const [hasHydratedCart, setHasHydratedCart] = useState(false);
@@ -1558,6 +1561,33 @@ export default function CardapioPage() {
     if (!hasHydratedCart) return;
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
   }, [cart, hasHydratedCart]);
+
+  useEffect(() => {
+    const raw = localStorage.getItem(DELIVERY_DETAILS_STORAGE_KEY);
+    if (!raw) return;
+
+    try {
+      const parsed = JSON.parse(raw) as {
+        address?: string;
+        neighborhood?: string;
+        complement?: string;
+        preferredTime?: string;
+      };
+      if (typeof parsed.address !== "string" || typeof parsed.neighborhood !== "string") {
+        localStorage.removeItem(DELIVERY_DETAILS_STORAGE_KEY);
+        return;
+      }
+
+      setDeliveryAddress(parsed.address);
+      setDeliveryNeighborhood(parsed.neighborhood);
+      setDeliveryComplement(typeof parsed.complement === "string" ? parsed.complement : "");
+      setDeliveryPreferredTime(typeof parsed.preferredTime === "string" ? parsed.preferredTime : "");
+      setRememberDeliveryDetails(true);
+      setHasSavedDeliveryDetails(true);
+    } catch {
+      localStorage.removeItem(DELIVERY_DETAILS_STORAGE_KEY);
+    }
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -2737,11 +2767,37 @@ export default function CardapioPage() {
     setIsReceivingModalOpen(true);
   };
 
+  const clearSavedDeliveryDetails = () => {
+    localStorage.removeItem(DELIVERY_DETAILS_STORAGE_KEY);
+    setHasSavedDeliveryDetails(false);
+    setRememberDeliveryDetails(false);
+    setDeliveryAddress("");
+    setDeliveryNeighborhood("");
+    setDeliveryComplement("");
+    setDeliveryPreferredTime("");
+  };
+
   const confirmReceivingAndSend = () => {
     if (receivingMode === "entrega") {
       if (!deliveryAddress.trim() || !deliveryNeighborhood.trim()) {
         setSubmitError("Para entrega, preencha endereço e bairro para continuar.");
         return;
+      }
+
+      if (rememberDeliveryDetails) {
+        localStorage.setItem(
+          DELIVERY_DETAILS_STORAGE_KEY,
+          JSON.stringify({
+            address: deliveryAddress.trim(),
+            neighborhood: deliveryNeighborhood.trim(),
+            complement: deliveryComplement.trim(),
+            preferredTime: deliveryPreferredTime.trim()
+          })
+        );
+        setHasSavedDeliveryDetails(true);
+      } else {
+        localStorage.removeItem(DELIVERY_DETAILS_STORAGE_KEY);
+        setHasSavedDeliveryDetails(false);
       }
     }
 
@@ -3725,6 +3781,32 @@ export default function CardapioPage() {
                         />
                         <p className="mt-1 text-xs font-normal text-cocoa-600">Sujeito à confirmação da loja.</p>
                       </label>
+                      <label className="flex items-start gap-3 rounded-xl border border-rose-100 bg-rose-50/45 px-4 py-3 text-sm text-cocoa-800">
+                        <input
+                          type="checkbox"
+                          checked={rememberDeliveryDetails}
+                          onChange={(event) => setRememberDeliveryDetails(event.target.checked)}
+                          className="mt-0.5 h-4 w-4 rounded border-rose-200 text-cocoa-800 focus:ring-cocoa-700/30"
+                        />
+                        <span className="flex-1">
+                          <span className="block font-semibold text-cocoa-900">Lembrar meus dados neste dispositivo</span>
+                          <span className="mt-1 block text-xs text-cocoa-600">
+                            Salva endereço, bairro, complemento e horário preferencial apenas neste navegador.
+                          </span>
+                        </span>
+                      </label>
+                      {hasSavedDeliveryDetails ? (
+                        <div className="flex items-center justify-between gap-3 rounded-xl border border-rose-100 bg-white px-4 py-3 text-sm text-cocoa-700">
+                          <p>Endereço salvo neste dispositivo.</p>
+                          <button
+                            type="button"
+                            onClick={clearSavedDeliveryDetails}
+                            className="font-semibold text-rose-700 transition hover:text-rose-800"
+                          >
+                            Limpar
+                          </button>
+                        </div>
+                      ) : null}
                       <p className="text-sm text-cocoa-700">{DELIVERY_FEE_NOTICE}</p>
                     </div>
                   ) : (
