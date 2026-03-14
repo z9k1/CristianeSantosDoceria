@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CtaLink } from "@/components/cta-link";
 import { Gallery } from "@/components/gallery";
@@ -70,12 +69,13 @@ export default function HomePage() {
                   className="w-full min-w-[17rem] px-8 py-3 shadow-xl !from-rose-500 !to-rose-700 hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-2xl hover:!from-rose-700 hover:!to-rose-900 sm:w-auto"
                   external={false}
                 />
-                <Link
+                <CtaLink
+                  label="Briefing de eventos"
                   href={eventosPath}
-                  className="inline-flex h-14 items-center justify-center rounded-lg border border-rose-200 bg-white px-6 text-base font-semibold uppercase tracking-[0.14em] text-cocoa-800 shadow-sm transition hover:border-rose-300 hover:bg-rose-50"
-                >
-                  Briefing de eventos
-                </Link>
+                  eventName="click_event_briefing"
+                  className="w-full !bg-white !text-cocoa-800 !from-white !to-white px-6 py-3 text-base tracking-[0.14em] shadow-sm ring-1 ring-rose-200 hover:!from-rose-50 hover:!to-rose-50 hover:ring-rose-300 sm:w-auto"
+                  external={false}
+                />
               </div>
             </div>
 
