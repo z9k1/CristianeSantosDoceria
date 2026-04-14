@@ -618,6 +618,14 @@ const BARRAS_FLORIDAS_CHOCOLATES: BarraChocolateOption[] = [
   { id: "branco-limao-lavanda", label: "Branco com limao siciliano e lavanda" }
 ];
 
+const KIT_FESTA_MESSAGE_CONFIG: Record<string, { label: string; cakeLine: string }> = {
+  "kit-festa-10-pessoas": { label: "Kit festa 1", cakeLine: "Bolo 1kg" },
+  "kit-festa-20-pessoas": { label: "Kit festa 2", cakeLine: "Bolo 2kg" },
+  "kit-festa-30-pessoas": { label: "Kit festa 3", cakeLine: "Bolo 3kg" },
+  "kit-festa-40-pessoas": { label: "Kit festa 4", cakeLine: "Bolo 4kg" },
+  "kit-festa-50-pessoas": { label: "Kit festa 5", cakeLine: "Bolo 5kg" }
+};
+
 const KIT_FESTA_10_PRODUCT: KitProduct = {
   id: "kit-festa-10-pessoas",
   name: "Kit festa 10 pessoas",
@@ -2716,17 +2724,23 @@ export default function CardapioPage() {
 
     const lines = cart
       .map((item) => {
+        const kitMessageConfig = item.category === "kit" ? KIT_FESTA_MESSAGE_CONFIG[item.productId] : undefined;
         const itemName =
           item.category === "bolo"
             ? `Bolo ${item.productName}`
-            : item.productName;
-        const quantityLabel = item.category === "bolo" ? `${item.quantity} kg` : `${item.quantity}x`;
+            : kitMessageConfig?.label ?? item.productName;
+        const quantityLabel =
+          item.category === "kit" ? "" : item.category === "bolo" ? `${item.quantity} kg` : `${item.quantity}x`;
         const optionLines = item.detailLines.filter((line) => !line.toLowerCase().startsWith("quantidade:"));
+        if (kitMessageConfig) {
+          optionLines.unshift(kitMessageConfig.cakeLine);
+        }
         if (item.category === "bombom" && item.bombomTheme) {
           optionLines.push(`Tema: ${item.bombomTheme}`);
         }
         const options = optionLines.length ? `\n${optionLines.map((line) => `  - ${line}`).join("\n")}` : "";
-        return `\u2022 ${itemName} (${quantityLabel})${options}`;
+        const heading = quantityLabel ? `\u2022 ${itemName} (${quantityLabel})` : `\u2022 ${itemName}`;
+        return `${heading}${options}`;
       })
       .join("\n\n");
 
@@ -3627,11 +3641,11 @@ export default function CardapioPage() {
                                 <p className="text-sm font-semibold text-cocoa-900">{`Bolo ${item.productName}`}</p>
                                 <p className="mt-0.5 text-xs font-semibold text-cocoa-700">{`${item.quantity} kg`}</p>
                               </div>
-                      ) : (
-                        <p className="text-sm font-semibold text-cocoa-900">
-                          {`${item.quantity}x ${item.productName}`}
-                        </p>
-                      )}
+                            ) : (
+                              <p className="text-sm font-semibold text-cocoa-900">
+                                {`${item.quantity}x ${item.productName}`}
+                              </p>
+                            )}
                             {item.detailLines.map((line) => (
                               <p key={line} className="mt-1 text-xs text-cocoa-700">
                                 {line}
