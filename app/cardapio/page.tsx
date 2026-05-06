@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -507,7 +507,7 @@ const CENTO_13G_PRODUCT: CentoProduct = {
   id: "cento-docinhos-13g",
   name: "Cento de Docinhos 13g",
   description:
-    "Tamanho ideal para festas. R$ 150,00 / cento, com escolha de até 4 sabores para 100 unidades no total.",
+    "Tamanho ideal para festas. Venda em lotes de 50 unidades. A cada 50 unidades, você pode escolher até 2 sabores.",
   imageUrl: assetPath("/images/bolos/brigadeiro.jpeg"),
   unitPrice: 150
 };
@@ -526,7 +526,7 @@ const CENTO_18G_PRODUCT: CentoProduct = {
   id: "cento-docinhos-18g",
   name: "Cento de Docinhos 18g",
   description:
-    "Docinhos em tamanho tradicional (18g). R$ 220,00 / cento, com escolha de até 4 sabores para 100 unidades no total.",
+    "Docinhos em tamanho tradicional (18g). Venda em lotes de 50 unidades. A cada 50 unidades, você pode escolher até 2 sabores.",
   imageUrl: assetPath("/images/bolos/doces-finos2.jpeg"),
   unitPrice: 220
 };
@@ -1701,7 +1701,13 @@ export default function CardapioPage() {
   const centoTotal = useMemo(() => {
     if (!selectedCento) return 0;
     const flavorsCount = selectedCentoFlavorIds.length;
-    if (flavorsCount === 0) return 0;
+    if (flavorsCount === 0 && selectedCento.id !== CENTO_CAKE_DONUT_PRODUCT.id) return 0;
+    
+    const isDocinhoCento = selectedCento.id === CENTO_13G_PRODUCT.id || selectedCento.id === CENTO_18G_PRODUCT.id;
+    if (isDocinhoCento) {
+      return (selectedCento.unitPrice / 100) * centoQuantity;
+    }
+
     const isFixedPriceCento =
       selectedCento.id === CENTO_MACARONS_MINI_PRODUCT.id ||
       selectedCento.id === CENTO_18G_PRODUCT.id ||
@@ -1710,7 +1716,14 @@ export default function CardapioPage() {
     return selectedCento.unitPrice * centoQuantity * (isFixedPriceCento ? 1 : flavorsCount);
   }, [selectedCento, centoQuantity, selectedCentoFlavorIds.length]);
 
-  const maxCentoFlavors = selectedCento?.id === CENTO_MACARONS_MINI_PRODUCT.id ? 5 : 4;
+  const maxCentoFlavors = useMemo(() => {
+    if (!selectedCento) return 4;
+    if (selectedCento.id === CENTO_MACARONS_MINI_PRODUCT.id) return 5;
+    if (selectedCento.id === CENTO_13G_PRODUCT.id || selectedCento.id === CENTO_18G_PRODUCT.id) {
+      return Math.max(2, Math.floor(centoQuantity / 50) * 2);
+    }
+    return 4;
+  }, [selectedCento, centoQuantity]);
 
   const selectedBarraSize = useMemo(
     () => BARRAS_FLORIDAS_SIZES.find((size) => size.id === selectedBarraSizeId) ?? BARRAS_FLORIDAS_SIZES[0],
@@ -1924,8 +1937,10 @@ export default function CardapioPage() {
     setSelectedSimpleProduct(null);
     setSelectedSimpleCategory(null);
     setSelectedCento(cento);
-    setCentoQuantity(1);
-    setCentoQuantityInput("1");
+    const isDocinhoCento = cento.id === CENTO_13G_PRODUCT.id || cento.id === CENTO_18G_PRODUCT.id;
+    const initialQty = isDocinhoCento ? 50 : 1;
+    setCentoQuantity(initialQty);
+    setCentoQuantityInput(initialQty.toString());
     setSelectedCentoFlavorIds([]);
     setCentoError("");
     setCentoColors("");
@@ -2069,15 +2084,37 @@ export default function CardapioPage() {
   );
 
   const validateCentoQuantity = useCallback(() => {
+    const isDocinhoCento = selectedCento?.id === CENTO_13G_PRODUCT.id || selectedCento?.id === CENTO_18G_PRODUCT.id;
     const parsed = Number.parseInt(centoQuantityInput, 10);
-    if (Number.isNaN(parsed) || parsed < 1) {
+    
+    if (Number.isNaN(parsed)) {
+      const fallback = isDocinhoCento ? 50 : 1;
+      setCentoQuantity(fallback);
+      setCentoQuantityInput(fallback.toString());
+      return fallback;
+    }
+
+    if (isDocinhoCento) {
+      if (parsed < 50) {
+        setCentoQuantity(50);
+        setCentoQuantityInput("50");
+        return 50;
+      }
+      const remainder = parsed % 50;
+      const fixed = remainder === 0 ? parsed : parsed - remainder;
+      setCentoQuantity(fixed);
+      setCentoQuantityInput(fixed.toString());
+      return fixed;
+    }
+
+    if (parsed < 1) {
       setCentoQuantity(1);
       setCentoQuantityInput("1");
       return 1;
     }
     setCentoQuantity(parsed);
     return parsed;
-  }, [centoQuantityInput]);
+  }, [centoQuantityInput, selectedCento]);
 
   const validateBarraQuantity = useCallback(() => {
     const parsed = Number.parseInt(barraQuantityInput, 10);
@@ -2351,15 +2388,21 @@ export default function CardapioPage() {
 
     const flavorIds = selectedFlavors.map((flavor) => flavor.id).sort();
     const flavorLabels = selectedFlavors.map((flavor) => flavor.label);
+
+    const isDocinhoCento = selectedCento.id === CENTO_13G_PRODUCT.id || selectedCento.id === CENTO_18G_PRODUCT.id;
     const isFixedPriceCento =
       selectedCento.id === CENTO_MACARONS_MINI_PRODUCT.id ||
       selectedCento.id === CENTO_18G_PRODUCT.id ||
       selectedCento.id === CENTO_13G_PRODUCT.id ||
       isCakeDonut;
-    const lineTotal = selectedCento.unitPrice * safeQuantity * (isFixedPriceCento ? 1 : selectedFlavors.length);
+
+    const lineTotal = isDocinhoCento 
+      ? (selectedCento.unitPrice / 100) * safeQuantity 
+      : selectedCento.unitPrice * safeQuantity * (isFixedPriceCento ? 1 : selectedFlavors.length);
+
     const detailLines = [
       ...(isCakeDonut ? [] : [`Sabores: ${flavorLabels.join(", ")}`]),
-      `Quantidade: ${safeQuantity} cento(s)`
+      `Quantidade: ${safeQuantity} ${isDocinhoCento ? "unidades" : "cento(s)"}`
     ];
     if (selectedCento.id === CENTO_MACARONS_MINI_PRODUCT.id && centoColors.trim()) {
       detailLines.push(`Cores: ${centoColors.trim()}`);
@@ -2369,7 +2412,7 @@ export default function CardapioPage() {
       category: "cento",
       productId: selectedCento.id,
       productName: selectedCento.name,
-      basePrice: selectedCento.unitPrice,
+      basePrice: isDocinhoCento ? selectedCento.unitPrice / 100 : selectedCento.unitPrice,
       quantity: safeQuantity,
       decorationIds: flavorIds,
       decorationLabels: flavorLabels,
@@ -2390,15 +2433,21 @@ export default function CardapioPage() {
       const existing = updated[existingIndex];
       const mergedQuantity = existing.quantity + newItem.quantity;
       const flavorsCount = existing.decorationIds.length || 1;
+      const isDocinhoCento = existing.productId === CENTO_13G_PRODUCT.id || existing.productId === CENTO_18G_PRODUCT.id;
       const isFixedPriceCento =
         existing.productId === CENTO_MACARONS_MINI_PRODUCT.id ||
         existing.productId === CENTO_18G_PRODUCT.id ||
         existing.productId === CENTO_13G_PRODUCT.id ||
         existing.productId === CENTO_CAKE_DONUT_PRODUCT.id;
+
+      const newLineTotal = isDocinhoCento
+        ? existing.basePrice * mergedQuantity
+        : existing.basePrice * mergedQuantity * (isFixedPriceCento ? 1 : flavorsCount);
+
       updated[existingIndex] = {
         ...existing,
         quantity: mergedQuantity,
-        lineTotal: existing.basePrice * mergedQuantity * (isFixedPriceCento ? 1 : flavorsCount)
+        lineTotal: newLineTotal
       };
       return updated;
     });
@@ -4236,10 +4285,11 @@ export default function CardapioPage() {
 
               <div className="mt-4 space-y-3">
                 <label className="block text-base font-bold text-cocoa-700">
-                  Quantidade (centos)
+                  Quantidade ({selectedCento.id === CENTO_13G_PRODUCT.id || selectedCento.id === CENTO_18G_PRODUCT.id ? "unidades" : "centos"})
                   <input
                     type="number"
-                    min={1}
+                    min={selectedCento.id === CENTO_13G_PRODUCT.id || selectedCento.id === CENTO_18G_PRODUCT.id ? 50 : 1}
+                    step={selectedCento.id === CENTO_13G_PRODUCT.id || selectedCento.id === CENTO_18G_PRODUCT.id ? 50 : 1}
                     value={centoQuantityInput}
                     onChange={(event) => {
                       setCentoQuantityInput(event.target.value);
@@ -4248,7 +4298,11 @@ export default function CardapioPage() {
                     onBlur={validateCentoQuantity}
                     className="mt-1 h-14 w-full box-border rounded-lg border border-rose-200 px-6 py-2 text-lg leading-none outline-none ring-cocoa-700/20 focus:ring-1"
                   />
-                  <p className="mt-1 text-xs font-normal text-cocoa-600">Cada pedido corresponde a 100 unidades no total.</p>
+                  <p className="mt-1 text-xs font-normal text-cocoa-600">
+                    {selectedCento.id === CENTO_13G_PRODUCT.id || selectedCento.id === CENTO_18G_PRODUCT.id 
+                      ? "Venda em lotes de 50 unidades." 
+                      : "Cada pedido corresponde a 100 unidades no total."}
+                  </p>
                 </label>
 
                 <div
